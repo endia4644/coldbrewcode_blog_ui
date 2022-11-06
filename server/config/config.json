@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "root",
+    "password": ".A4512132a!",
+    "database": "coldbrew_code",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": ".A4512132a!",
+    "database": "coldbrew_code",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": ".A4512132a!",
+    "database": "coldbrew_code",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
