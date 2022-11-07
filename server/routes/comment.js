@@ -2,6 +2,7 @@
 const express = require('express');
 const { isLoggedIn } = require('./middleware');
 const db = require('../models');
+const sequelize = require("sequelize");
 
 const router = express.Router();
 
@@ -10,6 +11,7 @@ router.post('/', isLoggedIn, async (req, res, next) => {
     const newComment = await db.Comment.create({
       commentContent: req.body.commentContent,
       commentDepth: req.body.commentDepth,
+      dltYsno: "N",
       UserId: req.user.id,
       PostId: req.body.postId,
       ParentId: req.body.parentId
@@ -34,19 +36,29 @@ router.get('/:id', async (req, res, next) => {
       where: {
         id: req.params.id
       },
+      attributes: ['id', 'commentContent', 'createdAt', 'updatedAt', 'dltYsno'],
       include: [{
         model: db.User,
         attributes: ['id', 'email', 'nickname']
       }, {
+        /* 대댓글을 조회한다. */
         model: db.Comment,
+        as: 'childComment',
+        required: false,
+        /* 
+          서브쿼리로 조회된 댓글의 대댓글 갯수를 조회한다. 
+          1단계 댓글인 경우 2단계 댓글의 수만 조회한다. ( 3단계 수는 가져오지 않는다. )
+        */
+        attributes: ['id', 'commentContent', 'createdAt', 'updatedAt', 'dltYsno', [sequelize.literal('(SELECT COUNT("ParentId") FROM Comments WHERE `childComment.id` = Comments.ParentId)'), 'childCount']],
+        include: [{
+          model: db.User,
+          attributes: ['id', 'email', 'nickname']
+        }],
         where: {
-          commentDepth: {
-            [Op.gt]: req.body.depth,
-            [Op.lt]: req.body.depth + 1
-          }
-        }
+          ParentId: req.params.id
+        },
+        order: [['id', 'DESC']],
       }],
-      order: [['createAt', 'DESC']],
     });
     return res.json(comments);
   } catch (err) {

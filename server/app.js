@@ -11,6 +11,7 @@ const morgan = require('morgan');
 const userRouter = require('./routes/user');
 const postRouter = require('./routes/post');
 const commentRouter = require('./routes/comment');
+const seriesRouter = require('./routes/series');
 
 const app = express();
 
@@ -47,6 +48,8 @@ app.get('/', (req, res) => {
 app.use('/user', userRouter);
 app.use('/post', postRouter);
 app.use('/comment', commentRouter);
+app.use('/series', seriesRouter);
+
 
 
 app.listen(3085, () => {

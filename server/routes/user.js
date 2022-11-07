@@ -3,12 +3,26 @@ const express = require('express');
 const passport = require('passport');
 const db = require('../models');
 const bcrypt = require('bcrypt');
-const { isLoggedIn, isNotLoggedIn } = require('./middleware');
+const { isLoggedIn, isNotLoggedIn, isProfileImgExist } = require('./middleware');
 const multer = require('multer');
 const router = express.Router();
 const path = require('path');
 
 const upload = multer({
+  storage: multer.diskStorage({
+    destination(req, file, done) {
+      done(null, 'uploads');
+    },
+    filename(req, file, done) {
+      const ext = path.extname(file.originalname);
+      const basename = path.basename(file.originalname, ext); // coldbrew.png, basename = coldbrew, ext = .png
+      done(null, basename + Date.now() + ext);
+    }
+  }),
+  limits: { fileSize: 20 * 1024 * 1024 },
+});
+
+const remove = multer({
   storage: multer.diskStorage({
     destination(req, file, done) {
       done(null, 'uploads');
@@ -41,6 +55,7 @@ router.post('/', isNotLoggedIn, async (req, res, next) => {
       password: hash,
       userType: req.body.userType,
       nickName: req.body.nickName,
+      profileImg: '',
       commentNoticeYsno: req.body.commentNoticeYsno,
       newPostNoticeYsno: req.body.newPostNoticeYsno,
       dltYsno: 'N'
@@ -85,9 +100,19 @@ router.post('/logout', isLoggedIn, (req, res) => {
   }
 })
 
-router.post('/image', isLoggedIn, upload.array('image'), (req, res) => {
-  console.log(req.files);
-  res.json(req.files.map(v => v.filename));
+router.post('/profile', isLoggedIn, isProfileImgExist, upload.single('profileImg'), async (req, res) => {
+  try {
+    await db.User.update({
+      profileImg: req.file.filename
+    }, {
+      where: {
+        id: req.user.id
+      }
+    })
+  } catch (err) {
+    console.error(err);
+  }
+  res.json(req.file.filename);
 });
 
 module.exports = router;

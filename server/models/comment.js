@@ -8,6 +8,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT, // 매우 긴 글
       allowNull: false,
     },
+    dltYsno: {
+      type: DataTypes.STRING(1),
+      allowNull: false, //필수
+    },
   }, {
     charset: 'utf8mb4',
     collate: 'utf8mb4_general_ci'
@@ -15,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   Comment.associate = (db) => {
     db.Comment.belongsTo(db.User); //UserId
     db.Comment.belongsTo(db.Post); //postNo
-    db.Comment.belongsTo(db.Comment, { as: 'refComment', foreignKey: 'ParentId' }); //commentNo
+    db.Comment.hasMany(db.Comment, { as: 'childComment', foreignKey: 'ParentId' }); //commentNo
   };
   return Comment;
 }

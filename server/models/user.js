@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(45),
       allowNull: false, //필수
     },
+    profileImg: {
+      type: DataTypes.STRING(45),
+      allowNull: true, //비필수
+    },
     commentNoticeYsno: {
       type: DataTypes.STRING(1),
       allowNull: false, //필수
