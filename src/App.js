@@ -1,6 +1,5 @@
-import { BarsOutlined, CoffeeOutlined } from '@ant-design/icons';
-import { Layout, Menu } from 'antd';
-import { Content } from 'antd/lib/layout/layout';
+import { BarsOutlined, CoffeeOutlined, GithubOutlined, TwitterOutlined } from '@ant-design/icons';
+import { Layout, Menu, Tag } from 'antd';
 import Sider from 'antd/lib/layout/Sider';
 import React from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
@@ -28,16 +27,11 @@ export default function App() {
     <>
       <Layout style={{ height: "100%", minHeight: '100vh' }} className="ant-layout-has-sider">
         <Sider
+          className='fix-menu'
           theme="light"
-          style={{ paddingTop: 40 }}
+          style={{ paddingTop: 40, zIndex: 2, height: '100%' }}
           breakpoint="lg"
           collapsedWidth="0"
-          onBreakpoint={broken => {
-            console.log(broken);
-          }}
-          onCollapse={(collapsed, type) => {
-            console.log(collapsed, type);
-          }}
         >
           <div className="logo" />
           <Menu
@@ -47,20 +41,15 @@ export default function App() {
             style={{ height: "100%" }}
             items={items}
           />
+          <div style={{ width: 95, paddingLeft: 24, paddingBottom: 20, borderBottom: '1px solid gray' }}>
+
+          </div>
         </Sider>
-        <Layout className="site-layout-background">
-          <Content
-            style={{
-              margin: '24px 16px',
-              padding: 24,
-              minHeight: 280,
-            }}
-          >
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/blog" element={<Blog />} />
-            </Routes>
-          </Content>
+        <Layout className="site-layout-background" style={{ minWidth: 420, width: '100%' }}>
+          <Routes>
+            <Route path="/" element={<Home />} />-
+            <Route path="/blog" element={<Blog />} />
+          </Routes>
         </Layout>
       </Layout>
     </>

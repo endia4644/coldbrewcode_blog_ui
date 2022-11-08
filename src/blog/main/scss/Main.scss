@@ -1,0 +1,51 @@
+@import "../../../App.scss";
+
+.main {
+  &-header {
+    padding: 10px 20px 0 50px;
+  }
+
+  &-content {
+    width: $mainContentSize;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &-name {
+    font-size: 1.5rem;
+    line-height: 1.5;
+    font-weight: bold;
+  }
+
+  &-tabs {
+    .ant-tabs-nav-wrap {
+      text-align: center;
+
+      .ant-tabs-tab {
+        width: 100px;
+        font-size: 1.5rem;
+
+        .ant-tabs-tab-btn {
+          width: 100px;
+        }
+      }
+    }
+  }
+}
+
+.ant-tabs-bottom>.ant-tabs-nav:before,
+.ant-tabs-bottom>div>.ant-tabs-nav:before,
+.ant-tabs-top>.ant-tabs-nav:before,
+.ant-tabs-top>div>.ant-tabs-nav:before {
+  border-bottom: 0;
+}
+
+@media (max-width: $mainContentSize) {
+  .main-content {
+    width: 100%;
+  }
+
+  .main-name {
+    font-size: 1.125rem;
+  }
+}

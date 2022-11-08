@@ -3,6 +3,10 @@
 
 // 변수
 $mainColor: #382119;
+$subColor: #634426;
+
+$mainContentSize: 756px;
+$mainSidebarSize: 992px;
 
 /* 구글 폰트 적용 */
 body {
@@ -10,7 +14,9 @@ body {
 }
 
 .ant-layout-sider-zero-width-trigger {
-  top: 0px;
+  top: 10px;
+  font-size: 28px;
+  right: -45px;
 }
 
 h1.ant-typography {
@@ -22,11 +28,11 @@ h1.ant-typography {
 }
 
 .ant-menu {
-  color: #382119;
+  color: $mainColor;
 }
 
 .ant-menu-item-selected {
-  color: #382119;
+  color: $mainColor;
   font-weight: bold;
 }
 
@@ -35,25 +41,79 @@ h1.ant-typography {
   background-color: #fff;
 }
 
-.ant-menu-item-selected,
-.ant-menu-item-selected a,
-.ant-menu-item-selected a:hover {
-  color: #382119;
-  font-weight: bold;
+.ant-menu-item-selected {
+  a {
+    &:hover {
+      color: $mainColor;
+      font-weight: bold;
+    }
+  }
 }
 
-.ant-menu-light .ant-menu-item:hover,
-.ant-menu-light .ant-menu-item-active,
-.ant-menu-light .ant-menu:not(.ant-menu-inline) .ant-menu-submenu-open,
-.ant-menu-light .ant-menu-submenu-active,
-.ant-menu-light .ant-menu-submenu-title:hover {
-  color: #382119;
+.ant-menu-item-selected {
+  color: $mainColor;
   font-weight: bold;
+
+  a {
+    color: $mainColor;
+    font-weight: bold;
+
+    &:hover {
+      color: $mainColor;
+      font-weight: bold;
+    }
+  }
+}
+
+.ant-menu-light {
+
+  .ant-menu-item:hover,
+  .ant-menu-item-active,
+  .ant-menu:not(.ant-menu-inline) .ant-menu-submenu-open,
+  .ant-menu-submenu-active,
+  .ant-menu-submenu-title:hover {
+    color: $mainColor;
+    font-weight: bold;
+  }
+}
+
+.ant-btn-ghost:focus,
+.ant-btn-ghost:hover {
+  color: $mainColor;
+  border-color: $mainColor;
+  background: transparent;
 }
 
 .ant-menu-vertical .ant-menu-item::after,
 .ant-menu-vertical-left .ant-menu-item::after,
 .ant-menu-vertical-right .ant-menu-item::after,
 .ant-menu-inline .ant-menu-item::after {
-  border-right: 3px solid #382119;
+  border-right: 3px solid $mainColor;
+}
+
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn,
+.ant-tabs-tab:hover {
+  color: $mainColor;
+  font-weight: 700;
+}
+
+.ant-tabs-ink-bar {
+  background: $mainColor;
+}
+
+.setting-dropbox {
+  width: 165px;
+  padding-top: 5px;
+}
+
+.fix-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.width-full {
+  width: 100%;
 }
