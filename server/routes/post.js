@@ -117,7 +117,7 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-router.patch('/:id', async (req, res, next) => {
+router.delete('/:id', async (req, res, next) => {
   try {
     await db.sequelize.transaction(async (t) => {
       await db.Post.update({ dltYsno: 'Y', seriesId: null }, {

@@ -22,20 +22,6 @@ const upload = multer({
   limits: { fileSize: 20 * 1024 * 1024 },
 });
 
-const remove = multer({
-  storage: multer.diskStorage({
-    destination(req, file, done) {
-      done(null, 'uploads');
-    },
-    filename(req, file, done) {
-      const ext = path.extname(file.originalname);
-      const basename = path.basename(file.originalname, ext); // coldbrew.png, basename = coldbrew, ext = .png
-      done(null, basename + Date.now() + ext);
-    }
-  }),
-  limits: { fileSize: 20 * 1024 * 1024 },
-});
-
 router.post('/', isNotLoggedIn, async (req, res, next) => {
   try {
     const hash = await bcrypt.hash(req.body.password, 12);
@@ -61,6 +47,44 @@ router.post('/', isNotLoggedIn, async (req, res, next) => {
       dltYsno: 'N'
     })
     return res.status(200).json(newUser);
+  } catch (err) {
+    console.log(err);
+    return next(err);
+  }
+});
+
+router.patch('/', isLoggedIn, async (req, res, next) => {
+  const param = {};
+  if (req.query.commentNoticeYsno) {
+    param['commentNoticeYsno'] = req.query.commentNoticeYsno;
+  }
+  if (req.query.newPostNoticeYsno) {
+    param['newPostNoticeYsno'] = req.query.newPostNoticeYsno;
+  }
+  try {
+    await db.User.update(param, {
+      where: {
+        id: req.user.id,
+        dltYsno: 'N'
+      }
+    })
+    return res.send('수정되었습니다.');
+  } catch (err) {
+    console.log(err);
+    return next(err);
+  }
+})
+
+router.delete('/', isLoggedIn, async (req, res, next) => {
+  try {
+    await db.User.update({
+      dltYsno: "Y"
+    }, {
+      where: {
+        id: req.user.id
+      }
+    })
+    return res.send('삭제되었습니다.')
   } catch (err) {
     console.log(err);
     return next(err);

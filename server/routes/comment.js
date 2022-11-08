@@ -67,8 +67,13 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-router.patch('/:id', async (req, res, next) => {
+router.delete('/:id', isLoggedIn, async (req, res, next) => {
   try {
+    const deletePost = await db.Comment.findOne({
+      where: {
+        id: req.params.id
+      }
+    })
     await db.Comment.update({ dltYsno: 'Y' }, {
       where: {
         id: req.params.id
