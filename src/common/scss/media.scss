@@ -1,0 +1,55 @@
+/* 미디어 CSS */
+
+@media (max-width: $mainContentSize) {
+  .main-content {
+    width: 100%;
+  }
+
+  .main-name {
+    font-size: 1.125rem;
+  }
+}
+
+/* xl */
+
+@media (max-width: $xxl) {
+  .main {
+    &-side {
+      display: none;
+    }
+  }
+}
+
+@media (min-width: $xxl) {
+  .main {
+    &-topbar {
+      display: none;
+    }
+  }
+}
+
+/* xl */
+
+/* lg */
+
+@media (max-width: $lg) {
+  .main-list {
+    .ant-row {
+      >div:nth-child(n+2) {
+        border-top: 1px solid rgba(0, 0, 0, .06);
+      }
+    }
+  }
+}
+
+@media (min-width: $lg) {
+  .main-list {
+    .ant-row {
+      >div:nth-child(n+3) {
+        border-top: 1px solid rgba(0, 0, 0, .06);
+      }
+    }
+  }
+}
+
+/* lg */

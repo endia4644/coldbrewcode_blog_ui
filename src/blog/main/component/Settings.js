@@ -16,6 +16,9 @@ export default function Settings({ logout }) {
                     overlayClassName="setting-dropbox"
                     overlay={
                         <Menu>
+                            <Menu.Item onClick={logout}>임시글</Menu.Item>
+                            <Menu.Item onClick={logout}>관심글</Menu.Item>
+                            <Menu.Item onClick={logout}>설정</Menu.Item>
                             <Menu.Item onClick={logout}>로그아웃</Menu.Item>
                         </Menu>
                     }

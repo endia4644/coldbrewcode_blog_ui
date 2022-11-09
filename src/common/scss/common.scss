@@ -1,16 +1,17 @@
 @charset "UTF-8";
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;500&display=swap');
-
-// 변수
-$mainColor: #382119;
-$subColor: #634426;
-
-$mainContentSize: 756px;
-$mainSidebarSize: 992px;
+@import "./vars.scss";
+@import "./media.scss";
 
 /* 구글 폰트 적용 */
 body {
   font-family: 'Noto Sans KR'
+}
+
+.ant-layout,
+.site-layout-background,
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+  background: #fff;
 }
 
 .ant-layout-sider-zero-width-trigger {
@@ -23,22 +24,20 @@ h1.ant-typography {
   margin-bottom: 0.2em;
 }
 
-.site-layout-background {
-  background: #fff;
-}
-
 .ant-menu {
   color: $mainColor;
 }
 
-.ant-menu-item-selected {
-  color: $mainColor;
-  font-weight: bold;
+.ant-anchor-ink-ball {
+  border: 2px solid $mainColor;
 }
 
-
-.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-  background-color: #fff;
+.ant-menu-item-selected,
+.ant-anchor-link-active>.ant-anchor-link-title,
+a:active,
+a:hover {
+  color: $mainColor;
+  font-weight: bold;
 }
 
 .ant-menu-item-selected {

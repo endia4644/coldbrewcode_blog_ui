@@ -1,20 +1,57 @@
-@import "../../../App.scss";
+@import "./../../../common/scss/vars.scss";
+
+/*
+  $xs: 576px;
+  $sm: 576px;
+  $md: 768px;
+  $lg: 992px;
+  $xl: 1200px;
+  $xxl: 1600px;
+*/
 
 .main {
   &-header {
-    padding: 10px 20px 0 50px;
+    padding: 0 20px 0 50px;
   }
 
   &-content {
     width: $mainContentSize;
     margin-left: auto;
     margin-right: auto;
+
+    .ant-typography {
+      a {
+        color: $mainColor;
+      }
+    }
   }
 
   &-name {
     font-size: 1.5rem;
     line-height: 1.5;
     font-weight: bold;
+  }
+
+  &-sidebar {
+    font-size: 14px;
+
+    .tablist {
+      border-left: 1px solid #f0f0f0;
+    }
+
+    .ant-tabs-left>.ant-tabs-nav .ant-tabs-ink-bar,
+    .ant-tabs-left>div>.ant-tabs-nav .ant-tabs-ink-bar {
+      left: 0;
+    }
+
+    .ant-tabs-left>.ant-tabs-content-holder,
+    .ant-tabs-left>div>.ant-tabs-content-holder {
+      border-left: 0;
+    }
+
+    .ant-tabs-left>.ant-tabs-nav .ant-tabs-tab {
+      padding: 0 24px;
+    }
   }
 
   &-tabs {
@@ -31,21 +68,60 @@
       }
     }
   }
+
+  &-topbar {
+    .ant-tabs-nav-list {
+      .ant-tabs-tab {
+        background-color: $grayColor;
+        color: black;
+        border: 0;
+        height: 32px;
+        padding: 4px 16px;
+        font-size: 14px;
+        border-radius: 32px;
+        margin-left: 10px;
+
+        &-active {
+          background-color: #634426;
+          color: $fontColor;
+
+          .ant-tabs-tab-btn {
+            color: $fontColor;
+            font-weight: 700;
+          }
+        }
+      }
+    }
+
+    .ant-tabs-ink-bar {
+      display: none;
+    }
+  }
+}
+
+.ant-tabs-content-holder {
+  .ant-col {
+    .tag-button {
+      background-color: $subColor;
+      color: $fontColor;
+      border: 0;
+    }
+  }
 }
 
 .ant-tabs-bottom>.ant-tabs-nav:before,
 .ant-tabs-bottom>div>.ant-tabs-nav:before,
 .ant-tabs-top>.ant-tabs-nav:before,
 .ant-tabs-top>div>.ant-tabs-nav:before {
-  border-bottom: 0;
+  display: none;
 }
 
-@media (max-width: $mainContentSize) {
-  .main-content {
-    width: 100%;
-  }
+.ant-tabs-top>.ant-tabs-nav .ant-tabs-nav-wrap.ant-tabs-nav-wrap-ping-left:before,
+.ant-tabs-top>.ant-tabs-nav .ant-tabs-nav-wrap.ant-tabs-nav-wrap-ping-right:after {
+  opacity: 0;
+}
 
-  .main-name {
-    font-size: 1.125rem;
-  }
+.ant-tabs>.ant-tabs-nav .ant-tabs-nav-more,
+.ant-tabs>div>.ant-tabs-nav .ant-tabs-nav-more {
+  display: none;
 }

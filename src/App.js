@@ -1,14 +1,18 @@
 import { BarsOutlined, CoffeeOutlined, GithubOutlined, TwitterOutlined } from '@ant-design/icons';
 import { Layout, Menu, Tag } from 'antd';
+import { Link, Route, Routes } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Sider from 'antd/lib/layout/Sider';
 import React from 'react';
-import { Link, Route, Routes } from 'react-router-dom';
 import Home from './home/container/Home';
-import 'antd/dist/antd.min.css';
-import './App.scss';
 import Blog from './blog/main/container/BlogMain';
+import 'antd/dist/antd.min.css';
+import './common/scss/common.scss';
+
 
 export default function App() {
+  const location = useLocation();
+  const siderKey = location.pathname;
   function getItem(label, key, icon, children, type, link) {
     return {
       key,
@@ -20,8 +24,8 @@ export default function App() {
     };
   }
   const items = [
-    getItem(<Link to={"/"}>About</Link>, '1', <CoffeeOutlined />),
-    getItem(<Link to={"/blog"}>Blog</Link>, '2', <BarsOutlined />),
+    getItem(<Link to={"/"}>About</Link>, '/', <CoffeeOutlined />),
+    getItem(<Link to={"/blog"}>Blog</Link>, '/blog', <BarsOutlined />),
   ];
   return (
     <>
@@ -29,21 +33,20 @@ export default function App() {
         <Sider
           className='fix-menu'
           theme="light"
+          width={160}
           style={{ paddingTop: 40, zIndex: 2, height: '100%' }}
-          breakpoint="lg"
+          breakpoint="xxl"
+          defaultCollapsed={true}
           collapsedWidth="0"
         >
           <div className="logo" />
           <Menu
-            defaultSelectedKeys={['1']}
+            defaultSelectedKeys={[siderKey]}
             mode="inline"
             theme="light"
             style={{ height: "100%" }}
             items={items}
           />
-          <div style={{ width: 95, paddingLeft: 24, paddingBottom: 20, borderBottom: '1px solid gray' }}>
-
-          </div>
         </Sider>
         <Layout className="site-layout-background" style={{ minWidth: 420, width: '100%' }}>
           <Routes>
