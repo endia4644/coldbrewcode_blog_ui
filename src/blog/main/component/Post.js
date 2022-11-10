@@ -1,9 +1,10 @@
 import { FieldTimeOutlined, HeartOutlined, LockOutlined, MessageOutlined } from "@ant-design/icons";
 import { Button, Col, List, Space, Typography } from "antd";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { actions } from "../state";
+import useFetchInfo from "../../../common/hook/useFetchInfo";
+import { actions, Types } from "../state";
 import { elapsedTime } from "./../../../common/util/util.js";
 
 const IconText = ({ icon, text }) => (
@@ -18,19 +19,23 @@ const handleImgError = (e) => {
 }
 
 export default function Post({ post }) {
-  // const post = Array.from({
-  //   length: 6,
-  // }).map((_, i) => ({
-  //   postThumnail: 'https://ant.design',
-  //   id: `${i}`,
-  //   postName: `자료구조 Stack`,
-  //   lockYsno: 'Y',
-  //   postDescription:
-  //     'Stack 자료구조에 대해 배워봅니다.',
-  //   tags: ['자료구조', 'Stack', '자료구조', 'Stack', '자료구조', 'Stack'],
-  //   postContent:
-  //     '정렬 알고리즘에 입문할 때 예시로 쓰일 정도로 쉽고 기초적인 정렬 알고리즘이라고 할 수 있다...',
-  // }))
+  const targetRef = useRef(null);
+  const dispatch = useDispatch();
+  const { isFetching, totalCount } = useFetchInfo(Types.FetchAllPost);
+  useEffect(() => {
+    let observer;
+    if (targetRef.current) {
+      observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !isFetching) {
+            dispatch(actions.fetchAllPost(post, totalCount));
+          }
+        })
+      })
+      observer.observe(targetRef.current);
+    }
+    return () => observer && observer.disconnect();
+  }, [isFetching])
   return (
     <>
       <List
@@ -84,6 +89,7 @@ export default function Post({ post }) {
           </List.Item>
         )}
       />
+      <div ref={targetRef} />
     </>
   )
 }

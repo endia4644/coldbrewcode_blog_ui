@@ -18,7 +18,7 @@ function* fetchAllPost(action, page) {
   if (page <= Math.floor(action.totalCount / 6)) {
     const { isSuccess, data } = yield call(callApi, {
       url: '/post',
-      params: { page: page }
+      params: { limit: 8, offset: 8 * page }
     });
     if (isSuccess && data) {
       if (action.post) {

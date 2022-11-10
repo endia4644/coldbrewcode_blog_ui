@@ -67,15 +67,17 @@ router.get('/', async (req, res, next) => {
             [Op.eq]: 0, // 게시글에서는 1단계 댓글만 조회한다.
           }
         }
+
       }],
       order: [
         ['createdAt', 'DESC'],
         [db.Comment, 'createdAt', 'DESC']
       ],
-      offset: req.query.offset,
-      limit: req.query.limit
+      offset: Number(req.query.offset),
+      limit: parseInt(req.query.limit, 10) || 10,
     });
-    res.send(makeResponse({ data: posts }));
+    const postCnt = await db.Post.count();
+    res.send(makeResponse({ data: posts, totalCount: postCnt }));
   } catch (err) {
     console.error(err);
     next(err);
