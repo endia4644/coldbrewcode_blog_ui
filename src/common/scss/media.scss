@@ -13,6 +13,8 @@
 /* xl */
 
 @media (max-width: $xxl) {
+
+  /* side-bar 숨김 - 화면이 xxl 사이즈보다 작은 경우 */
   .main {
     &-side {
       display: none;
@@ -21,6 +23,8 @@
 }
 
 @media (min-width: $xxl) {
+
+  /* top-bar 숨김 - 화면이 xxl 사이즈보다 큰 경우 */
   .main {
     &-topbar {
       display: none;
@@ -33,6 +37,11 @@
 /* lg */
 
 @media (max-width: $lg) {
+
+  /* 
+    게시글의 border-top 2번째 게시글 부터 적용
+    - 게시글이 하나씩 보이는 경우 
+  */
   .main-list {
     .ant-row {
       >div:nth-child(n+2) {
@@ -40,14 +49,35 @@
       }
     }
   }
+
+  main {
+
+    /* 게시글의 description 영역 padding 크게 조정 */
+    .ant-list-vertical .ant-list-item-action>li {
+      padding: 0 20px;
+    }
+  }
 }
 
 @media (min-width: $lg) {
+
+  /* 
+      게시글의 border-top 3번째 게시글 부터 적용
+      - 게시글이 두개씩 보이는 경우 
+    */
   .main-list {
     .ant-row {
       >div:nth-child(n+3) {
         border-top: 1px solid rgba(0, 0, 0, .06);
       }
+    }
+  }
+
+  main {
+
+    /* 게시글의 description 영역 padding 작게 조정 */
+    .ant-list-vertical .ant-list-item-action>li {
+      padding: 0 10px;
     }
   }
 }

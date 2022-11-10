@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { API_HOST } from '../constant';
 import { message } from 'antd';
+import { API_HOST } from '../constant';
 
 /**
  *

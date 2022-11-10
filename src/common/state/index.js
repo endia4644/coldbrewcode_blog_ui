@@ -9,6 +9,7 @@ export const Types = {
   SetValue: 'common/SetValue',
   SetIsSlow: 'common/SetIsSlow',
   SetFetchStatus: 'common/SetFetchStatus',
+
 };
 
 export const actions = {

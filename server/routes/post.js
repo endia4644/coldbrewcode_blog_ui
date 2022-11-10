@@ -3,6 +3,7 @@ const express = require('express');
 const { isLoggedIn } = require('./middleware');
 const db = require('../models');
 const { Op, literal } = require("sequelize");
+const { makeResponse } = require('../util');
 
 const router = express.Router();
 
@@ -13,8 +14,9 @@ router.post('/', isLoggedIn, async (req, res, next) => {
       const newPost = await db.Post.create({
         postName: req.body.postName,
         postContent: req.body.postContent,
-        postIntroduce: req.body.postIntroduce,
+        postDescription: req.body.postDescription,
         likeCnt: 0,
+        lockYsno: req.body.lockYsno,
         dltYsno: 'N',
         UserId: req.user.id,
         SeriesId: req.body.seriesId
@@ -38,7 +40,7 @@ router.post('/', isLoggedIn, async (req, res, next) => {
           attributes: ['id', 'email', 'nickName'],
         }]
       })
-      return res.json(fullPost);
+      res.send(makeResponse({ data: fullPost }));
     })
   } catch (err) {
     console.error(err);
@@ -73,7 +75,7 @@ router.get('/', async (req, res, next) => {
       offset: req.query.offset,
       limit: req.query.limit
     });
-    return res.json(posts);
+    res.send(makeResponse({ data: posts }));
   } catch (err) {
     console.error(err);
     next(err);
@@ -110,7 +112,7 @@ router.get('/:id', async (req, res, next) => {
       offset: req.query.offset,
       limit: req.query.limit
     });
-    return res.json(posts);
+    res.send(makeResponse({ data: posts }));
   } catch (err) {
     console.error(err);
     next(err);
@@ -151,7 +153,7 @@ router.delete('/:id', async (req, res, next) => {
         }
       }
     })
-    res.send('삭제 되었습니다.');
+    res.send(makeResponse({ data: 'SUCCESS' }));
   } catch (err) {
     console.error(err);
     next(err);

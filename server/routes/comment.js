@@ -23,7 +23,7 @@ router.post('/', isLoggedIn, async (req, res, next) => {
         attributes: ['id', 'email', 'nickname'],
       }]
     })
-    return res.json(fullComment);
+    return res.send(makeResponse(fullComment));
   } catch (err) {
     console.error(err);
     next(err);
@@ -60,7 +60,7 @@ router.get('/:id', async (req, res, next) => {
         order: [['id', 'DESC']],
       }],
     });
-    return res.json(comments);
+    res.send(makeResponse(comments));
   } catch (err) {
     console.error(err);
     next(err);

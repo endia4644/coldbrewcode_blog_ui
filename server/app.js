@@ -16,7 +16,7 @@ const seriesRouter = require('./routes/series');
 const app = express();
 
 const corsOptions = {
-  origin: '*',
+  origin: 'http://localhost:3000',
   credentials: true
 }
 

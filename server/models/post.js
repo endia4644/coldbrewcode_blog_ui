@@ -8,12 +8,20 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(200),
       allowNull: false,
     },
-    postIntroduce: {
+    postDescription: {
       type: DataTypes.STRING(1000),
       allowNull: false,
     },
+    postThumnail: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
+    },
     likeCnt: {
       type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    lockYsno: {
+      type: DataTypes.STRING(1),
       allowNull: false,
     },
     dltYsno: {

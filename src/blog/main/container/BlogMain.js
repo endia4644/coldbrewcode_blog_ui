@@ -1,90 +1,31 @@
-import { LikeOutlined, MessageOutlined, StarOutlined } from "@ant-design/icons";
-import { Button, Col, Divider, List, Row, Space, Tabs, Typography } from "antd";
+import { Col, Divider, Row, Tabs } from "antd";
 import { Content, Header } from "antd/lib/layout/layout";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
 import Settings from "../component/Settings";
 import SideBar from "../component/SideBar";
 import TopBar from "../component/TopBar";
 import UserInfo from "./UserInfo";
 import "../scss/Main.scss";
+import Post from "../component/Post";
+import { useDispatch, useSelector } from "react-redux";
+import { actions } from "../state";
+// import Series from "../component/Series";
 
 export default function Blog() {
-  const [size, setSize] = useState('large');
-  const data = Array.from({
-    length: 6,
-  }).map((_, i) => ({
-    href: 'https://ant.design',
-    key: `post_${i}`,
-    title: `자료구조 Stack`,
-    postNo: 1,
-    description:
-      'Stack 자료구조에 대해 배워봅니다.',
-    tags: ['자료구조', 'Stack', '자료구조', 'Stack', '자료구조', 'Stack'],
-    content:
-      '정렬 알고리즘에 입문할 때 예시로 쓰일 정도로 쉽고 기초적인 정렬 알고리즘이라고 할 수 있다...',
-  }));
-  const IconText = ({ icon, text }) => (
-    <Space>
-      {React.createElement(icon)}
-      {text}
-    </Space>
-  );
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(actions.fetchAllPost());
+  }, [dispatch]);
+
+  const post = useSelector(state => state.main.post);
   const tabPaneItems = [{
     label: '글',
     key: 'tabpane-1',
-    children: (
-      <List
-        className="main-list"
-        grid={{
-          xs: 1,
-          sm: 1,
-          md: 1,
-          lg: 2,
-          xl: 2,
-          xxl: 2,
-        }
-        }
-        itemLayout="vertical"
-        size="large"
-        dataSource={data}
-        renderItem={(item) => (
-          <List.Item
-            className="main-list-item"
-            style={{ paddingTop: 30 }}
-            key={item.key}
-            actions={[
-              <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />,
-              <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o" />,
-              <IconText icon={MessageOutlined} text="2" key="list-vertical-message" />,
-            ]}
-          >
-            <img
-              style={{ paddingBottom: 20 }}
-              width={'100%'}
-              alt="logo"
-              src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-            />
-            <Typography.Title>
-              <Link to={`/${item.postNo}`}>{item.title}</Link>
-            </Typography.Title>
-            <List.Item.Meta
-              description={item.description}
-            />
-            {item.content}
-            <Col>
-              {item.tags.map((item, i) => (
-                <Button key={`button_${i}`} className="tag-button" type="primary" shape="round" style={{ marginTop: 10, marginRight: 10 }}>{item}</Button>
-              ))}
-            </Col>
-          </List.Item>
-        )}
-      />
-    )
+    children: (<Post post={post} />)
   },
   {
     label: '시리즈',
-    key: 'tabpane-2'
+    key: 'tabpane-2',
   }]
   return (
     <>
