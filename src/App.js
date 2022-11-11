@@ -1,5 +1,5 @@
-import { BarsOutlined, CoffeeOutlined, GithubOutlined, TwitterOutlined } from '@ant-design/icons';
-import { Layout, Menu, Tag } from 'antd';
+import { BarsOutlined, CoffeeOutlined } from '@ant-design/icons';
+import { Layout, Menu } from 'antd';
 import { Link, Route, Routes } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import Sider from 'antd/lib/layout/Sider';

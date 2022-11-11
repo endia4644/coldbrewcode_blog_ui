@@ -1,26 +1,12 @@
-import { Affix, Anchor, Col, Divider, Row, Tabs, Typography } from 'antd';
+import { Affix, Col, Divider, Row, Tabs } from 'antd';
 import Search from 'antd/lib/input/Search';
-import React, { useState } from 'react';
+import React from 'react';
 
-export default function SideBar() {
-    const [top, setTop] = useState(10);
-    const tags = [
-        {
-            label: '전체보기',
-            count: 6
-        },
-        {
-            label: '자료구조',
-            count: 3
-        },
-        {
-            label: '알고리즘',
-            count: 3
-        }
-    ]
+export default function SideBar({ hashtag }) {
+    const [activeKey, setActiveKey] = React.useState(null)
     return (
         <>
-            <Affix className='main-sidebar' offsetTop={top}>
+            <Affix className='main-sidebar'>
                 <Row className='main-side' style={{ position: 'absolute', left: '-38.5rem', top: '14rem' }}>
                     <Col>
                         <Search
@@ -34,13 +20,12 @@ export default function SideBar() {
                         <Col style={{ marginTop: 20 }}>
                             <Tabs
                                 tabPosition='left'
-                                items={tags.map((item, i) => {
-                                    const id = String(i + 1);
+                                items={hashtag.map((item, i) => {
                                     return {
-                                        label: `${item.label}(${item.count})`,
-                                        key: `sideBar_${i}`,
+                                        label: `${item.hashtagName} (${item.postCount})`,
+                                        key: item.id,
                                         onTabClick: (item) => {
-                                            console.log(item);
+                                            console.log(activeKey)
                                         }
                                     };
                                 })}

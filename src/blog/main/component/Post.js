@@ -1,7 +1,7 @@
 import { FieldTimeOutlined, HeartOutlined, LockOutlined, MessageOutlined } from "@ant-design/icons";
 import { Button, Col, List, Space, Typography } from "antd";
 import React, { useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";
@@ -35,7 +35,7 @@ export default function Post({ post }) {
       observer.observe(targetRef.current);
     }
     return () => observer && observer.disconnect();
-  }, [isFetching])
+  }, [dispatch, isFetching, post, totalCount])
   return (
     <>
       <List

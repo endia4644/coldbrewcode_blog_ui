@@ -1,22 +1,14 @@
-import { Affix, Tabs } from 'antd';
-import React, { useState } from 'react';
+import { Tabs } from 'antd';
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import { actions } from '../state';
 
-export default function SideBar() {
-  const tags = [
-    {
-      label: '전체보기',
-      count: 6
-    },
-    {
-      label: '자료구조',
-      count: 3
-    },
-    {
-      label: '알고리즘',
-      count: 3
-    }
-  ]
-  const [top, setTop] = useState(10);
+export default function Topbar({ hashtag }) {
+  const dispatch = useDispatch();
+  const onchangFunction = (activeKey) => {
+    console.log(activeKey);
+    dispatch(actions.fetchAllPost(null, 0, activeKey))
+  }
   return (
     <>
       <Tabs
@@ -24,11 +16,11 @@ export default function SideBar() {
         className='main-topbar'
         defaultActiveKey="1"
         tabPosition='top'
-        items={tags.map((item, i) => {
-          const id = String(i);
+        onChange={onchangFunction}
+        items={hashtag.map((item, i) => {
           return {
-            label: `${item.label} (${item.count})`,
-            key: `topBar_${i}`,
+            label: `${item.hashtagName} (${item.postCount})`,
+            key: item.id,
           };
         })}
       >

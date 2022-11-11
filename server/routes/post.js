@@ -2,7 +2,7 @@
 const express = require('express');
 const { isLoggedIn } = require('./middleware');
 const db = require('../models');
-const { Op, literal } = require("sequelize");
+const { Op, literal, where } = require("sequelize");
 const { makeResponse } = require('../util');
 
 const router = express.Router();
@@ -50,13 +50,48 @@ router.post('/', isLoggedIn, async (req, res, next) => {
 
 router.get('/', async (req, res, next) => {
   try {
+    let hashtag = req.query.hashtag;
+    const postId = {};
+    const search = req.query.search;
+    const postName = {};
+    const postIdList = [];
+    /* 태그 조회인 경우 */
+    if (hashtag) {
+      hashtag = await db.Hashtag.findAll({
+        attributes: ['id'],
+        where: {
+          id: req.query.hashtag
+        },
+        include: {
+          model: db.Post,
+          through: { attributes: [] }
+        }
+      })
+      /* 해시태그 관계 테이블에서 조회한 postId 리스트에 주입 */
+      hashtag?.[0]?.Posts.map(post => postIdList.push(post.id));
+      postId[Op.in] = postIdList;
+    } else {
+      postId[Op.not] = null;
+    }
+    /* 검색 조회인 경우 */
+    if (search) {
+      postName[Op.like] = `%${search}%`;
+    } else {
+      postName[Op.not] = null;
+    }
     const posts = await db.Post.findAll({
+      where: {
+        postName: postName,
+        id: postId
+      },
       include: [{
         model: db.User,
         attributes: ['id', 'email', 'nickName']
       }, {
         model: db.Hashtag,
         required: false,
+        attributes: ['id', 'hashtagName'],
+        through: { attributes: [] }
       }, {
         model: db.Comment,
         as: 'Comments',
@@ -73,10 +108,15 @@ router.get('/', async (req, res, next) => {
         ['createdAt', 'DESC'],
         [db.Comment, 'createdAt', 'DESC']
       ],
-      offset: Number(req.query.offset),
-      limit: parseInt(req.query.limit, 10) || 10,
+      offset: parseInt(req.query.offset) || 0,
+      limit: parseInt(req.query.limit, 10) || 8,
     });
-    const postCnt = await db.Post.count();
+    const postCnt = await db.Post.count({
+      where: {
+        postName: postName,
+        id: postId
+      },
+    });
     res.send(makeResponse({ data: posts, totalCount: postCnt }));
   } catch (err) {
     console.error(err);
@@ -111,8 +151,6 @@ router.get('/:id', async (req, res, next) => {
         ['createdAt', 'DESC'],
         [db.Comment, 'createdAt', 'DESC']
       ],
-      offset: req.query.offset,
-      limit: req.query.limit
     });
     res.send(makeResponse({ data: posts }));
   } catch (err) {

@@ -1,8 +1,11 @@
-import { FieldTimeOutlined, HeartOutlined, LockOutlined, MessageOutlined } from "@ant-design/icons";
-import { Button, Col, List, Space, Typography } from "antd";
-import React from "react";
-import { useSelector } from "react-redux";
+import { BookOutlined, FieldTimeOutlined } from "@ant-design/icons";
+import { List, Space, Typography } from "antd";
+import React, { useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import useFetchInfo from "../../../common/hook/useFetchInfo";
+import { actions, Types } from "../state";
+import { elapsedTime } from "./../../../common/util/util.js";
 
 const IconText = ({ icon, text }) => (
   <Space>
@@ -11,8 +14,24 @@ const IconText = ({ icon, text }) => (
   </Space>
 );
 
-export default function Series() {
-  const series = useSelector(state => state.main.series);
+export default function Series({ series }) {
+  const targetRef = useRef(null);
+  const dispatch = useDispatch();
+  const { isFetching, totalCount } = useFetchInfo(Types.FetchAllSeries);
+  useEffect(() => {
+    let observer;
+    if (targetRef.current) {
+      observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !isFetching) {
+            dispatch(actions.fetchAllPost(series, totalCount));
+          }
+        })
+      })
+      observer.observe(targetRef.current);
+    }
+    return () => observer && observer.disconnect();
+  }, [dispatch, isFetching, series, totalCount])
   return (
     <>
       <List
@@ -33,12 +52,10 @@ export default function Series() {
           <List.Item
             className="main-list-item"
             style={{ paddingTop: 30 }}
-            key={item.key}
+            key={`series_${item.id}`}
             actions={[
-              <IconText icon={FieldTimeOutlined} text="약 2시간 전" key="list-vertical-star-o" />,
-              <IconText icon={HeartOutlined} text="156" key="list-vertical-like-o" />,
-              <IconText icon={MessageOutlined} text="2" key="list-vertical-message" />,
-              item.lockYsno === 'Y' && <IconText icon={LockOutlined} text="비공개" key="list-vertical-message" />
+              <IconText icon={BookOutlined} text={`${item.postCount}개의 포스트`} key="list-vertical-like-o" />,
+              <IconText icon={FieldTimeOutlined} text={elapsedTime(item.createdAt)} key="list-vertical-star-o" />,
             ]}
           >
             <img
@@ -48,17 +65,8 @@ export default function Series() {
               src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
             />
             <Typography.Title>
-              <Link to={`/${item.postNo}`}>{item.title}</Link>
+              <Link to={`/series/${item.id}`}>{item.seriesName}</Link>
             </Typography.Title>
-            <List.Item.Meta
-              description={item.description}
-            />
-            {item.content}
-            <Col>
-              {item.tags.map((item, i) => (
-                <Button key={`button_${i}`} className="tag-button" type="primary" shape="round" style={{ marginTop: 10, marginRight: 10 }}>{item}</Button>
-              ))}
-            </Col>
           </List.Item>
         )}
       />
