@@ -8,3 +8,9 @@ export const AuthStatus = {
   Login: 'Login',
   NotLogin: 'NotLogin',
 };
+
+export const NO_SAVE = [
+  'main/FetchHashtagPost',
+  'main/FetchSearchPost',
+]
+

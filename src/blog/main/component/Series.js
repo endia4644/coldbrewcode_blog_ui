@@ -1,7 +1,7 @@
 import { BookOutlined, FieldTimeOutlined } from "@ant-design/icons";
 import { List, Space, Typography } from "antd";
 import React, { useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";
@@ -14,7 +14,8 @@ const IconText = ({ icon, text }) => (
   </Space>
 );
 
-export default function Series({ series }) {
+export default function Series() {
+  const series = useSelector(state => state.main.series);
   const targetRef = useRef(null);
   const dispatch = useDispatch();
   const { isFetching, totalCount } = useFetchInfo(Types.FetchAllSeries);
@@ -24,7 +25,10 @@ export default function Series({ series }) {
       observer = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
           if (entry.isIntersecting && !isFetching) {
-            dispatch(actions.fetchAllPost(series, totalCount));
+            dispatch(actions.fetchAllSeries({
+              series,
+              totalCount,
+            }));
           }
         })
       })
@@ -70,6 +74,7 @@ export default function Series({ series }) {
           </List.Item>
         )}
       />
+      <div className="listPost" style={{ width: '100%', height: 10 }} ref={targetRef} />
     </>
   )
 }

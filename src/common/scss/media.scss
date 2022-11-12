@@ -44,7 +44,7 @@
   */
   .main-list {
     .ant-row {
-      >div:nth-child(n+2) {
+      >div:first-child:nth-child(n+2) {
         border-top: 1px solid rgba(0, 0, 0, .06);
       }
     }
@@ -67,8 +67,14 @@
     */
   .main-list {
     .ant-row {
-      >div:nth-child(n+3) {
-        border-top: 1px solid rgba(0, 0, 0, .06);
+
+      >div:nth-child(n),
+      >div:nth-last-child(2):nth-child(even) {
+        border-bottom: 1px solid rgba(0, 0, 0, .06);
+      }
+
+      >div:nth-last-child(-n + 2) {
+        border-bottom: 0;
       }
     }
   }
@@ -83,3 +89,28 @@
 }
 
 /* lg */
+
+/* md */
+
+@media (max-width: $md) {
+
+  /* 
+    게시글의 border-top 2번째 게시글 부터 적용
+    - 게시글이 하나씩 보이는 경우 
+  */
+  .ant-back-top {
+    right: 60px !important;
+  }
+}
+
+@media (min-width: $md) {
+
+  /* 
+    게시글의 border-top 2번째 게시글 부터 적용
+    - 게시글이 하나씩 보이는 경우 
+  */
+  .ant-back-top {
+    right: 120px !important;
+    bottom: 70px !important;
+  }
+}

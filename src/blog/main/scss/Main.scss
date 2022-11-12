@@ -126,3 +126,12 @@
 .ant-tabs>div>.ant-tabs-nav .ant-tabs-nav-more {
   display: none;
 }
+
+.up-arrow-icon {
+  opacity: 0.5;
+}
+
+.up-arrow-icon:focus,
+.up-arrow-icon:hover {
+  opacity: 1;
+}

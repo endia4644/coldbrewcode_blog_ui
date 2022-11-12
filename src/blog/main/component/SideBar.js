@@ -1,9 +1,22 @@
 import { Affix, Col, Divider, Row, Tabs } from 'antd';
 import Search from 'antd/lib/input/Search';
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { actions } from '../state';
 
 export default function SideBar({ hashtag }) {
-    const [activeKey, setActiveKey] = React.useState(null)
+    const dispatch = useDispatch();
+    const sideActiveKey = useSelector(state => state.main.sideActiveKey);
+    const onchangFunction = (sideActiveKey) => {
+        dispatch(actions.fetchHashtagPost(null, 0, sideActiveKey !== '0' ? sideActiveKey : ''))
+    }
+    /* 사이드탭 제어함수 */
+    const onTabClick = (target) => {
+        dispatch(actions.setValue('sideActiveKey', target));
+    }
+    const onSearchFunction = (search) => {
+        dispatch(actions.fetchSearchPost(null, 0, search));
+    }
     return (
         <>
             <Affix className='main-sidebar'>
@@ -11,7 +24,7 @@ export default function SideBar({ hashtag }) {
                     <Col>
                         <Search
                             placeholder="검색어를 입력하세요"
-                            onSearch={() => { }}
+                            onSearch={(search) => { onSearchFunction(search) }}
                             style={{
                                 width: 200,
                             }}
@@ -19,14 +32,15 @@ export default function SideBar({ hashtag }) {
                         <Divider />
                         <Col style={{ marginTop: 20 }}>
                             <Tabs
+                                onChange={onchangFunction}
                                 tabPosition='left'
+                                defaultActiveKey='0'
+                                activeKey={sideActiveKey}
+                                onTabClick={onTabClick}
                                 items={hashtag.map((item, i) => {
                                     return {
                                         label: `${item.hashtagName} (${item.postCount})`,
-                                        key: item.id,
-                                        onTabClick: (item) => {
-                                            console.log(activeKey)
-                                        }
+                                        key: item.id + '',
                                     };
                                 })}
                             />

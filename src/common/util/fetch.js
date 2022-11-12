@@ -1,8 +1,8 @@
 import { put, delay, fork, cancel, select, call } from 'redux-saga/effects';
 import lruCache from 'lru-cache';
-import { FetchStatus } from '../constant';
+import { FetchStatus, NO_SAVE } from '../constant';
 import { callApi } from './api';
-import { actions } from '../state';
+import { actions, Types } from '../state';
 import { FETCH_PAGE, FETCH_KEY } from '../redux-helper';
 
 function makeCheckSlowSaga(actionType, fetchKey) {
@@ -91,6 +91,10 @@ export function makeFetchSaga({
             nextPage: isSuccess ? page + 1 : page,
             errorMessage: isSuccess ? '' : apiResult.resultMessage,
           };
+          /* Posthashtag, Postsearch 검색은 인덱스를 초기화한다. */
+          if (NO_SAVE.includes(actionType)) {
+            params.nextPage = 0;
+          }
         }
       } else if (value !== undefined) {
         res = yield value;

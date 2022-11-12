@@ -1,6 +1,6 @@
-import { Col, Divider, Row, Tabs } from "antd";
+import { BackTop, Col, Divider, Row, Space, Tabs } from "antd";
 import { Content, Header } from "antd/lib/layout/layout";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Settings from "../component/Settings";
 import SideBar from "../component/SideBar";
 import TopBar from "../component/TopBar";
@@ -10,6 +10,7 @@ import Post from "../component/Post";
 import { useDispatch, useSelector } from "react-redux";
 import { actions } from "../state";
 import Series from "../component/Series";
+import { UpArrowIcon } from "../../../common/component/Icon";
 // import Series from "../component/Series";
 
 export default function Blog() {
@@ -20,19 +21,22 @@ export default function Blog() {
     dispatch(actions.fetchAllHashtag());
   }, [dispatch]);
 
-  const post = useSelector(state => state.main.post);
-  const series = useSelector(state => state.main.series);
   const hashtag = useSelector(state => state.main.hashtag);
+  const activeKey = useSelector(state => state.main.activeKey);
   const tabPaneItems = [{
     label: '글',
-    key: 'tabpane-1',
-    children: (<Post post={post} />)
+    key: 'post',
+    children: (<Post />)
   },
   {
     label: '시리즈',
-    key: 'tabpane-2',
-    children: (<Series series={series} />)
+    key: 'series',
+    children: (<Series />)
   }]
+  /* 메인탭 제어함수 */
+  const onTabClick = (target) => {
+    dispatch(actions.setValue('activeKey', target));
+  }
   return (
     <>
       <Header className="site-layout-background main-header fix-menu">
@@ -57,10 +61,15 @@ export default function Blog() {
         <TopBar hashtag={hashtag} />
         <Row justify='center' style={{ marginTop: 100 }}>
           <Col className="width-full">
-            <Tabs className="main-tabs" size="large" animated centered defaultActiveKey="1" items={tabPaneItems} />
+            <Tabs className="main-tabs" size="large" onTabClick={onTabClick} animated centered activeKey={activeKey} defaultActiveKey="1" items={tabPaneItems} />
           </Col>
         </Row>
       </Content>
+      <BackTop>
+        <div>
+          <UpArrowIcon />
+        </div>
+      </BackTop>
     </>
   )
 };

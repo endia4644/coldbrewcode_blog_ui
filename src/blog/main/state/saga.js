@@ -2,10 +2,11 @@ import { all, call, put, takeEvery } from "redux-saga/effects";
 import { actions, Types } from "../../main/state";
 import { callApi } from "../../../common/util/api";
 import { makeFetchSaga } from "../../../common/util/fetch";
+import { actions as common } from "../../../common/state";
 
 function* fetchAllPost(action, page) {
-  if (page <= Math.floor(action.totalCount / 6)) {
-    const { isSuccess, data } = yield call(callApi, {
+  if (page <= Math.floor(action.totalCount / 8)) {
+    const { isSuccess, data, totalCount } = yield call(callApi, {
       url: '/post',
       params: { limit: 8, offset: 8 * page, hashtag: action?.hashtag, search: action?.search }
     });
@@ -20,41 +21,44 @@ function* fetchAllPost(action, page) {
 }
 
 function* fetchSearchPost(action, page) {
-  if (page <= Math.floor(action.totalCount / 6)) {
+  console.log(page, Math.floor(action.totalCount / 8));
+  if (page <= Math.floor(action.totalCount / 8)) {
     const { isSuccess, data } = yield call(callApi, {
       url: '/post',
       params: { limit: 8, offset: 8 * page, search: action?.search }
     });
     if (isSuccess && data) {
-      if (action.post) {
-        yield put(actions.setValue('post', [...action.post, ...data]));
-      } else {
-        yield put(actions.setValue('post', data));
-      }
+      yield put(actions.setValue('post', data));
+      yield put(actions.setValue('searchCurrent', action?.search));
+      yield put(actions.setValue('activeKey', 'post'));
     }
   }
 }
 
 function* fetchHashtagPost(action, page) {
-  console.log(page, Math.floor(action.totalCount / 6))
-  if (page <= Math.floor(action.totalCount / 6)) {
-    const { isSuccess, data } = yield call(callApi, {
+  if (page <= Math.floor(action.totalCount / 8)) {
+    const { isSuccess, data, totalCount } = yield call(callApi, {
       url: '/post',
       params: { limit: 8, offset: 8 * page, hashtag: action?.hashtag }
     });
     if (isSuccess && data) {
-      if (action.post) {
-        yield put(actions.setValue('post', [...action.post, ...data]));
-      } else {
-        yield put(actions.setValue('post', data));
-      }
-      yield put(actions.setValue('hashtagCurrent', [action?.hashtag]));
+      yield put(actions.setValue('post', data));
+      yield put(common.setFetchStatus({
+        actionType: Types.FetchAllPost,
+        fetchKey: Types.FetchAllPost,
+        totalCount: totalCount,
+        nextPage: 1,
+        errorMessage: null
+      }));
+      yield put(actions.setValue('searchCurrent', null));
+      yield put(actions.setValue('hashtagCurrent', action?.hashtag));
+      yield put(actions.setValue('activeKey', 'post'));
     }
   }
 }
 
 function* fetchAllSeries(action, page) {
-  if (page <= Math.floor(action.totalCount / 6)) {
+  if (page <= Math.floor(action.totalCount / 8)) {
     const { isSuccess, data } = yield call(callApi, {
       url: '/series',
       params: { limit: 8, offset: 8 * page }

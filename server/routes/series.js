@@ -2,7 +2,7 @@
 const express = require('express');
 const { isLoggedIn } = require('./middleware');
 const db = require('../models');
-const { Op, literal, where } = require("sequelize");
+const { fn, col, Op } = require("sequelize");
 const { makeResponse } = require('../util');
 
 const router = express.Router();
@@ -50,74 +50,23 @@ router.post('/', isLoggedIn, async (req, res, next) => {
 
 router.get('/', async (req, res, next) => {
   try {
-    let tag = req.query.tag;
-    const postId = {};
-    const search = req.query.search;
-    const postName = {};
-    const postIdList = [];
-    /* 태그 조회인 경우 */
-    if (tag) {
-      tag = await db.Hashtag.findAll({
-        attributes: ['id'],
-        where: {
-          id: req.query.tag
-        },
-        include: {
-          model: db.Post,
-          through: { attributes: [] }
-        }
-      })
-      /* 해시태그 관계 테이블에서 조회한 postId 리스트에 주입 */
-      tag?.[0]?.Posts.map(post => postIdList.push(post.id));
-      postId[Op.in] = postIdList;
-    } else {
-      postId[Op.not] = null;
-    }
-    /* 검색 조회인 경우 */
-    if (search) {
-      postName[Op.like] = `%${search}%`;
-    } else {
-      postName[Op.not] = null;
-    }
-    const posts = await db.Post.findAll({
-      where: {
-        postName: postName,
-        id: postId
-      },
+    const series = await db.Series.findAll({
+      attributes: ['id', 'seriesName', [fn('COUNT', col('Posts.id')), 'postCount'], 'createdAt', 'updatedAt'],
       include: [{
-        model: db.User,
-        attributes: ['id', 'email', 'nickName']
-      }, {
-        model: db.Hashtag,
+        model: db.Post,
+        as: 'Posts',
         required: false,
-        attributes: ['id', 'hashtagName'],
-        through: { attributes: [] }
-      }, {
-        model: db.Comment,
-        as: 'Comments',
-        attributes: ['id', 'commentContent', 'createdAt', 'updatedAt', 'dltYsno', [literal('(SELECT COUNT("ParentId") FROM Comments WHERE `Comments.id` = Comments.ParentId)'), 'childCount']],
-        required: false,
+        attributes: [],
         where: {
-          commentDepth: {
-            [Op.eq]: 0, // 게시글에서는 1단계 댓글만 조회한다.
+          dltYsno: {
+            [Op.eq]: 'N'
           }
-        }
-
+        },
       }],
-      order: [
-        ['createdAt', 'DESC'],
-        [db.Comment, 'createdAt', 'DESC']
-      ],
-      offset: parseInt(req.query.offset) || 0,
-      limit: parseInt(req.query.limit, 10) || 8,
+      group: ['id'],
     });
-    const postCnt = await db.Post.count({
-      where: {
-        postName: postName,
-        id: postId
-      },
-    });
-    res.send(makeResponse({ data: posts, totalCount: postCnt }));
+    const seriesTotalCount = db.Series.count();
+    return res.send(makeResponse({ data: series, totalCount: seriesTotalCount }));
   } catch (err) {
     console.error(err);
     next(err);
@@ -126,33 +75,29 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
   try {
-    const posts = await db.Post.findAll({
+    const Serieses = await db.Series.findOne({
       where: {
         id: req.params.id
       },
+      attributes: ['id', 'seriesName', 'createdAt', 'updatedAt'],
       include: [{
-        model: db.User,
-        attributes: ['id', 'email', 'nickName']
-      }, {
-        model: db.Hashtag,
+        model: db.Post,
+        as: 'Posts',
         required: false,
-      }, {
-        model: db.Comment,
-        as: 'Comments',
-        attributes: ['id', 'commentContent', 'createdAt', 'updatedAt', 'dltYsno', [literal('(SELECT COUNT("ParentId") FROM Comments WHERE `Comments.id` = Comments.ParentId)'), 'childCount']],
-        required: false,
+        attributes: ['id', 'postContent', 'postName', 'postDescription', 'likeCnt', 'createdAt', 'updatedAt', 'dltYsno'],
+        include: [{
+          model: db.User,
+          attributes: ['id', 'email', 'nickname']
+        }],
         where: {
-          commentDepth: {
-            [Op.eq]: 0, // 게시글에서는 1단계 댓글만 조회한다.
+          dltYsno: {
+            [Op.eq]: 'N'
           }
-        }
+        },
+        order: [['id', 'DESC']],
       }],
-      order: [
-        ['createdAt', 'DESC'],
-        [db.Comment, 'createdAt', 'DESC']
-      ],
     });
-    res.send(makeResponse({ data: posts }));
+    return res.json(Serieses);
   } catch (err) {
     console.error(err);
     next(err);

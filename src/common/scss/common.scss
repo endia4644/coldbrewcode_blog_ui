@@ -49,6 +49,29 @@ a:hover {
   }
 }
 
+.ant-input-search {
+
+  .ant-input:focus,
+  .ant-input:hover {
+    border-color: $subColor;
+  }
+}
+
+.ant-input-focused,
+.ant-input:focus {
+  box-shadow: 0 0 0 1px $fontColor;
+}
+
+
+.ant-input-search .ant-input:focus+.ant-input-group-addon .ant-input-search-button:not(.ant-btn-primary),
+.ant-input-search .ant-input:hover+.ant-input-group-addon .ant-input-search-button:not(.ant-btn-primary) {
+  border-left-color: $subColor;
+}
+
+.ant-input-search>.ant-input-group>.ant-input-group-addon:last-child .ant-input-search-button:not(.ant-btn-primary) {
+  color: $subColor;
+}
+
 .ant-menu-item-selected {
   color: $mainColor;
   font-weight: bold;
@@ -76,6 +99,13 @@ a:hover {
   }
 }
 
+.ant-btn:active,
+.ant-btn:focus,
+.ant-btn:hover {
+  border-color: $subColor;
+  box-shadow: 0 0 0 1px #d8b48b;
+}
+
 .ant-btn-ghost:focus,
 .ant-btn-ghost:hover {
   color: $mainColor;
@@ -95,6 +125,7 @@ a:hover {
   color: $mainColor;
   font-weight: 700;
 }
+
 
 .ant-tabs-ink-bar {
   background: $mainColor;
