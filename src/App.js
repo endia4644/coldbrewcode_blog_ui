@@ -5,9 +5,10 @@ import { useLocation } from 'react-router-dom';
 import Sider from 'antd/lib/layout/Sider';
 import React from 'react';
 import Home from './home/container/Home';
-import Blog from './blog/main/container/BlogMain';
+import Blog from './blog/main/container/Main';
 import 'antd/dist/antd.min.css';
 import './common/scss/common.scss';
+import Write from './blog/write/container/Write';
 
 
 export default function App() {
@@ -52,6 +53,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />-
             <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/write" element={<Write />} />
           </Routes>
         </Layout>
       </Layout>

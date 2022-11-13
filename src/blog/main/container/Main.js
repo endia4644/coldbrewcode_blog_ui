@@ -11,9 +11,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { actions } from "../state";
 import Series from "../component/Series";
 import { UpArrowIcon } from "../../../common/component/Icon";
-// import Series from "../component/Series";
 
-export default function Blog() {
+export default function Main() {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(actions.fetchAllPost());

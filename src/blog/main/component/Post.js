@@ -20,13 +20,14 @@ const handleImgError = (e) => {
 }
 
 export default function Post() {
+  const dispatch = useDispatch();
   const targetRef = useRef(null);
   const post = useSelector(state => state.main.post);
   const hashtagCurrent = useSelector(state => state.main.hashtagCurrent);
   const searchCurrent = useSelector(state => state.main.searchCurrent);
-  const dispatch = useDispatch();
   const { isFetching, totalCount } = useFetchInfo(Types.FetchAllPost);
   const { totalCount: searchCount } = useFetchInfo(Types.FetchSearchPost);
+
   useEffect(() => {
     let observer;
     if (targetRef.current) {
@@ -45,7 +46,7 @@ export default function Post() {
     <>
       {searchCurrent && (
         <>
-          <Space>
+          <Space style={{ marginLeft: 30 }}>
             <Title level={5}>총</Title>
             <Title level={3} style={{ color: '#d8b48b' }}>{searchCount}</Title>
             <Title level={5}>개의 포스트를 찾았습니다.</Title>

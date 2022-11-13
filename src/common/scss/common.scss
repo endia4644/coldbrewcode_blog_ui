@@ -101,9 +101,13 @@ a:hover {
 
 .ant-btn:active,
 .ant-btn:focus,
-.ant-btn:hover {
-  border-color: $subColor;
-  box-shadow: 0 0 0 1px #d8b48b;
+.ant-btn:hover,
+.search-bar:hover,
+.search-bar:active,
+.search-bar:focus {
+  color: black;
+  border: 1px solid $antdGrayColor;
+  box-shadow: 0 0 0 1px $antdGrayColor;
 }
 
 .ant-btn-ghost:focus,

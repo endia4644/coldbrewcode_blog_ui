@@ -1,6 +1,7 @@
 import { SettingFilled, UserOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Menu, Space } from 'antd';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 /**
  * 
@@ -11,7 +12,9 @@ export default function Settings({ logout }) {
     return (
         <>
             <Space>
-                <Button type="ghost" shape='round' size='large'>글 작성하기</Button>
+                <Button type="ghost" shape='round' size='large'>
+                    <Link to={'/blog/write'}>글 작성하기</Link>
+                </Button>
                 <Dropdown
                     overlayClassName="setting-dropbox"
                     overlay={

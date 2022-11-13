@@ -31,6 +31,7 @@ function* fetchSearchPost(action, page) {
       yield put(actions.setValue('post', data));
       yield put(actions.setValue('searchCurrent', action?.search));
       yield put(actions.setValue('activeKey', 'post'));
+      yield put(actions.setValue('sideActiveKey', null));
     }
   }
 }

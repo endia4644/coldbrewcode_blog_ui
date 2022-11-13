@@ -135,3 +135,12 @@
 .up-arrow-icon:hover {
   opacity: 1;
 }
+
+.search-bar {
+  width: 200px;
+  height: 40px;
+  padding: 4.9px 0;
+  font-size: 18px;
+  border-radius: 2px;
+  border-color: $grayColor;
+}
