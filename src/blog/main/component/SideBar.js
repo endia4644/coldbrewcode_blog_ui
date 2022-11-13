@@ -1,12 +1,13 @@
 import { Affix, Col, Divider, Row, Tabs } from 'antd';
-import Search from 'antd/lib/input/Search';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../state';
+import Search from './Search';
 
 export default function SideBar({ hashtag }) {
     const dispatch = useDispatch();
     const sideActiveKey = useSelector(state => state.main.sideActiveKey);
+
     const onchangFunction = (sideActiveKey) => {
         dispatch(actions.fetchHashtagPost(null, 0, sideActiveKey !== '0' ? sideActiveKey : ''))
     }
@@ -14,21 +15,12 @@ export default function SideBar({ hashtag }) {
     const onTabClick = (target) => {
         dispatch(actions.setValue('sideActiveKey', target));
     }
-    const onSearchFunction = (search) => {
-        dispatch(actions.fetchSearchPost(null, 0, search));
-    }
     return (
         <>
             <Affix className='main-sidebar'>
-                <Row className='main-side' style={{ position: 'absolute', left: '-38.5rem', top: '14rem' }}>
+                <Row className='main-side' style={{ position: 'absolute', left: '-40.5rem', top: '14rem' }}>
                     <Col>
-                        <Search
-                            placeholder="검색어를 입력하세요"
-                            onSearch={(search) => { onSearchFunction(search) }}
-                            style={{
-                                width: 200,
-                            }}
-                        />
+                        <Search />
                         <Divider />
                         <Col style={{ marginTop: 20 }}>
                             <Tabs
