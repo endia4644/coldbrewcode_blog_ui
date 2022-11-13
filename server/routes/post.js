@@ -2,12 +2,27 @@
 const express = require('express');
 const { isLoggedIn } = require('./middleware');
 const db = require('../models');
-const { Op, literal, where } = require("sequelize");
+const { Op, literal } = require("sequelize");
 const { makeResponse } = require('../util');
+const multer = require('multer');
+const path = require('path');
 
 const router = express.Router();
 
-router.post('/', isLoggedIn, async (req, res, next) => {
+const upload = multer({
+  storage: multer.diskStorage({
+    destination(req, file, done) {
+      done(null, 'uploads');
+    },
+    filename(req, file, done) {
+      const ext = path.extname(file.originalname);
+      done(null, 'post_' + Date.now() + ext);
+    }
+  }),
+  limits: { fileSize: 20 * 1024 * 1024 },
+});
+
+router.post('/', async (req, res, next) => {
   try {
     //* 트랜잭션 설정
     await db.sequelize.transaction(async (t) => {
@@ -18,7 +33,7 @@ router.post('/', isLoggedIn, async (req, res, next) => {
         likeCnt: 0,
         lockYsno: req.body.lockYsno,
         dltYsno: 'N',
-        UserId: req.user.id,
+        UserId: 1,
         SeriesId: req.body.seriesId
       }, {
         transaction: t, // 이 쿼리를 트랜잭션 처리
@@ -42,6 +57,57 @@ router.post('/', isLoggedIn, async (req, res, next) => {
       })
       res.send(makeResponse({ data: fullPost }));
     })
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+router.patch('/', async (req, res, next) => {
+  try {
+    //* 트랜잭션 설정
+    await db.sequelize.transaction(async (t) => {
+      console.log(req.body.postId)
+      const newPost = await db.Post.update({
+        postName: req.body.postName,
+        postContent: req.body.postContent,
+        postDescription: req.body.postDescription,
+        lockYsno: req.body.lockYsno,
+        SeriesId: req.body.seriesId
+      }, {
+        where: {
+          id: req.body.postId
+        },
+        transaction: t, // 이 쿼리를 트랜잭션 처리
+      })
+      if (req.body.hashtags) {
+        /* 해시태그 테이블 INSERT  */
+        const hashtags = await Promise.all(req.body.hashtags.map(tag => db.Hashtag.findOrCreate({
+          where: { hashtagName: tag },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        })));
+        /* 매핑 테이블 INSERT  */
+        await hashtags.map(r => newPost.addHashtags(r[0]))
+      }
+      const fullPost = await db.Post.findOne({
+        where: { id: req.body.postId },
+        transaction: t, // 이 쿼리를 트랜잭션 처리
+        include: [{
+          model: db.User,
+          attributes: ['id', 'email', 'nickName'],
+        }]
+      })
+      res.send(makeResponse({ data: fullPost }));
+    })
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+router.post('/img', upload.single('img'), async (req, res, next) => {
+  try {
+    res.json(req.file.filename);
   } catch (err) {
     console.error(err);
     next(err);
@@ -151,6 +217,21 @@ router.get('/:id', async (req, res, next) => {
         ['createdAt', 'DESC'],
         [db.Comment, 'createdAt', 'DESC']
       ],
+    });
+    res.send(makeResponse({ data: posts }));
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+router.get('/:id/content', async (req, res, next) => {
+  try {
+    const posts = await db.Post.findAll({
+      where: {
+        id: req.params.id
+      },
+      attributes: ['postContent'],
     });
     res.send(makeResponse({ data: posts }));
   } catch (err) {

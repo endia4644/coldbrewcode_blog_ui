@@ -5,7 +5,7 @@ import { API_HOST } from '../constant';
 /**
  *
  * @param {object} param
- * @param {'get' | 'post' =} param.method
+ * @param {'get' | 'post' | 'put' | 'patch' |'delete' =} param.method
  * @param {string} param.url
  * @param {object=} param.params
  * @param {object=} param.data

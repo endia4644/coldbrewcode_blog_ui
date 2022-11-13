@@ -54,6 +54,7 @@ export default function App() {
             <Route path="/" element={<Home />} />-
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/write" element={<Write />} />
+            <Route path="/blog/write/:id" element={<Write />} />
           </Routes>
         </Layout>
       </Layout>

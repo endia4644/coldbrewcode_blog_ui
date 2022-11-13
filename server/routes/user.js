@@ -15,8 +15,7 @@ const upload = multer({
     },
     filename(req, file, done) {
       const ext = path.extname(file.originalname);
-      const basename = path.basename(file.originalname, ext); // coldbrew.png, basename = coldbrew, ext = .png
-      done(null, basename + Date.now() + ext);
+      done(null, 'profile_' + Date.now() + ext);
     }
   }),
   limits: { fileSize: 20 * 1024 * 1024 },
@@ -124,7 +123,7 @@ router.post('/logout', isLoggedIn, (req, res) => {
   }
 })
 
-router.post('/profile', isLoggedIn, isProfileImgExist, upload.single('profileImg'), async (req, res) => {
+router.post('/profile', isLoggedIn, isProfileImgExist, upload.single('img'), async (req, res) => {
   try {
     await db.User.update({
       profileImg: req.file.filename
