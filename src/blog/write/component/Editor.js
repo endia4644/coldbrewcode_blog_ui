@@ -1,14 +1,88 @@
 
 import axios from 'axios';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import ReactQuill from 'react-quill';
-import "react-quill/dist/quill.snow.css";
+import ReactQuill, { Quill } from 'react-quill';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { API_HOST } from '../../../common/constant';
 import { callApi } from '../../../common/util/api';
 import { actions } from '../state';
+import ImageResize from "quill-image-resize-module-react";
+import hljs from 'highlight.js'
+import '../scss/write.scss';
 
+import "react-quill/dist/quill.snow.css";
+import "highlight.js/styles/github.css";
+
+const fontFamilyArr = ["NotoSans", "Roboto", "Sono", "NanumGothic"];
+let fonts = Quill.import("attributors/style/font");
+fonts.whitelist = fontFamilyArr;
+Quill.register(fonts, true);
+
+const fontSizeArr = ['8px', '10px', '11px', '12px', '14px', '18px', '24px'];
+var size = Quill.import('attributors/style/size');
+size.whitelist = fontSizeArr;
+Quill.register(size, true);
+
+hljs.configure({
+  languages: ['javascript', 'ruby', 'python', 'rust'],
+});
+
+Quill.register("modules/imageResize", ImageResize);
+
+const Parchment = Quill.import('parchment');
+const BaseImage = Quill.import('formats/image');
+
+const ATTRIBUTES = [
+  'alt',
+  'height',
+  'width',
+  'style',
+];
+
+const WHITE_STYLE = ['margin', 'display', 'float'];
+
+class Image extends BaseImage {
+  static formats(domNode) {
+    return ATTRIBUTES.reduce(function (formats, attribute) {
+      console.log(formats, attribute);
+      if (domNode.hasAttribute(attribute)) {
+        formats[attribute] = domNode.getAttribute(attribute);
+      }
+      console.log('return');
+      console.log(formats);
+      return formats;
+    }, {});
+  }
+
+  format(name, value) {
+    if (ATTRIBUTES.indexOf(name) > -1) {
+      if (value) {
+        if (name === 'style') {
+          value = this.sanitize_style(value);
+        }
+        this.domNode.setAttribute(name, value);
+      } else {
+        this.domNode.removeAttribute(name);
+      }
+    } else {
+      super.format(name, value);
+    }
+  }
+
+  sanitize_style(style) {
+    let style_arr = style.split(";")
+    let allow_style = "";
+    style_arr.forEach((v, i) => {
+      if (WHITE_STYLE.indexOf(v.trim().split(":")[0]) !== -1) {
+        allow_style += v + ";"
+      }
+    })
+    return allow_style;
+  }
+}
+
+Quill.register(Image, true);
 
 const Editor = ({ placeholder, value, ...rest }) => {
   const dispatch = useDispatch();
@@ -107,19 +181,35 @@ const Editor = ({ placeholder, value, ...rest }) => {
     return {
       toolbar: {
         container: [
+          [{
+            'font': fontFamilyArr
+          }],
+          [{ header: [1, 2, 3, 4, 5] }, { 'size': fontSizeArr }],
+          [{ 'color': [] }, 'bold', 'italic', 'underline', 'strike'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          [{ align: [] }],
           ['image'],
-          [{ header: [1, 2, 3, false] }],
-          ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+          ['code-block', 'blockquote']
         ],
         handlers: {
           // 이미지 처리는 우리가 직접 imageHandler라는 함수로 처리할 것이다.
           image: imageHandler,
         },
       },
+      syntax: {
+        highlight: text => hljs.highlightAuto(text).value,
+      },
+      imageResize: {
+        // https://www.npmjs.com/package/quill-image-resize-module-react 참고
+        parchment: Quill.import("parchment"),
+        modules: ["Resize", "DisplaySize", "Toolbar"],
+      },
     };
   }, []);
   // 위에서 설정한 모듈들 foramts을 설정한다
   const formats = [
+    'size',
+    'font',
     'header',
     'bold',
     'italic',
@@ -127,6 +217,12 @@ const Editor = ({ placeholder, value, ...rest }) => {
     'strike',
     'blockquote',
     'image',
+    'color',
+    'align',
+    'code-block',
+    'width',
+    'style',
+    'list'
   ];
 
   return (
@@ -142,7 +238,6 @@ const Editor = ({ placeholder, value, ...rest }) => {
         }}
         formats={formats}
         placeholder={placeholder}
-        preserveWhitespace
       ></ReactQuill>
       <button onClick={handleSubmit}>완료</button>
     </>
