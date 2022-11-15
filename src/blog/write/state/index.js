@@ -1,9 +1,9 @@
 import { createReducer, createSetValueAction, setValueReducer } from "../../../common/redux-helper";
 
 export const Types = {
-  SetValue: 'main/SetValue',
-  FetchCreatePost: 'main/FetchCreatePost',
-  FetchUpdatePost: 'main/FetchUpdatePost',
+  SetValue: 'write/SetValue',
+  FetchCreatePost: 'write/FetchCreatePost',
+  FetchUpdatePost: 'write/FetchUpdatePost',
 };
 
 export const actions = {
@@ -23,7 +23,9 @@ export const actions = {
   }),
 }
 const INITINAL_STATE = {
-
+  postName: '',
+  postContent: '',
+  hashtag: [],
 }
 
 const reducer = createReducer(INITINAL_STATE, {

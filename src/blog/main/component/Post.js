@@ -1,4 +1,4 @@
-import { FieldTimeOutlined, HeartOutlined, LockOutlined, MessageOutlined } from "@ant-design/icons";
+import { ExpandAltOutlined, FieldTimeOutlined, HeartOutlined, LockOutlined, MessageOutlined } from "@ant-design/icons";
 import { Button, Col, List, Space, Typography } from "antd";
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -92,9 +92,16 @@ export default function Post() {
                 <Link to={`/${item.id}`}>{item.postName}</Link>
               </Typography.Title>
               <List.Item.Meta
-                description={item.postDescription}
               />
-              {item.postContent}
+              <Typography.Paragraph
+                style={{ minHeight: 66 }}
+                ellipsis={{
+                  rows: 3,
+                  expandable: false,
+                }}
+              >
+                {item.postDescription}
+              </Typography.Paragraph>
               {
                 item.Hashtags &&
                 <Col>
@@ -105,9 +112,10 @@ export default function Post() {
               }
             </List.Item>
           </>
-        )}
+        )
+        }
       />
-      <div className="listPost" style={{ width: '100%', height: 10 }} ref={targetRef} />
+      < div className="listPost" style={{ width: '100%', height: 10 }} ref={targetRef} />
     </>
   )
 }

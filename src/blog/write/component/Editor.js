@@ -1,15 +1,11 @@
 
 import axios from 'axios';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
-import { useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
 import { API_HOST } from '../../../common/constant';
 import { callApi } from '../../../common/util/api';
-import { actions } from '../state';
 import ImageResize from "quill-image-resize-module-react";
 import hljs from 'highlight.js'
-import '../scss/write.scss';
 
 import "react-quill/dist/quill.snow.css";
 import "highlight.js/styles/github.css";
@@ -30,7 +26,6 @@ hljs.configure({
 
 Quill.register("modules/imageResize", ImageResize);
 
-const Parchment = Quill.import('parchment');
 const BaseImage = Quill.import('formats/image');
 
 const ATTRIBUTES = [
@@ -84,10 +79,7 @@ class Image extends BaseImage {
 
 Quill.register(Image, true);
 
-const Editor = ({ placeholder, value, ...rest }) => {
-  const dispatch = useDispatch();
-  const [htmlContent, setHtmlContent] = useState(null);
-  const { id: postId } = useParams();
+const Editor = ({ postId, placeholder, htmlContent, getHtmlContent, ...rest }) => {
   const quillRef = useRef(null);
 
   useEffect(() => {
@@ -99,23 +91,10 @@ const Editor = ({ placeholder, value, ...rest }) => {
         method: 'get',
         url: `/post/${postId}/content`,
       });
-      console.log(data?.[0]?.postContent);
-      setHtmlContent(data?.[0]?.postContent ?? '');
+      getHtmlContent(data?.[0]?.postContent ?? '');
     };
     fetchData();
   }, [postId, callApi])
-
-  const handleSubmit = async () => {
-    if (postId) {
-      //기존 게시글 업데이트
-      dispatch(actions.fetchUpdatePost(postId, '게시글', '게시글', htmlContent));
-      //history.push(`/@${user.name}/post/${postId}`);
-    } else {
-      //새로운 게시글 생성
-      dispatch(actions.fetchCreatePost('게시글', '게시글', htmlContent));
-      //history.push(`/@${user.name}/posts?folder=${selectedFolder}`);
-    }
-  }
 
   // 이미지 처리를 하는 핸들러
   const imageHandler = () => {
@@ -231,7 +210,9 @@ const Editor = ({ placeholder, value, ...rest }) => {
         {...rest}
         ref={quillRef}
         value={htmlContent}
-        onChange={setHtmlContent}
+        style={{ height: 'calc(100vh - 270px)' }}
+        scrollingContainer={'quill'}
+        onChange={getHtmlContent}
         theme="snow"
         modules={{
           ...modules,
@@ -239,7 +220,6 @@ const Editor = ({ placeholder, value, ...rest }) => {
         formats={formats}
         placeholder={placeholder}
       ></ReactQuill>
-      <button onClick={handleSubmit}>완료</button>
     </>
   )
 }

@@ -106,9 +106,10 @@ a:hover {
 .search-bar:hover,
 .search-bar:active,
 .search-bar:focus {
-  color: black;
-  border: 1px solid $antdGrayColor;
-  box-shadow: 0 0 0 1px $antdGrayColor;
+  color: $fontColor;
+  font-weight: 700;
+  border: 0;
+  background-color: $subColor;
 }
 
 .ant-btn-ghost:focus,
@@ -155,4 +156,73 @@ a:hover {
 
 .ql-font-roboto {
   font-family: 'Roboto', sans-serif;
+}
+
+.button {
+  &-border {
+    &-hide {
+      border: 0;
+    }
+  }
+
+  &-type {
+    &-round {
+      height: 32px;
+      padding: 4px 16px;
+      font-size: 14px;
+      border-radius: 4px;
+    }
+  }
+
+  &-size {
+    &-large {
+      width: 205px;
+    }
+  }
+
+
+  &-color {
+    &-normal {
+      background: $mainColor;
+      border: 0;
+      color: $fontColor;
+      font-weight: 700;
+    }
+
+    &-reverse {
+      background: $fontColor;
+      border: 0;
+      color: $mainColor;
+      font-weight: 700;
+    }
+  }
+}
+
+.ant-upload.ant-upload-drag p.ant-upload-drag-icon {
+  margin-bottom: 0;
+}
+
+.ant-upload.ant-upload-drag .ant-upload {
+  padding: 0;
+}
+
+.ant-upload.ant-upload-drag {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background: #fafafa;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color .3s;
+}
+
+.vertical-line {
+  width: 5px;
+  min-height: 425px;
+  background: var(--bg-element3);
+  background-color: $subColor;
+  margin-left: 2rem;
+  margin-right: 2rem;
 }

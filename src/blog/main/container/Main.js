@@ -5,7 +5,7 @@ import Settings from "../component/Settings";
 import SideBar from "../component/SideBar";
 import TopBar from "../component/TopBar";
 import UserInfo from "./UserInfo";
-import "../scss/Main.scss";
+import "../scss/main.scss";
 import Post from "../component/Post";
 import { useDispatch, useSelector } from "react-redux";
 import { actions } from "../state";

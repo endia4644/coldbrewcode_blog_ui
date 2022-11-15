@@ -251,7 +251,7 @@
     box-sizing: border-box;
   }
 
-  사용자 에이전트 스타일시트 p {
+  p {
     display: block;
     margin-block-start: 1em;
     margin-block-end: 1em;
@@ -283,41 +283,127 @@
   }
 }
 
-.post {
+.main {
+  &-content {
+    .post {
 
-  &-title,
-  &-tag {
-    border: 0;
+      &-title,
+      &-tag {
+        border: 0;
+      }
+
+      &-title {
+        color: $subColor;
+        font-size: 2.5em;
+
+        &::placeholder {
+          color: $subColor;
+          font-weight: 700;
+          opacity: 0.5;
+        }
+
+        &.ant-input-focused,
+        &.ant-input:focus {
+          border: 0;
+          box-shadow: 0 0 0 0;
+        }
+      }
+
+      &-tag {
+        &::placeholder {
+          color: $subColor;
+          font-weight: 700;
+          opacity: 0.5;
+        }
+
+        &.ant-input-focused,
+        &.ant-input:focus {
+          border: 0;
+          box-shadow: 0 0 0 0;
+        }
+      }
+    }
   }
 
-  &-title {
-    color: $subColor;
-    font-size: 2.5em;
+  &-footer {
+    width: $mainContentSize;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 -3px 3px -3px gray;
 
-    &::placeholder {
-      color: $subColor;
-      font-weight: 700;
-      opacity: 0.5;
+    &.ant-layout-footer {
+      padding: 10px 34px 10px 10px;
+      background: #fff;
+      border: 0;
     }
 
-    &.ant-input-focused,
-    &.ant-input:focus {
-      border: 0;
-      box-shadow: 0 0 0 0;
+    .ant-typography {
+      a {
+        color: $mainColor;
+      }
+    }
+
+    .ant-page-header-back-button:hover {
+      color: $fontColor;
+    }
+  }
+}
+
+.ql-container.ql-snow {
+  height: calc(100% - 64px);
+}
+
+.modal {
+  z-index: 1;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.7);
+  will-change: opacity;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  .content {
+    height: 100vh;
+    background-color: #fff;
+    overflow-y: auto;
+  }
+
+  a {
+    color: #fff;
+    text-align: right;
+    display: block;
+    margin-bottom: 1vmin;
+  }
+
+  .image-motion {
+    display: block;
+    width: 100%;
+    height: 50vmin;
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
   }
 
-  &-tag {
-    &::placeholder {
-      color: $subColor;
-      font-weight: 700;
-      opacity: 0.5;
-    }
+  .title-motion {
+    font-size: 2.4vmin;
+  }
 
-    &.ant-input-focused,
-    &.ant-input:focus {
-      border: 0;
-      box-shadow: 0 0 0 0;
-    }
+  .title {
+    margin-top: 1vmin;
+    margin-bottom: 4vmin;
+  }
+
+  .cateogry {
+    font-size: 60%;
+  }
+
+  p {
+    font-size: 2.1vmin;
+    line-height: 150%;
   }
 }

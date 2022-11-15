@@ -28,3 +28,29 @@ export function UpArrowIcon(props) {
     </svg>
   )
 }
+
+export function ImageIcon(props) {
+  return (
+    <svg
+      width="250"
+      height="200"
+      xmlns="http://www.w3.org/2000/svg"
+      className="feather feather-image"
+      strokeLinejoin="round"
+      strokeLinecap="round"
+      strokeWidth="2"
+      stroke="currentColor"
+      fill="none"
+      {...props}
+    >
+      <g>
+        <title>Layer 1</title>
+        <g strokeWidth="6" stroke="null" id="svg_4">
+          <rect stroke="#634426" id="svg_1" ry="2" rx="2" height="128.94057" width="199.79408" y="35.52972" x="25.10295" />
+          <circle stroke="#634426" id="svg_2" r="10.27673" cy="74.92822" cx="86.15114" />
+          <polyline stroke="#634426" id="svg_3" points="224.8970489501953,121.49008560180664 169.39869689941406,85.67327499389648 47.30229187011719,164.47028732299805 " />
+        </g>
+      </g>
+    </svg>
+  )
+}

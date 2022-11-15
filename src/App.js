@@ -6,9 +6,9 @@ import Sider from 'antd/lib/layout/Sider';
 import React from 'react';
 import Home from './home/container/Home';
 import Blog from './blog/main/container/Main';
+import Write from './blog/write/container/Write';
 import 'antd/dist/antd.min.css';
 import './common/scss/common.scss';
-import Write from './blog/write/container/Write';
 
 
 export default function App() {
@@ -30,7 +30,7 @@ export default function App() {
   ];
   return (
     <>
-      <Layout style={{ height: "100%", minHeight: '100vh' }} className="ant-layout-has-sider">
+      <Layout style={{ height: "100vh", minHeight: '667px' }} className="ant-layout-has-sider">
         <Sider
           className='fix-menu'
           theme="light"
@@ -49,7 +49,7 @@ export default function App() {
             items={items}
           />
         </Sider>
-        <Layout className="site-layout-background" style={{ minWidth: 420, width: '100%' }}>
+        <Layout className="site-layout-background" style={{ minWidth: 375, width: '100%' }}>
           <Routes>
             <Route path="/" element={<Home />} />-
             <Route path="/blog" element={<Blog />} />
