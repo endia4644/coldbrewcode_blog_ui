@@ -44,6 +44,19 @@ function* fetchUpdatePost(action) {
   }
 }
 
+function* fetchAllSeries(action) {
+  const { isSuccess, data } = yield call(callApi, {
+    url: '/series/name',
+  });
+  if (isSuccess && data) {
+    if (action.series) {
+      yield put(actions.setValue('seriesList', [...action.seriesList, ...data]));
+    } else {
+      yield put(actions.setValue('seriesList', data));
+    }
+  }
+}
+
 export default function* () {
   yield all([
     takeEvery(
@@ -53,6 +66,10 @@ export default function* () {
     takeEvery(
       Types.FetchUpdatePost,
       makeFetchSaga({ fetchSaga: fetchUpdatePost, canCache: false })
+    ),
+    takeEvery(
+      Types.FetchAllSeries,
+      makeFetchSaga({ fetchSaga: fetchAllSeries, canCache: false })
     ),
   ]);
 }

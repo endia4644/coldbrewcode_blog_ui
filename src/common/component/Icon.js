@@ -32,25 +32,26 @@ export function UpArrowIcon(props) {
 export function ImageIcon(props) {
   return (
     <svg
-      width="250"
+      width="300"
       height="200"
       xmlns="http://www.w3.org/2000/svg"
-      className="feather feather-image"
-      strokeLinejoin="round"
-      strokeLinecap="round"
-      strokeWidth="2"
-      stroke="currentColor"
       fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="feather feather-image"
       {...props}
     >
       <g>
         <title>Layer 1</title>
-        <g strokeWidth="6" stroke="null" id="svg_4">
-          <rect stroke="#634426" id="svg_1" ry="2" rx="2" height="128.94057" width="199.79408" y="35.52972" x="25.10295" />
-          <circle stroke="#634426" id="svg_2" r="10.27673" cy="74.92822" cx="86.15114" />
-          <polyline stroke="#634426" id="svg_3" points="224.8970489501953,121.49008560180664 169.39869689941406,85.67327499389648 47.30229187011719,164.47028732299805 " />
+        <g stroke="null" id="svg_4" strokeWidth="6">
+          <rect stroke="#634426" x="34.60296" y="22.52334" width="230.79407" height="148.94695" rx="2" ry="2" id="svg_1" />
+          <circle stroke="#634426" cx="105.12337" cy="68.0349" r="11.87127" id="svg_2" />
+          <polyline stroke="#634426" points="265.3970413208008,121.82128143310547 201.28759002685547,80.44715881347656 60.246742248535156,171.4702911376953 " id="svg_3" />
         </g>
       </g>
+
     </svg>
   )
 }

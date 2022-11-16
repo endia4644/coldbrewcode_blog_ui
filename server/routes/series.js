@@ -73,6 +73,21 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+router.get('/name', async (req, res, next) => {
+  try {
+    const series = await db.Series.findAll({
+      attributes: ['seriesName'],
+      order: [['createdAt', 'DESC']],
+    });
+    const seriesTotalCount = db.Series.count();
+    return res.send(makeResponse({ data: series, totalCount: seriesTotalCount }));
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+
 router.get('/:id', async (req, res, next) => {
   try {
     const Serieses = await db.Series.findOne({

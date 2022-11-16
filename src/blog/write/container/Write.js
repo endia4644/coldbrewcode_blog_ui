@@ -130,7 +130,7 @@ export default function Write() {
                 onClick={submit}
                 className='button-type-round button-color-reverse'
               >
-                출간하기
+                세부설정하기
               </Button>
             </Space>
           </Col>

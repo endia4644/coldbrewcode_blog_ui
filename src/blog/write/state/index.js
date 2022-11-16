@@ -4,6 +4,7 @@ export const Types = {
   SetValue: 'write/SetValue',
   FetchCreatePost: 'write/FetchCreatePost',
   FetchUpdatePost: 'write/FetchUpdatePost',
+  FetchAllSeries: 'write/FetchAllSeries'
 };
 
 export const actions = {
@@ -21,11 +22,15 @@ export const actions = {
     description,
     htmlContent
   }),
+  fetchAllSeries: () => ({
+    type: Types.FetchAllSeries,
+  }),
 }
 const INITINAL_STATE = {
   postName: '',
   postContent: '',
   hashtag: [],
+  seriesList: [],
 }
 
 const reducer = createReducer(INITINAL_STATE, {
