@@ -1,5 +1,5 @@
 import { AppstoreAddOutlined, ArrowLeftOutlined, GlobalOutlined, LockOutlined } from "@ant-design/icons";
-import { Button, Col, Divider, Form, Input, Radio, Row, Space, Typography, Upload } from "antd";
+import { Button, Col, Form, Input, Radio, Row, Space, Typography, Upload } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { Content, Footer } from "antd/lib/layout/layout";
 import { AnimatePresence, motion } from "framer-motion";
@@ -11,18 +11,50 @@ import { actions } from "../state";
 export default function WriteSetting({ setLevel }) {
   const dispatch = useDispatch();
   const [isSeriesADD, setIsSeriesADD] = useState(false);
-  const [series, setSeries] = useState(null);
   const [seriesInput, setSeriesInput] = useState(null);
   const [inputFocus, setInputFocus] = useState(false);
   const seriesList = useSelector(state => state.write.seriesList);
   const [value, setValue] = useState(null);
+  const [prev, setPrev] = useState('');
+  const spanRefs = useRef({});
 
   const onChange = (target) => {
     setValue(target.target.value);
   }
+
+  const addSeries = () => {
+    if (seriesInput) {
+      const selected = spanRefs?.current[seriesInput];
+      if (!selected && seriesInput !== '') {
+        dispatch(actions.fetchCreateSeries(seriesInput));
+      } else {
+        spanRefs.current[seriesInput].scrollIntoView({
+          behavior: 'auto',
+          block: 'center',
+          inline: 'center'
+        });
+      }
+      setValue(seriesInput);
+    }
+    setSeriesInput('');
+    setPrev(seriesInput);
+  }
+
   useEffect(() => {
     dispatch(actions.fetchAllSeries());
   }, [dispatch])
+
+  useEffect(() => {
+    if (Object.keys(spanRefs).length !== 0 && prev) {
+      if (spanRefs.current[prev]) {
+        spanRefs.current[prev].scrollIntoView({
+          behavior: 'auto',
+          block: 'center',
+          inline: 'center'
+        });
+      }
+    }
+  }, [seriesList])
 
   return (
     <>
@@ -93,13 +125,17 @@ export default function WriteSetting({ setLevel }) {
                           setInputFocus(!inputFocus);
                         }}
                         onKeyDown={(e) => {
-
+                          if (e.key === 'Enter') {
+                            addSeries(); // Enter 입력이 되면 클릭 이벤트 실행
+                          }
                         }}
                         style={{
                           border: 0
                         }}
                         value={seriesInput}
-                        onChange={setSeriesInput}
+                        onChange={(e) => {
+                          setSeriesInput(e.target.value);
+                        }}
                         placeholder="새로운 시리즈 이름을 입력하세요" />
                       <AnimatePresence>
                         {inputFocus && (
@@ -111,6 +147,7 @@ export default function WriteSetting({ setLevel }) {
                             <motion.div layoutId={`button_1`}>
                               <Button
                                 className='button-type-round button-color-reverse'
+                                onClick={addSeries}
                                 style={{ marginTop: 20 }}
                               >
                                 시리즈 추가
@@ -129,7 +166,7 @@ export default function WriteSetting({ setLevel }) {
                         value={value}
                         style={{
                           width: '100%',
-                          minHeight: 265,
+                          maxHeight: 265,
                           overflow: 'auto',
                         }}
                       >
@@ -141,6 +178,7 @@ export default function WriteSetting({ setLevel }) {
                                 key={item.seriesName}
                                 value={item.seriesName}>
                                 {item.seriesName}
+                                <span ref={(element) => spanRefs.current[item.seriesName] = element} />
                               </Radio.Button >
                             )
                           })}
@@ -152,7 +190,10 @@ export default function WriteSetting({ setLevel }) {
                         <Button
                           style={{ fontWeight: 700 }}
                           className='button-border-hide button-type-round'
-                          onClick={() => { setIsSeriesADD(!isSeriesADD) }}
+                          onClick={() => {
+                            setSeriesInput('');
+                            setIsSeriesADD(!isSeriesADD)
+                          }}
                         >
                           취소
                         </Button>

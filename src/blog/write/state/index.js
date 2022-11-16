@@ -4,7 +4,8 @@ export const Types = {
   SetValue: 'write/SetValue',
   FetchCreatePost: 'write/FetchCreatePost',
   FetchUpdatePost: 'write/FetchUpdatePost',
-  FetchAllSeries: 'write/FetchAllSeries'
+  FetchAllSeries: 'write/FetchAllSeries',
+  FetchCreateSeries: 'write/FetchCreateSeries',
 };
 
 export const actions = {
@@ -24,6 +25,10 @@ export const actions = {
   }),
   fetchAllSeries: () => ({
     type: Types.FetchAllSeries,
+  }),
+  fetchCreateSeries: (seriesName) => ({
+    type: Types.FetchCreateSeries,
+    seriesName,
   }),
 }
 const INITINAL_STATE = {

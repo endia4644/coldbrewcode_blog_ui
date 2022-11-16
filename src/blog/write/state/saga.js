@@ -57,6 +57,24 @@ function* fetchAllSeries(action) {
   }
 }
 
+function* fetchCreateSeries(action) {
+  const { isSuccess, data } = yield call(callApi, {
+    method: 'post',
+    url: '/series',
+    data: {
+      seriesName: action.seriesName
+    }
+  });
+  if (isSuccess && data) {
+    if (action.series) {
+      yield put(actions.setValue('seriesList', [...action.seriesList, ...data]));
+    } else {
+      yield put(actions.setValue('seriesList', data));
+    }
+  }
+}
+
+
 export default function* () {
   yield all([
     takeEvery(
@@ -70,6 +88,10 @@ export default function* () {
     takeEvery(
       Types.FetchAllSeries,
       makeFetchSaga({ fetchSaga: fetchAllSeries, canCache: false })
+    ),
+    takeEvery(
+      Types.FetchCreateSeries,
+      makeFetchSaga({ fetchSaga: fetchCreateSeries, canCache: false })
     ),
   ]);
 }

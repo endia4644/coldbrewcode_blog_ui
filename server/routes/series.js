@@ -7,40 +7,24 @@ const { makeResponse } = require('../util');
 
 const router = express.Router();
 
-router.post('/', isLoggedIn, async (req, res, next) => {
+router.post('/', async (req, res, next) => {
   try {
     //* 트랜잭션 설정
     await db.sequelize.transaction(async (t) => {
-      const newPost = await db.Post.create({
-        postName: req.body.postName,
-        postContent: req.body.postContent,
-        postDescription: req.body.postDescription,
-        likeCnt: 0,
-        lockYsno: req.body.lockYsno,
-        dltYsno: 'N',
-        UserId: req.user.id,
-        SeriesId: req.body.seriesId
+      await db.Series.create({
+        seriesName: req.body.seriesName,
       }, {
         transaction: t, // 이 쿼리를 트랜잭션 처리
       })
-      if (req.body.hashtags) {
-        /* 해시태그 테이블 INSERT  */
-        const hashtags = await Promise.all(req.body.hashtags.map(tag => db.Hashtag.findOrCreate({
-          where: { hashtagName: tag },
-          transaction: t, // 이 쿼리를 트랜잭션 처리
-        })));
-        /* 매핑 테이블 INSERT  */
-        await hashtags.map(r => newPost.addHashtags(r[0]))
-      }
-      const fullPost = await db.Post.findOne({
-        where: { id: newPost.id },
+      const series = await db.Series.findAll({
+        attributes: ['seriesName'],
+        order: [['createdAt', 'DESC']],
         transaction: t, // 이 쿼리를 트랜잭션 처리
-        include: [{
-          model: db.User,
-          attributes: ['id', 'email', 'nickName'],
-        }]
-      })
-      res.send(makeResponse({ data: fullPost }));
+      });
+      const seriesTotalCount = await db.Series.count({
+        transaction: t, // 이 쿼리를 트랜잭션 처리
+      });
+      res.send(makeResponse({ data: series, totalCount: seriesTotalCount }));
     })
   } catch (err) {
     console.error(err);
@@ -65,7 +49,7 @@ router.get('/', async (req, res, next) => {
       }],
       group: ['id'],
     });
-    const seriesTotalCount = db.Series.count();
+    const seriesTotalCount = await db.Series.count();
     return res.send(makeResponse({ data: series, totalCount: seriesTotalCount }));
   } catch (err) {
     console.error(err);
@@ -79,7 +63,7 @@ router.get('/name', async (req, res, next) => {
       attributes: ['seriesName'],
       order: [['createdAt', 'DESC']],
     });
-    const seriesTotalCount = db.Series.count();
+    const seriesTotalCount = await db.Series.count();
     return res.send(makeResponse({ data: series, totalCount: seriesTotalCount }));
   } catch (err) {
     console.error(err);

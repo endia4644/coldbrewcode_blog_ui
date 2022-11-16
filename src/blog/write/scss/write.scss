@@ -421,6 +421,13 @@
     .ant-radio-group {
       &.series-group {
         box-shadow: 0px 0px 3px -1px gray;
+
+        .ant-radio-button-wrapper {
+          .ant-radio-button~span {
+            width: 100%;
+            font-size: 15px;
+          }
+        }
       }
 
       .ant-space-item {
@@ -498,5 +505,13 @@
   >span {
     display: flex;
     align-items: center;
+  }
+}
+
+.sub-content .ant-col .ant-radio-group.series-group .ant-radio-button-wrapper {
+  >span {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
   }
 }

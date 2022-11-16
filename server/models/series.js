@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     seriesName: {
       type: DataTypes.STRING(20),
       allowNull: false,
+      unique: true,
     },
   }, {
     charset: 'utf8',

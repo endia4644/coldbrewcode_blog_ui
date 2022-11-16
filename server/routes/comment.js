@@ -69,7 +69,7 @@ router.get('/:id', async (req, res, next) => {
 
 router.delete('/:id', isLoggedIn, async (req, res, next) => {
   try {
-    const deletePost = await db.Comment.findOne({
+    await db.Comment.findOne({
       where: {
         id: req.params.id
       }
