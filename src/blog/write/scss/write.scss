@@ -414,6 +414,23 @@
     resize: none;
   }
 
+  .ant-upload.ant-upload-select-picture-card {
+    border: 1px dashed $subColor !important;
+  }
+
+  .ant-upload.ant-upload-select-picture-card>.ant-upload {
+    flex-direction: column;
+  }
+
+  .ant-upload.ant-upload-select-picture-card {
+    width: 300px;
+    height: 343px;
+  }
+
+  .ant-upload.ant-upload-select-picture-card:hover {
+    border: 1px solid $subColor !important;
+  }
+
   .ant-col {
     width: 300px;
 

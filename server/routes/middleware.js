@@ -15,7 +15,7 @@ exports.isNotLoggedIn = (req, res, next) => {
   return res.status(401).send('로그인한 사람은 할 수 없습니다.');
 }
 
-exports.isProfileImgExist = async (req, res, next) => {
+exports.isImageExist = async (req, res, next) => {
   try {
     const exUser = await db.User.findOne({
       where: {

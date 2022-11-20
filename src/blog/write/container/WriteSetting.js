@@ -1,11 +1,12 @@
-import { AppstoreAddOutlined, ArrowLeftOutlined, GlobalOutlined, LockOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Input, Radio, Row, Space, Typography, Upload } from "antd";
+import { AppstoreAddOutlined, ArrowLeftOutlined, GlobalOutlined, LockOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Col, Input, Radio, Row, Space, Typography, message, Upload, Modal } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { Content, Footer } from "antd/lib/layout/layout";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ImageIcon } from "../../../common/component/Icon";
+import { FailImageIcon, ImageIcon } from "../../../common/component/Icon";
+import { API_HOST } from "../../../common/constant";
 import { actions } from "../state";
 
 export default function WriteSetting({ setLevel }) {
@@ -17,6 +18,81 @@ export default function WriteSetting({ setLevel }) {
   const [value, setValue] = useState(null);
   const [prev, setPrev] = useState('');
   const spanRefs = useRef({});
+  const sequence = useSelector(state => state.write.sequence);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(true);
+  const [imageUrl, setImageUrl] = useState('');
+
+  const handleCancel = () => setPreviewOpen(false);
+
+  const handlePreview = async () => {
+    setPreviewOpen(true);
+  };
+
+  const handleChange = (info) => {
+    console.log(info);
+    if (info.file.status === 'uploading') {
+      setLoading(true);
+      return;
+    }
+    if (info.file.status === 'done') {
+      // Get this url from response in real world.
+      setImageUrl(`${API_HOST}/${info.file.response}`);
+      setPreviewImage(`${API_HOST}/${info.file.response}`);
+      setIsSuccess(true);
+    } else {
+      setImageUrl('');
+      setPreviewImage('');
+      setIsSuccess(false);
+    }
+    setLoading(false);
+  };
+
+  const beforeUpload = (file) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('You can only upload JPG/PNG file!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error('Image must smaller than 2MB!');
+    }
+    return isJpgOrPng && isLt2M;
+  };
+
+  const uploadButton = (
+    <div>
+      {loading ? <LoadingOutlined style={{ fontSize: '5em' }} /> : isSuccess ?
+        <>
+          <p className="ant-upload-drag-icon">
+            <ImageIcon style={{ height: 180, display: 'block' }} />
+          </p>
+          <p>
+            <Button
+              style={{ marginBottom: 15 }}
+              className='button-type-round button-color-normal button-size-large'
+            >
+              썸네일 업로드
+            </Button>
+          </p>
+        </> :
+        <>
+          <p className="ant-upload-drag-icon">
+            <FailImageIcon style={{ height: 180, display: 'block' }} />
+          </p>
+          <p>
+            <Button
+              style={{ marginBottom: 15 }}
+              className='button-type-round button-color-red button-size-large'
+            >
+              업로드 실패
+            </Button>
+          </p>
+        </>}
+    </div>
+  );
 
   const onChange = (target) => {
     setValue(target.target.value);
@@ -70,21 +146,35 @@ export default function WriteSetting({ setLevel }) {
               <Row className="sub-content">
                 <Col>
                   <Typography.Title level={3}>포스트 미리보기</Typography.Title>
-                  <Form>
-                    <Form.Item name="dragger" valuePropName="fileList" getValueFromEvent={() => { }} noStyle>
-                      <Upload.Dragger name="files" action="/upload.do">
-                        <p className="ant-upload-drag-icon">
-                          <ImageIcon style={{ height: 180, display: 'block' }} />
-                          <Button
-                            style={{ marginBottom: 15 }}
-                            className='button-type-round button-color-normal button-size-large'
-                          >
-                            썸네일 업로드
-                          </Button>
-                        </p>
-                      </Upload.Dragger>
-                    </Form.Item>
-                  </Form>
+                  <Upload
+                    name="image"
+                    listType="picture-card"
+                    className="avatar-uploader"
+                    showUploadList={false}
+                    withCredentials={true}
+                    action={`${API_HOST}/image`}
+                    data={sequence}
+                    beforeUpload={beforeUpload}
+                    onChange={handleChange}
+                    onPreview={handlePreview}
+                  >
+                    {imageUrl ?
+                      <>
+                        <img
+                          src={imageUrl}
+                          alt="avatar"
+                          style={{ width: '100%' }} />
+                      </> : uploadButton}
+                  </Upload>
+                  <Modal open={previewOpen} title='미리보기' footer={null} onCancel={handleCancel}>
+                    <img
+                      alt="example"
+                      style={{
+                        width: '100%',
+                      }}
+                      src={previewImage}
+                    />
+                  </Modal>
                   <Typography.Title level={3} style={{ marginTop: 30 }}>제목</Typography.Title>
                   <TextArea showCount maxLength={100} />
                 </Col>

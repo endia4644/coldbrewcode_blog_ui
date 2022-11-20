@@ -4,22 +4,7 @@ const passport = require('passport');
 const db = require('../models');
 const bcrypt = require('bcrypt');
 const { isLoggedIn, isNotLoggedIn, isProfileImgExist } = require('./middleware');
-const multer = require('multer');
 const router = express.Router();
-const path = require('path');
-
-const upload = multer({
-  storage: multer.diskStorage({
-    destination(req, file, done) {
-      done(null, 'uploads');
-    },
-    filename(req, file, done) {
-      const ext = path.extname(file.originalname);
-      done(null, 'profile_' + Date.now() + ext);
-    }
-  }),
-  limits: { fileSize: 20 * 1024 * 1024 },
-});
 
 router.post('/', isNotLoggedIn, async (req, res, next) => {
   try {
@@ -123,10 +108,10 @@ router.post('/logout', isLoggedIn, (req, res) => {
   }
 })
 
-router.post('/profile', isLoggedIn, isProfileImgExist, upload.single('img'), async (req, res) => {
+router.post('/profile', isLoggedIn, async (req, res) => {
   try {
     await db.User.update({
-      profileImg: req.file.filename
+      profileImg: req.body.filename
     }, {
       where: {
         id: req.user.id
@@ -135,7 +120,7 @@ router.post('/profile', isLoggedIn, isProfileImgExist, upload.single('img'), asy
   } catch (err) {
     console.error(err);
   }
-  res.json(req.file.filename);
+  res.json(req.body.filename);
 });
 
 module.exports = router;

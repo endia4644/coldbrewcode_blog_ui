@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Content, Footer } from "antd/lib/layout/layout";
 import "react-quill/dist/quill.snow.css";
 import Editor from '../component/Editor';
@@ -7,7 +7,7 @@ import { Button, Col, Divider, Input, Row, Space } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom'; // 설치한 패키지
 import '../scss/write.scss';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../state';
 import WriteSetting from './WriteSetting';
 import { AnimatePresence } from 'framer-motion';
@@ -22,6 +22,7 @@ export default function Write() {
   const [hashtag, setHashtag] = useState([]);
   const [htmlContent, setHtmlContent] = useState(null);
   const [postName, setPostName] = useState(null);
+  const sequence = useSelector(state => state.write.sequence);
 
   const [level, setLevel] = useState(0);
 
@@ -41,6 +42,8 @@ export default function Write() {
     dispatch(actions.setValue('postName', postName))
     dispatch(actions.setValue('postContent', htmlContent))
     dispatch(actions.setValue('hashtag', Array.from(tagRef.current)))
+    console.log(htmlContent);
+    console.log(htmlContent.match(/[^='/]*\.(gif|jpg|jpeg|bmp|svg)/g))
   }
 
   const insertHashTag = () => {
@@ -50,6 +53,24 @@ export default function Write() {
     }
     setCurrentTag('');
   }
+
+  const getSequence = () => {
+    const today = new Date(); // today 객체에 Date()의 결과를 넣어줬다
+    const year = today.getFullYear()  //현재 년도
+    const month = today.getMonth() + 1 // 현재 월
+    const date = today.getDate() // 현제 날짜
+    const hours = today.getHours() //현재 시간
+    const minutes = today.getMinutes() //현재 분
+    const seconds = today.getSeconds() //현재 분
+
+    return `endia1@endia.me-${year}${month}${date}${hours}${minutes}${seconds}`
+  }
+
+  /* 시퀀스 생성 */
+  useEffect(() => {
+    console.log('호출')
+    dispatch(actions.setValue('sequence', getSequence()));
+  }, [dispatch]);
 
   return (
     <>
@@ -99,10 +120,12 @@ export default function Write() {
         </Row>
         <Divider />
         <Editor
+          sequence={sequence}
           postId={postId}
           placeholder={'기록하고 싶은 이야기를 적어 보세요'}
           htmlContent={htmlContent}
           getHtmlContent={getHtmlContent}
+
         />
       </Content>
       <Footer className='main-footer'>

@@ -40,46 +40,17 @@ const WHITE_STYLE = ['margin', 'display', 'float'];
 class Image extends BaseImage {
   static formats(domNode) {
     return ATTRIBUTES.reduce(function (formats, attribute) {
-      console.log(formats, attribute);
       if (domNode.hasAttribute(attribute)) {
         formats[attribute] = domNode.getAttribute(attribute);
       }
-      console.log('return');
-      console.log(formats);
       return formats;
     }, {});
-  }
-
-  format(name, value) {
-    if (ATTRIBUTES.indexOf(name) > -1) {
-      if (value) {
-        if (name === 'style') {
-          value = this.sanitize_style(value);
-        }
-        this.domNode.setAttribute(name, value);
-      } else {
-        this.domNode.removeAttribute(name);
-      }
-    } else {
-      super.format(name, value);
-    }
-  }
-
-  sanitize_style(style) {
-    let style_arr = style.split(";")
-    let allow_style = "";
-    style_arr.forEach((v, i) => {
-      if (WHITE_STYLE.indexOf(v.trim().split(":")[0]) !== -1) {
-        allow_style += v + ";"
-      }
-    })
-    return allow_style;
   }
 }
 
 Quill.register(Image, true);
 
-const Editor = ({ postId, placeholder, htmlContent, getHtmlContent, ...rest }) => {
+const Editor = ({ sequence, postId, placeholder, htmlContent, getHtmlContent, ...rest }) => {
   const quillRef = useRef(null);
 
   useEffect(() => {
@@ -114,6 +85,7 @@ const Editor = ({ postId, placeholder, htmlContent, getHtmlContent, ...rest }) =
       // multer에 맞는 형식으로 데이터 만들어준다.
       const formData = new FormData();
       formData.append('img', file); // formData는 키-밸류 구조
+      formData.append('sequence', sequence);  // 시퀀스ID 주입
       // 백엔드 multer라우터에 이미지를 보낸다.
       try {
         const url = await axios({

@@ -1,7 +1,16 @@
 module.exports = (sequelize, DataTypes) => {
   const Image = sequelize.define('Image', {
-    content: {
-      type: DataTypes.TEXT, // 매우 긴 글
+    fileName: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+    },
+    sequence: {
+      type: DataTypes.STRING(106),
+      allowNull: false,
+    },
+    saveYsno: {
+      type: DataTypes.BOOLEAN,
+      default: false,
       allowNull: false,
     }
   }, {

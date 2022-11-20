@@ -55,3 +55,29 @@ export function ImageIcon(props) {
     </svg>
   )
 }
+
+export function FailImageIcon(props) {
+  return (
+    <svg
+      width="300"
+      height="200"
+      xmlns="http://www.w3.org/2000/svg"
+      className="feather feather-image"
+      strokeLinejoin="round"
+      strokeLinecap="round"
+      strokeWidth="2"
+      stroke="currentColor"
+      fill="none"
+      {...props}
+    >
+      <g>
+        <title>Layer 1</title>
+        <g strokeWidth="6" id="svg_4" stroke="null">
+          <rect id="svg_1" ry="2" rx="2" height="148.94695" width="230.79407" y="22.52334" x="34.60296" stroke="#fa1131" />
+          <circle id="svg_2" r="11.87127" cy="68.0349" cx="105.12337" stroke="#fa1131" />
+          <polyline id="svg_3" points="265.3970413208008,121.82128143310547 201.28759002685547,80.44715881347656 60.246742248535156,171.4702911376953 " stroke="#fa1131" />
+        </g>
+      </g>
+    </svg>
+  )
+}

@@ -32,10 +32,12 @@ export const actions = {
   }),
 }
 const INITINAL_STATE = {
+  sequence: '',
   postName: '',
   postContent: '',
   hashtag: [],
   seriesList: [],
+  imageList: [],
 }
 
 const reducer = createReducer(INITINAL_STATE, {

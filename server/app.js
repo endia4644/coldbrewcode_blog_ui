@@ -13,6 +13,7 @@ const postRouter = require('./routes/post');
 const commentRouter = require('./routes/comment');
 const seriesRouter = require('./routes/series');
 const hashtagRouter = require('./routes/hashtag');
+const imageRouter = require('./routes/image');
 
 const app = express();
 
@@ -51,6 +52,7 @@ app.use('/post', postRouter);
 app.use('/comment', commentRouter);
 app.use('/series', seriesRouter);
 app.use('/hashtag', hashtagRouter);
+app.use('/image', imageRouter);
 
 
 

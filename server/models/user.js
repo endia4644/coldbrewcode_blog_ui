@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     email: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.STRING(100),
       allowNul: false, //필수
       unique: true, // 중복금지
     },
