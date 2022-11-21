@@ -21,7 +21,6 @@ export default function Write() {
   const [hashtag, setHashtag] = useState([]);
   const [htmlContent, setHtmlContent] = useState(null);
   const [postName, setPostName] = useState(null);
-  const sequence = useSelector((state) => state.write.sequence);
 
   const [level, setLevel] = useState(0);
 
@@ -53,7 +52,7 @@ export default function Write() {
     setCurrentTag("");
   };
 
-  const getSequence = () => {
+  const getGroupId = () => {
     const today = new Date(); // today 객체에 Date()의 결과를 넣어줬다
     const year = today.getFullYear(); //현재 년도
     const month = today.getMonth() + 1; // 현재 월
@@ -68,7 +67,7 @@ export default function Write() {
   /* 시퀀스 생성 */
   useEffect(() => {
     console.log("호출");
-    dispatch(actions.setValue("sequence", getSequence()));
+    dispatch(actions.setValue("groupId", getGroupId()));
   }, [dispatch]);
 
   return (
@@ -128,7 +127,6 @@ export default function Write() {
         </Row>
         <Divider />
         <Editor
-          sequence={sequence}
           postId={postId}
           placeholder={"기록하고 싶은 이야기를 적어 보세요"}
           htmlContent={htmlContent}

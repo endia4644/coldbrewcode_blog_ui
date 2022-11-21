@@ -35,37 +35,15 @@ export default function WriteSetting({ setLevel }) {
   const [value, setValue] = useState(null);
   const [prev, setPrev] = useState("");
   const spanRefs = useRef({});
-  const sequence = useSelector((state) => state.write.sequence);
+  const groupId = useSelector((state) => state.write.groupId);
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(true);
-  const [imageUrl, setImageUrl] = useState("");
+  const [previewImage, setPreviewImage] = useState(null);
   const [defaultFileList, setDefaultFileList] = useState([]);
 
   const handleCancel = () => setPreviewOpen(false);
 
   const handlePreview = async () => {
     setPreviewOpen(true);
-  };
-
-  const handleChange = (info) => {
-    console.log(info);
-    if (info.file.status === "uploading") {
-      setLoading(true);
-      return;
-    }
-    if (info.file.status === "done") {
-      // Get this url from response in real world.
-      setImageUrl(`${API_HOST}/${info.file.response}`);
-      setPreviewImage(`${API_HOST}/${info.file.response}`);
-      setIsSuccess(true);
-    } else {
-      setImageUrl("");
-      setPreviewImage("");
-      setIsSuccess(false);
-    }
-    setLoading(false);
   };
 
   const beforeUpload = (file) => {
@@ -82,10 +60,11 @@ export default function WriteSetting({ setLevel }) {
 
   const uploadImage = async (options) => {
     const { onSuccess, onError, file } = options;
-    const url = "http://localhost:3085/image";
+    const url = `${API_HOST}/image`;
     const method = "post";
     const fmData = new FormData();
     fmData.append("image", file);
+    fmData.append("groupId", groupId);
     try {
       const res = await axios({
         url,
@@ -93,7 +72,7 @@ export default function WriteSetting({ setLevel }) {
         data: fmData,
         withCredentials: true,
       });
-      onSuccess("Ok");
+      onSuccess(res.data);
       console.log("server res: ", res);
     } catch (err) {
       console.log("Eroor: ", err);
@@ -103,11 +82,8 @@ export default function WriteSetting({ setLevel }) {
   };
 
   const handleOnChange = ({ file, fileList, event }) => {
-    // console.log(file, fileList, event);
-    //Using Hooks to update the state to the current filelist
-    console.log(fileList);
     setDefaultFileList(fileList);
-    //filelist - [{uid: "-1",url:'Some url to image'}]
+    setPreviewImage(fileList?.[0]?.response);
   };
 
   const uploadButton = (
@@ -201,6 +177,7 @@ export default function WriteSetting({ setLevel }) {
                     defaultFileList={defaultFileList}
                     className="image-upload-grid"
                     onPreview={handlePreview}
+                    beforeUpload={beforeUpload}
                   >
                     {defaultFileList.length >= 1 ? null : uploadButton}
                   </Upload>
@@ -215,7 +192,7 @@ export default function WriteSetting({ setLevel }) {
                       style={{
                         width: "100%",
                       }}
-                      src={previewImage}
+                      src={`${API_HOST}/${previewImage?.fileName}`}
                     />
                   </Modal>
                   <Typography.Title level={3} style={{ marginTop: 30 }}>

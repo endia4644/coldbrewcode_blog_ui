@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(100),
         allowNull: false,
       },
-      sequence: {
+      groupId: {
         type: DataTypes.STRING(106),
         allowNull: false,
       },

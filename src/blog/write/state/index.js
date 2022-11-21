@@ -1,11 +1,15 @@
-import { createReducer, createSetValueAction, setValueReducer } from "../../../common/redux-helper";
+import {
+  createReducer,
+  createSetValueAction,
+  setValueReducer,
+} from "../../../common/redux-helper";
 
 export const Types = {
-  SetValue: 'write/SetValue',
-  FetchCreatePost: 'write/FetchCreatePost',
-  FetchUpdatePost: 'write/FetchUpdatePost',
-  FetchAllSeries: 'write/FetchAllSeries',
-  FetchCreateSeries: 'write/FetchCreateSeries',
+  SetValue: "write/SetValue",
+  FetchCreatePost: "write/FetchCreatePost",
+  FetchUpdatePost: "write/FetchUpdatePost",
+  FetchAllSeries: "write/FetchAllSeries",
+  FetchCreateSeries: "write/FetchCreateSeries",
 };
 
 export const actions = {
@@ -15,13 +19,13 @@ export const actions = {
     postId,
     postName,
     description,
-    htmlContent
+    htmlContent,
   }),
   fetchCreatePost: (postName, description, htmlContent) => ({
     type: Types.FetchCreatePost,
     postName,
     description,
-    htmlContent
+    htmlContent,
   }),
   fetchAllSeries: () => ({
     type: Types.FetchAllSeries,
@@ -30,17 +34,17 @@ export const actions = {
     type: Types.FetchCreateSeries,
     seriesName,
   }),
-}
+};
 const INITINAL_STATE = {
-  sequence: '',
-  postName: '',
-  postContent: '',
+  groupId: "",
+  postName: "",
+  postContent: "",
   hashtag: [],
   seriesList: [],
   imageList: [],
-}
+};
 
 const reducer = createReducer(INITINAL_STATE, {
   [Types.SetValue]: setValueReducer,
-})
+});
 export default reducer;

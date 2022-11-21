@@ -22,12 +22,12 @@ const upload = multer({
 router.post("/", upload.single("image"), async (req, res, next) => {
   console.log(req.body);
   try {
-    await db.Image.create({
+    const result = await db.Image.create({
       fileName: req.file.filename,
-      sequence: "dddd",
+      groupId: req.body.groupId,
       saveYsno: false,
     });
-    return res.json(req.file.filename);
+    return res.json({ id: result.id, fileName: result.fileName });
   } catch (err) {
     console.error(err);
     next(err);

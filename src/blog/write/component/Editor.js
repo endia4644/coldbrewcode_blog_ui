@@ -1,41 +1,36 @@
-
-import axios from 'axios';
-import React, { useEffect, useMemo, useRef } from 'react';
-import ReactQuill, { Quill } from 'react-quill';
-import { API_HOST } from '../../../common/constant';
-import { callApi } from '../../../common/util/api';
+import axios from "axios";
+import React, { useEffect, useMemo, useRef } from "react";
+import ReactQuill, { Quill } from "react-quill";
+import { API_HOST } from "../../../common/constant";
+import { callApi } from "../../../common/util/api";
 import ImageResize from "quill-image-resize-module-react";
-import hljs from 'highlight.js'
+import hljs from "highlight.js";
 
 import "react-quill/dist/quill.snow.css";
 import "highlight.js/styles/github.css";
+import { useSelector } from "react-redux";
 
 const fontFamilyArr = ["NotoSans", "Roboto", "Sono", "NanumGothic"];
 let fonts = Quill.import("attributors/style/font");
 fonts.whitelist = fontFamilyArr;
 Quill.register(fonts, true);
 
-const fontSizeArr = ['8px', '10px', '11px', '12px', '14px', '18px', '24px'];
-var size = Quill.import('attributors/style/size');
+const fontSizeArr = ["8px", "10px", "11px", "12px", "14px", "18px", "24px"];
+var size = Quill.import("attributors/style/size");
 size.whitelist = fontSizeArr;
 Quill.register(size, true);
 
 hljs.configure({
-  languages: ['javascript', 'ruby', 'python', 'rust'],
+  languages: ["javascript", "ruby", "python", "rust"],
 });
 
 Quill.register("modules/imageResize", ImageResize);
 
-const BaseImage = Quill.import('formats/image');
+const BaseImage = Quill.import("formats/image");
 
-const ATTRIBUTES = [
-  'alt',
-  'height',
-  'width',
-  'style',
-];
+const ATTRIBUTES = ["alt", "height", "width", "style"];
 
-const WHITE_STYLE = ['margin', 'display', 'float'];
+const WHITE_STYLE = ["margin", "display", "float"];
 
 class Image extends BaseImage {
   static formats(domNode) {
@@ -50,8 +45,15 @@ class Image extends BaseImage {
 
 Quill.register(Image, true);
 
-const Editor = ({ sequence, postId, placeholder, htmlContent, getHtmlContent, ...rest }) => {
+const Editor = ({
+  postId,
+  placeholder,
+  htmlContent,
+  getHtmlContent,
+  ...rest
+}) => {
   const quillRef = useRef(null);
+  const groupId = useSelector((state) => state.write.groupId);
 
   useEffect(() => {
     if (!postId) {
@@ -59,48 +61,51 @@ const Editor = ({ sequence, postId, placeholder, htmlContent, getHtmlContent, ..
     }
     const fetchData = async () => {
       const { data } = await callApi({
-        method: 'get',
+        method: "get",
         url: `/post/${postId}/content`,
       });
-      getHtmlContent(data?.[0]?.postContent ?? '');
+      getHtmlContent(data?.[0]?.postContent ?? "");
     };
     fetchData();
-  }, [postId, callApi])
+  }, [postId, callApi]);
 
   // 이미지 처리를 하는 핸들러
   const imageHandler = () => {
-    console.log('에디터에서 이미지 버튼을 클릭하면 이 핸들러가 시작됩니다!');
+    console.log("에디터에서 이미지 버튼을 클릭하면 이 핸들러가 시작됩니다!");
 
     // 1. 이미지를 저장할 input type=file DOM을 만든다.
-    const input = document.createElement('input');
+    const input = document.createElement("input");
     // 속성 써주기
-    input.setAttribute('type', 'file');
-    input.setAttribute('accept', 'image/*');
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*");
     input.click(); // 에디터 이미지버튼을 클릭하면 이 input이 클릭된다.
     // input이 클릭되면 파일 선택창이 나타난다.
 
     // input에 변화가 생긴다면 = 이미지를 선택
-    input.addEventListener('change', async () => {
+    input.addEventListener("change", async () => {
       const file = input.files[0];
       // multer에 맞는 형식으로 데이터 만들어준다.
       const formData = new FormData();
-      formData.append('img', file); // formData는 키-밸류 구조
-      formData.append('sequence', sequence);  // 시퀀스ID 주입
+      formData.append("image", file); // formData는 키-밸류 구조
+      formData.append("groupId", groupId); // 시퀀스ID 주입
       // 백엔드 multer라우터에 이미지를 보낸다.
       try {
-        const url = await axios({
-          url: '/post/img',
-          method: 'post',
+        const res = await axios({
+          url: "/image",
+          method: "post",
           baseURL: API_HOST,
           data: formData,
           withCredentials: true,
-        }).then(response => {
-          return `${API_HOST}/${response.data}`
-        }).catch(err => {
-          return null;
-        });
-        console.log('성공 시, 백엔드가 보내주는 데이터', url);
-        const IMG_URL = url;
+        })
+          .then((response) => {
+            console.log(response);
+            return `${API_HOST}/${response?.data?.fileName}`;
+          })
+          .catch((err) => {
+            return null;
+          });
+        console.log("성공 시, 백엔드가 보내주는 데이터", res);
+        const IMG_URL = res;
         // 이 URL을 img 태그의 src에 넣은 요소를 현재 에디터의 커서에 넣어주면 에디터 내에서 이미지가 나타난다
         // src가 base64가 아닌 짧은 URL이기 때문에 데이터베이스에 에디터의 전체 글 내용을 저장할 수있게된다
         // 이미지는 꼭 로컬 백엔드 uploads 폴더가 아닌 다른 곳에 저장해 URL로 사용하면된다.
@@ -116,13 +121,12 @@ const Editor = ({ sequence, postId, placeholder, htmlContent, getHtmlContent, ..
         // 2. 현재 에디터 커서 위치값을 가져온다
         const range = editor.getSelection();
         // 가져온 위치에 이미지를 삽입한다
-        editor.insertEmbed(range.index, 'image', IMG_URL);
+        editor.insertEmbed(range.index, "image", IMG_URL);
       } catch (error) {
-        console.log('실패했어요ㅠ');
+        console.log("실패했어요ㅠ");
       }
     });
   };
-
 
   // Quill 에디터에서 사용하고싶은 모듈들을 설정한다.
   // useMemo를 사용해 modules를 만들지 않는다면 매 렌더링 마다 modules가 다시 생성된다.
@@ -132,15 +136,17 @@ const Editor = ({ sequence, postId, placeholder, htmlContent, getHtmlContent, ..
     return {
       toolbar: {
         container: [
-          [{
-            'font': fontFamilyArr
-          }],
-          [{ header: [1, 2, 3, 4, 5] }, { 'size': fontSizeArr }],
-          [{ 'color': [] }, 'bold', 'italic', 'underline', 'strike'],
-          [{ list: 'ordered' }, { list: 'bullet' }],
+          [
+            {
+              font: fontFamilyArr,
+            },
+          ],
+          [{ header: [1, 2, 3, 4, 5] }, { size: fontSizeArr }],
+          [{ color: [] }, "bold", "italic", "underline", "strike"],
+          [{ list: "ordered" }, { list: "bullet" }],
           [{ align: [] }],
-          ['image'],
-          ['code-block', 'blockquote']
+          ["image"],
+          ["code-block", "blockquote"],
         ],
         handlers: {
           // 이미지 처리는 우리가 직접 imageHandler라는 함수로 처리할 것이다.
@@ -148,7 +154,7 @@ const Editor = ({ sequence, postId, placeholder, htmlContent, getHtmlContent, ..
         },
       },
       syntax: {
-        highlight: text => hljs.highlightAuto(text).value,
+        highlight: (text) => hljs.highlightAuto(text).value,
       },
       imageResize: {
         // https://www.npmjs.com/package/quill-image-resize-module-react 참고
@@ -159,21 +165,21 @@ const Editor = ({ sequence, postId, placeholder, htmlContent, getHtmlContent, ..
   }, []);
   // 위에서 설정한 모듈들 foramts을 설정한다
   const formats = [
-    'size',
-    'font',
-    'header',
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'blockquote',
-    'image',
-    'color',
-    'align',
-    'code-block',
-    'width',
-    'style',
-    'list'
+    "size",
+    "font",
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "image",
+    "color",
+    "align",
+    "code-block",
+    "width",
+    "style",
+    "list",
   ];
 
   return (
@@ -182,8 +188,8 @@ const Editor = ({ sequence, postId, placeholder, htmlContent, getHtmlContent, ..
         {...rest}
         ref={quillRef}
         value={htmlContent}
-        style={{ height: 'calc(100vh - 270px)' }}
-        scrollingContainer={'quill'}
+        style={{ height: "calc(100vh - 270px)" }}
+        scrollingContainer={"quill"}
         onChange={getHtmlContent}
         theme="snow"
         modules={{
@@ -193,7 +199,7 @@ const Editor = ({ sequence, postId, placeholder, htmlContent, getHtmlContent, ..
         placeholder={placeholder}
       ></ReactQuill>
     </>
-  )
-}
+  );
+};
 
 export default React.memo(Editor);
