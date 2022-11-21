@@ -45,13 +45,13 @@ class Image extends BaseImage {
 
 Quill.register(Image, true);
 
-const Editor = ({
+export default function Editor({
   postId,
   placeholder,
   htmlContent,
   getHtmlContent,
   ...rest
-}) => {
+}) {
   const quillRef = useRef(null);
   const groupId = useSelector((state) => state.write.groupId);
 
@@ -98,7 +98,6 @@ const Editor = ({
           withCredentials: true,
         })
           .then((response) => {
-            console.log(response);
             return `${API_HOST}/${response?.data?.fileName}`;
           })
           .catch((err) => {
@@ -201,5 +200,3 @@ const Editor = ({
     </>
   );
 };
-
-export default React.memo(Editor);

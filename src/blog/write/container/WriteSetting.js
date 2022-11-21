@@ -102,8 +102,12 @@ export default function WriteSetting({ setLevel }) {
     </div>
   );
 
-  const onChange = (target) => {
+  const onSeriesChange = (target) => {
     setValue(target.target.value);
+  };
+
+  const onSeriesCancel = () => {
+    setValue(null);
   };
 
   const addSeries = () => {
@@ -151,9 +155,8 @@ export default function WriteSetting({ setLevel }) {
         <motion.div layoutId={`item-motion`}>
           <div className="content content-detail">
             <Content
-              className={`main-content main-writer main-writer-detail ${
-                isSeriesADD ? "isSeriesADD" : ""
-              }`}
+              className={`main-content main-writer main-writer-detail ${isSeriesADD ? "isSeriesADD" : ""
+                }`}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -268,12 +271,13 @@ export default function WriteSetting({ setLevel }) {
                           onClick={() => {
                             setSeriesInput("");
                             setIsSeriesADD(!isSeriesADD);
+                            onSeriesCancel();
                           }}
                         >
                           취소
                         </Button>
                         <Button
-                          disabled
+                          disabled={!value}
                           className="button-type-round button-color-reverse"
                         >
                           선택하기
@@ -329,7 +333,7 @@ export default function WriteSetting({ setLevel }) {
                       <Radio.Group
                         className="series-group"
                         onChange={(target) => {
-                          onChange(target);
+                          onSeriesChange(target);
                         }}
                         value={value}
                         style={{
@@ -349,8 +353,8 @@ export default function WriteSetting({ setLevel }) {
                                 {item.seriesName}
                                 <span
                                   ref={(element) =>
-                                    (spanRefs.current[item.seriesName] =
-                                      element)
+                                  (spanRefs.current[item.seriesName] =
+                                    element)
                                   }
                                 />
                               </Radio.Button>
@@ -370,12 +374,13 @@ export default function WriteSetting({ setLevel }) {
                           onClick={() => {
                             setSeriesInput("");
                             setIsSeriesADD(!isSeriesADD);
+                            onSeriesCancel();
                           }}
                         >
                           취소
                         </Button>
                         <Button
-                          disabled
+                          disabled={!value}
                           className="button-type-round button-color-reverse"
                         >
                           선택하기
