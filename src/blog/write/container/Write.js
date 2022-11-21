@@ -1,16 +1,15 @@
-
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 import { Content, Footer } from "antd/lib/layout/layout";
 import "react-quill/dist/quill.snow.css";
-import Editor from '../component/Editor';
-import { Button, Col, Divider, Input, Row, Space } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
-import { useNavigate, useParams } from 'react-router-dom'; // 설치한 패키지
-import '../scss/write.scss';
-import { useDispatch, useSelector } from 'react-redux';
-import { actions } from '../state';
-import WriteSetting from './WriteSetting';
-import { AnimatePresence } from 'framer-motion';
+import Editor from "../component/Editor";
+import { Button, Col, Divider, Input, Row, Space } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { useNavigate, useParams } from "react-router-dom"; // 설치한 패키지
+import "../scss/write.scss";
+import { useDispatch, useSelector } from "react-redux";
+import { actions } from "../state";
+import WriteSetting from "./WriteSetting";
+import { AnimatePresence } from "framer-motion";
 
 export default function Write() {
   const { id: postId } = useParams();
@@ -18,68 +17,71 @@ export default function Write() {
 
   const tagRef = useRef(new Set());
   const navigate = useNavigate();
-  const [currentTag, setCurrentTag] = useState('');
+  const [currentTag, setCurrentTag] = useState("");
   const [hashtag, setHashtag] = useState([]);
   const [htmlContent, setHtmlContent] = useState(null);
   const [postName, setPostName] = useState(null);
-  const sequence = useSelector(state => state.write.sequence);
+  const sequence = useSelector((state) => state.write.sequence);
 
   const [level, setLevel] = useState(0);
 
   const getHtmlContent = (htmlContent) => {
     setHtmlContent(htmlContent);
-  }
+  };
 
   const goBlog = () => {
-    navigate('/blog');
+    navigate("/blog");
   };
 
   const submit = () => {
     insertHashTag();
-    console.log(htmlContent, tagRef.current, postName)
+    console.log(htmlContent, tagRef.current, postName);
 
     setLevel(1);
-    dispatch(actions.setValue('postName', postName))
-    dispatch(actions.setValue('postContent', htmlContent))
-    dispatch(actions.setValue('hashtag', Array.from(tagRef.current)))
+    dispatch(actions.setValue("postName", postName));
+    dispatch(actions.setValue("postContent", htmlContent));
+    dispatch(actions.setValue("hashtag", Array.from(tagRef.current)));
     console.log(htmlContent);
-    console.log(htmlContent.match(/[^='/]*\.(gif|jpg|jpeg|bmp|svg)/g))
-  }
+    console.log(htmlContent.match(/[^='/]*\.(gif|jpg|jpeg|bmp|svg)/g));
+  };
 
   const insertHashTag = () => {
-    if (currentTag != '' && !tagRef.current.has(currentTag)) {
+    if (currentTag != "" && !tagRef.current.has(currentTag)) {
       setHashtag([...hashtag, { key: currentTag, hashtagName: currentTag }]);
       tagRef.current.add(currentTag);
     }
-    setCurrentTag('');
-  }
+    setCurrentTag("");
+  };
 
   const getSequence = () => {
     const today = new Date(); // today 객체에 Date()의 결과를 넣어줬다
-    const year = today.getFullYear()  //현재 년도
-    const month = today.getMonth() + 1 // 현재 월
-    const date = today.getDate() // 현제 날짜
-    const hours = today.getHours() //현재 시간
-    const minutes = today.getMinutes() //현재 분
-    const seconds = today.getSeconds() //현재 분
+    const year = today.getFullYear(); //현재 년도
+    const month = today.getMonth() + 1; // 현재 월
+    const date = today.getDate(); // 현제 날짜
+    const hours = today.getHours(); //현재 시간
+    const minutes = today.getMinutes(); //현재 분
+    const seconds = today.getSeconds(); //현재 분
 
-    return `endia1@endia.me-${year}${month}${date}${hours}${minutes}${seconds}`
-  }
+    return `endia1@endia.me-${year}${month}${date}${hours}${minutes}${seconds}`;
+  };
 
   /* 시퀀스 생성 */
   useEffect(() => {
-    console.log('호출')
-    dispatch(actions.setValue('sequence', getSequence()));
+    console.log("호출");
+    dispatch(actions.setValue("sequence", getSequence()));
   }, [dispatch]);
 
   return (
     <>
       <AnimatePresence>
-        {level > 0 && (<WriteSetting setLevel={setLevel} />)}
+        {level > 0 && <WriteSetting setLevel={setLevel} />}
       </AnimatePresence>
-      <Content className="main-content main-writer" style={{ marginTop: 30, paddingBottom: '4rem' }}>
+      <Content
+        className="main-content main-writer"
+        style={{ marginTop: 30, paddingBottom: "4rem" }}
+      >
         <Input
-          className='post-title'
+          className="post-title"
           placeholder="제목를 입력하세요."
           value={postName}
           onChange={(e) => {
@@ -88,30 +90,36 @@ export default function Write() {
         />
         <Divider />
         <Row>
-          {hashtag && hashtag.map((item, i) => {
-            return (
-              <Col key={item.hashtagName}>
-                <Button
-                  key={item.hashtagName}
-                  onClick={() => {
-                    setHashtag(hashtag.filter(item => item.key !== item.hashtagName))
-                    tagRef.current.delete(item.hashtagName);
-                  }}
-                  style={{ fontWeight: 700, marginRight: 10 }}
-                  className='button-type-round button-color-normal'>{item.hashtagName}</Button>
-              </Col>
-            )
-          })}
+          {hashtag &&
+            hashtag.map((item, i) => {
+              return (
+                <Col key={item.hashtagName}>
+                  <Button
+                    key={item.hashtagName}
+                    onClick={() => {
+                      setHashtag(
+                        hashtag.filter((item) => item.key !== item.hashtagName)
+                      );
+                      tagRef.current.delete(item.hashtagName);
+                    }}
+                    style={{ fontWeight: 700, marginRight: 10 }}
+                    className="button-type-round button-color-normal"
+                  >
+                    {item.hashtagName}
+                  </Button>
+                </Col>
+              );
+            })}
           <Col>
             <Input
-              className='post-tag'
+              className="post-tag"
               placeholder="태그를 입력하세요."
               value={currentTag}
               onChange={(e) => {
                 setCurrentTag(e.target.value);
               }}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') {
+                if (e.key === "Enter") {
                   insertHashTag();
                 }
               }}
@@ -122,36 +130,34 @@ export default function Write() {
         <Editor
           sequence={sequence}
           postId={postId}
-          placeholder={'기록하고 싶은 이야기를 적어 보세요'}
+          placeholder={"기록하고 싶은 이야기를 적어 보세요"}
           htmlContent={htmlContent}
           getHtmlContent={getHtmlContent}
-
         />
       </Content>
-      <Footer className='main-footer'>
+      <Footer className="main-footer">
         <Row>
-          <Col flex='auto'>
+          <Col flex="auto">
             <Button
               style={{ fontWeight: 700 }}
-              className='button-border-hide button-type-round'
+              className="button-border-hide button-type-round"
               icon={<ArrowLeftOutlined />}
               onClick={goBlog}
             >
               나가기
-
             </Button>
           </Col>
-          <Col flex='168px'>
+          <Col flex="168px">
             <Space>
               <Button
                 style={{ fontWeight: 700 }}
-                className='button-border-hide button-type-round'
+                className="button-border-hide button-type-round"
               >
                 임시저장
               </Button>
               <Button
                 onClick={submit}
-                className='button-type-round button-color-reverse'
+                className="button-type-round button-color-reverse"
               >
                 세부설정하기
               </Button>
@@ -160,5 +166,5 @@ export default function Write() {
         </Row>
       </Footer>
     </>
-  )
+  );
 }

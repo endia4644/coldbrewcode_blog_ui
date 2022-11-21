@@ -1,5 +1,5 @@
 @import "./../../../common/scss/vars.scss";
-@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Noto+Sans+KR:wght@100;500&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Sono:wght@200;300;400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Noto+Sans+KR:wght@100;500&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Sono:wght@200;300;400;500;600;700;800&display=swap");
 
 /*
   $xs: 576px;
@@ -32,7 +32,6 @@
 .ql-snow {
   .ql-picker {
     &.ql-size {
-
       .ql-picker-label,
       .ql-picker-item {
         &::before {
@@ -206,10 +205,11 @@
     margin: 12px 0;
     width: 20%;
     min-width: 20%;
-    border-top: 6px solid rgba(0, 0, 0, .06)
+    border-top: 6px solid rgba(0, 0, 0, 0.06);
   }
 
-  element.style {}
+  element.style {
+  }
 
   .ql-editor p,
   .ql-editor ol,
@@ -224,14 +224,15 @@
   .ql-editor h6 {
     margin: 0;
     padding: 0;
-    counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+    counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8
+      list-9;
   }
 
   .ql-snow * {
     box-sizing: border-box;
   }
 
-  .ql-editor>* {
+  .ql-editor > * {
     cursor: text;
   }
 
@@ -286,7 +287,6 @@
 .main {
   &-content {
     .post {
-
       &-title,
       &-tag {
         border: 0;
@@ -418,13 +418,18 @@
     border: 1px dashed $subColor !important;
   }
 
-  .ant-upload.ant-upload-select-picture-card>.ant-upload {
+  .ant-upload.ant-upload-select-picture-card > .ant-upload {
     flex-direction: column;
   }
 
   .ant-upload.ant-upload-select-picture-card {
     width: 300px;
-    height: 343px;
+    height: 240px;
+  }
+
+  .ant-upload-list-picture-card-container {
+    width: 300px;
+    height: 240px;
   }
 
   .ant-upload.ant-upload-select-picture-card:hover {
@@ -434,13 +439,12 @@
   .ant-col {
     width: 300px;
 
-
     .ant-radio-group {
       &.series-group {
         box-shadow: 0px 0px 3px -1px gray;
 
         .ant-radio-button-wrapper {
-          .ant-radio-button~span {
+          .ant-radio-button ~ span {
             width: 100%;
             font-size: 15px;
           }
@@ -470,21 +474,20 @@
         }
       }
 
-      .ant-radio-button~span {
+      .ant-radio-button ~ span {
         justify-content: space-around;
         width: 100%;
         font-size: 20px;
       }
 
       .ant-radio-button-wrapper-checked:not([class*=" ant-radio-button-wrapper-disabled"]).ant-radio-button-wrapper:first-child {
-        border-right-color: #fff !important;
+        border-right-color: $antdGrayColor !important;
       }
 
       .ant-radio-button-wrapper:not(:first-child):before {
         width: 0;
         height: 0;
       }
-
 
       .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
         color: $subColor;
@@ -494,9 +497,9 @@
 
       .ant-radio-button.ant-radio-button-checked {
         background-color: $subColor;
-        border-radius: 4px;
+        border-radius: 3px;
 
-        &~span {
+        & ~ span {
           color: $fontColor;
         }
       }
@@ -519,14 +522,14 @@
 }
 
 .sub-content .ant-col .ant-radio-group .ant-radio-button-wrapper {
-  >span {
+  > span {
     display: flex;
     align-items: center;
   }
 }
 
 .sub-content .ant-col .ant-radio-group.series-group .ant-radio-button-wrapper {
-  >span {
+  > span {
     display: flex;
     align-items: center;
     justify-content: flex-start;
