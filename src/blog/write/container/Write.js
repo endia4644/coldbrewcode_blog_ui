@@ -16,6 +16,7 @@ export default function Write() {
   const dispatch = useDispatch();
 
   const tagRef = useRef(new Set());
+  const imageMap = useRef(new Map());
   const navigate = useNavigate();
   const [currentTag, setCurrentTag] = useState("");
   const [hashtag, setHashtag] = useState([]);
@@ -32,16 +33,18 @@ export default function Write() {
     navigate("/blog");
   };
 
-  const submit = () => {
+  const detailSetting = () => {
     insertHashTag();
-    console.log(htmlContent, tagRef.current, postName);
 
     setLevel(1);
     dispatch(actions.setValue("postName", postName));
     dispatch(actions.setValue("postContent", htmlContent));
     dispatch(actions.setValue("hashtag", Array.from(tagRef.current)));
-    console.log(htmlContent);
-    console.log(htmlContent.match(/[^='/]*\.(gif|jpg|jpeg|bmp|svg)/g));
+    htmlContent?.match(/[^='/]*\.(gif|jpg|jpeg|bmp|svg|png)/g)?.map(item => {
+      if (imageMap.current.get(item)) {
+        console.log(item);
+      }
+    })
   };
 
   const insertHashTag = () => {
@@ -66,7 +69,6 @@ export default function Write() {
 
   /* 시퀀스 생성 */
   useEffect(() => {
-    console.log("호출");
     dispatch(actions.setValue("groupId", getGroupId()));
   }, [dispatch]);
 
@@ -131,6 +133,7 @@ export default function Write() {
           placeholder={"기록하고 싶은 이야기를 적어 보세요"}
           htmlContent={htmlContent}
           getHtmlContent={getHtmlContent}
+          imageMap={imageMap}
         />
       </Content>
       <Footer className="main-footer">
@@ -154,7 +157,7 @@ export default function Write() {
                 임시저장
               </Button>
               <Button
-                onClick={submit}
+                onClick={detailSetting}
                 className="button-type-round button-color-reverse"
               >
                 세부설정하기

@@ -39,6 +39,8 @@ export default function WriteSetting({ setLevel }) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [defaultFileList, setDefaultFileList] = useState([]);
+  const [publicSetting, setPublicSetting] = useState("public");
+  const [description, setDescription] = useState("");
 
   const handleCancel = () => setPreviewOpen(false);
 
@@ -199,16 +201,17 @@ export default function WriteSetting({ setLevel }) {
                     />
                   </Modal>
                   <Typography.Title level={3} style={{ marginTop: 30 }}>
-                    제목
+                    포스트 설명
                   </Typography.Title>
-                  <TextArea showCount maxLength={100} />
+                  <TextArea showCount maxLength={100} onChange={(e) => { setDescription(e.target.value) }} />
                 </Col>
                 <div className="vertical-line" />
                 {!isSeriesADD && (
                   <Col>
                     <Typography.Title level={3}>공개 설정</Typography.Title>
                     <Radio.Group
-                      defaultValue="a"
+                      defaultValue="public"
+                      onChange={(e) => { setPublicSetting(e.target.value) }}
                       className="public-setting"
                       style={{
                         display: "flex",
@@ -217,7 +220,7 @@ export default function WriteSetting({ setLevel }) {
                       }}
                     >
                       <Radio.Button
-                        value="a"
+                        value="public"
                         style={{
                           width: 140,
                           height: 50,
@@ -228,7 +231,7 @@ export default function WriteSetting({ setLevel }) {
                         <GlobalOutlined /> 전체공개
                       </Radio.Button>
                       <Radio.Button
-                        value="b"
+                        value="private"
                         style={{ width: 140, height: 50, display: "flex" }}
                       >
                         <LockOutlined /> 비공개

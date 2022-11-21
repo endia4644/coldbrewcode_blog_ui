@@ -60,7 +60,7 @@ router.get('/', async (req, res, next) => {
 router.get('/name', async (req, res, next) => {
   try {
     const series = await db.Series.findAll({
-      attributes: ['seriesName'],
+      attributes: ['id', 'seriesName'],
       order: [['createdAt', 'DESC']],
     });
     const seriesTotalCount = await db.Series.count();
