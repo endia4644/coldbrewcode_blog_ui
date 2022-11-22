@@ -3,6 +3,7 @@ import {
   ArrowLeftOutlined,
   GlobalOutlined,
   LockOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import {
   Button,
@@ -33,6 +34,7 @@ export default function WriteSetting({ setLevel }) {
   const [inputFocus, setInputFocus] = useState(false);
   const seriesList = useSelector((state) => state.write.seriesList);
   const [value, setValue] = useState(null);
+  const [seriesSelectYsno, setSeriesSelectYsno] = useState(false);
   const [prev, setPrev] = useState("");
   const spanRefs = useRef({});
   const groupId = useSelector((state) => state.write.groupId);
@@ -157,12 +159,13 @@ export default function WriteSetting({ setLevel }) {
         <motion.div layoutId={`item-motion`}>
           <div className="content content-detail">
             <Content
-              className={`main-content main-writer main-writer-detail ${isSeriesADD ? "isSeriesADD" : ""
-                }`}
+              className={`main-content main-writer main-writer-detail ${
+                isSeriesADD ? "isSeriesADD" : ""
+              }`}
               style={{
                 display: "flex",
                 alignItems: "center",
-                overflow: "hidden",
+                overflowY: "auto",
               }}
             >
               <Row
@@ -170,6 +173,7 @@ export default function WriteSetting({ setLevel }) {
                 style={{
                   paddingTop: 15,
                   paddingBottom: 15,
+                  overflow: "hidden",
                 }}
               >
                 <Col>
@@ -203,7 +207,13 @@ export default function WriteSetting({ setLevel }) {
                   <Typography.Title level={3} style={{ marginTop: 30 }}>
                     포스트 설명
                   </Typography.Title>
-                  <TextArea showCount maxLength={100} onChange={(e) => { setDescription(e.target.value) }} />
+                  <TextArea
+                    showCount
+                    maxLength={100}
+                    onChange={(e) => {
+                      setDescription(e.target.value);
+                    }}
+                  />
                 </Col>
                 <div className="vertical-line" />
                 {!isSeriesADD && (
@@ -211,7 +221,9 @@ export default function WriteSetting({ setLevel }) {
                     <Typography.Title level={3}>공개 설정</Typography.Title>
                     <Radio.Group
                       defaultValue="public"
-                      onChange={(e) => { setPublicSetting(e.target.value) }}
+                      onChange={(e) => {
+                        setPublicSetting(e.target.value);
+                      }}
                       className="public-setting"
                       style={{
                         display: "flex",
@@ -237,18 +249,50 @@ export default function WriteSetting({ setLevel }) {
                         <LockOutlined /> 비공개
                       </Radio.Button>
                     </Radio.Group>
-                    <Typography.Title level={3}>시리즈 설정</Typography.Title>
-                    <Button
-                      icon={<AppstoreAddOutlined />}
-                      style={{
-                        height: 50,
-                        fontSize: 20,
-                      }}
-                      className="button-type-round width-full"
-                      onClick={() => setIsSeriesADD(!isSeriesADD)}
-                    >
-                      시리즈에 추가하기
-                    </Button>
+                    {!seriesSelectYsno && (
+                      <>
+                        <Typography.Title level={3}>
+                          시리즈 설정
+                        </Typography.Title>
+                        <Button
+                          icon={<AppstoreAddOutlined />}
+                          style={{
+                            height: 50,
+                            fontSize: 20,
+                          }}
+                          className="button-type-round width-full"
+                          onClick={() => setIsSeriesADD(!isSeriesADD)}
+                        >
+                          시리즈에 추가하기
+                        </Button>
+                      </>
+                    )}
+                    {seriesSelectYsno && (
+                      <>
+                        <Typography.Title level={3}>
+                          시리즈 설정
+                        </Typography.Title>
+                        <Input.Group compact>
+                          <Input
+                            className="seires-input-selected"
+                            disabled
+                            value={value}
+                            addonAfter={
+                              <Button
+                                className="seires-button-selected"
+                                icon={<SettingOutlined />}
+                                onClick={() => {
+                                  setIsSeriesADD(!isSeriesADD);
+                                  setSeriesSelectYsno(!seriesSelectYsno);
+                                  setSeriesInput("");
+                                  setValue(null);
+                                }}
+                              />
+                            }
+                          />
+                        </Input.Group>
+                      </>
+                    )}
                   </Col>
                 )}
                 {isSeriesADD && (
@@ -282,6 +326,10 @@ export default function WriteSetting({ setLevel }) {
                         <Button
                           disabled={!value}
                           className="button-type-round button-color-reverse"
+                          onClick={() => {
+                            setSeriesSelectYsno(true);
+                            setIsSeriesADD(!isSeriesADD);
+                          }}
                         >
                           선택하기
                         </Button>
@@ -356,8 +404,8 @@ export default function WriteSetting({ setLevel }) {
                                 {item.seriesName}
                                 <span
                                   ref={(element) =>
-                                  (spanRefs.current[item.seriesName] =
-                                    element)
+                                    (spanRefs.current[item.seriesName] =
+                                      element)
                                   }
                                 />
                               </Radio.Button>
@@ -368,7 +416,11 @@ export default function WriteSetting({ setLevel }) {
                     )}
                     <Footer
                       className="seriesBottomButton"
-                      style={{ backgroundColor: "white", marginTop: "auto" }}
+                      style={{
+                        backgroundColor: "white",
+                        marginTop: "auto",
+                        zIndex: 2,
+                      }}
                     >
                       <Space>
                         <Button
@@ -385,6 +437,10 @@ export default function WriteSetting({ setLevel }) {
                         <Button
                           disabled={!value}
                           className="button-type-round button-color-reverse"
+                          onClick={() => {
+                            setSeriesSelectYsno(true);
+                            setIsSeriesADD(!isSeriesADD);
+                          }}
                         >
                           선택하기
                         </Button>

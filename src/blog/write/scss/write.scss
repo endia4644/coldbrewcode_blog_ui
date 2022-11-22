@@ -423,12 +423,12 @@
   }
 
   .ant-upload.ant-upload-select-picture-card {
-    width: 300px;
+    width: 280px;
     height: 240px;
   }
 
   .ant-upload-list-picture-card-container {
-    width: 300px;
+    width: 280px;
     height: 240px;
   }
 
@@ -436,8 +436,33 @@
     border: 1px solid $subColor !important;
   }
 
+  .seires-input-selected {
+    .ant-input-disabled {
+      border-radius: 3px !important;
+      height: 48px;
+    }
+    span {
+      &.ant-input-group-addon {
+        border: 0;
+        padding: 0;
+        .seires-button-selected {
+          border-radius: 3px !important;
+          height: 48px;
+          &:hover,
+          &:focus,
+          &:active {
+            color: #d8b48b;
+            font-weight: 700;
+            border: 1px solid white;
+            background-color: #634426;
+          }
+        }
+      }
+    }
+  }
+
   .ant-col {
-    width: 300px;
+    width: 280px;
 
     .ant-radio-group {
       &.series-group {

@@ -5,6 +5,9 @@
 @import "./media.scss";
 
 /* 구글 폰트 적용 */
+html {
+  --antd-wave-shadow-color: black;
+}
 body {
   font-family: "Noto Sans KR";
 }
