@@ -21,11 +21,25 @@ export const actions = {
     description,
     htmlContent,
   }),
-  fetchCreatePost: (postName, description, htmlContent) => ({
+  fetchCreatePost: ({
+    postName,
+    hashtags,
+    postDescription,
+    postContent,
+    postThumnail,
+    permission,
+    seriesName,
+    imageIds,
+  }) => ({
     type: Types.FetchCreatePost,
     postName,
-    description,
-    htmlContent,
+    hashtags,
+    postDescription,
+    postContent,
+    postThumnail,
+    permission,
+    seriesName,
+    imageIds,
   }),
   fetchAllSeries: () => ({
     type: Types.FetchAllSeries,
@@ -36,7 +50,6 @@ export const actions = {
   }),
 };
 const INITINAL_STATE = {
-  groupId: "",
   postName: "",
   postContent: "",
   hashtag: [],

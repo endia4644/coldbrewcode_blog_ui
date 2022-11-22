@@ -43,11 +43,10 @@ export default function WriteSetting({
   const [seriesSelectYsno, setSeriesSelectYsno] = useState(false);
   const [prev, setPrev] = useState("");
   const spanRefs = useRef({});
-  const groupId = useSelector((state) => state.write.groupId);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [defaultFileList, setDefaultFileList] = useState([]);
-  const [publicSetting, setPublicSetting] = useState("public");
+  const [permission, setPermission] = useState("public");
   const [description, setDescription] = useState("");
 
   const handleCancel = () => setPreviewOpen(false);
@@ -74,7 +73,6 @@ export default function WriteSetting({
     const method = "post";
     const fmData = new FormData();
     fmData.append("image", file);
-    fmData.append("groupId", groupId);
     try {
       const res = await axios({
         url,
@@ -228,9 +226,9 @@ export default function WriteSetting({
                     <Radio.Group
                       defaultValue="public"
                       onChange={(e) => {
-                        setPublicSetting(e.target.value);
+                        setPermission(e.target.value);
                       }}
-                      className="public-setting"
+                      className="permission"
                       style={{
                         display: "flex",
                         flexDirection: "row",
@@ -480,24 +478,43 @@ export default function WriteSetting({
                     <Button
                       className="button-type-round button-color-reverse"
                       onClick={() => {
-                        let images = [];
+                        let imageIds = [];
+                        let hashtags = [];
                         if (postImages) {
-                          images = [...postImages];
+                          imageIds = [...postImages];
                         }
                         if (previewImage) {
-                          images.push(previewImage.id);
+                          imageIds.push(previewImage.id);
                         }
-                        console.log(publicSetting);
+                        if (hashtag) {
+                          hashtag.map((item) => {
+                            hashtags.push(item.key);
+                          });
+                        }
+                        console.log(permission);
                         console.log(description);
                         console.log(
                           previewImage?.fileName
                             ? `${API_HOST}/${previewImage?.fileName}`
                             : null
                         );
-                        console.log(hashtag);
+                        console.log(value);
+                        console.log(hashtags);
                         console.log(postName);
                         console.log(postContent);
-                        console.log(images);
+                        console.log(imageIds);
+                        dispatch(
+                          actions.fetchCreatePost({
+                            postName: postName,
+                            hashtags: hashtags,
+                            postDescription: description,
+                            postContent: postContent,
+                            postThumnail: `${previewImage?.fileName ?? null}`,
+                            permission: permission,
+                            seriesName: value,
+                            imageIds: imageIds,
+                          })
+                        );
                       }}
                     >
                       출간하기

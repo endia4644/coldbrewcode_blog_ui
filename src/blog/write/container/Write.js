@@ -58,22 +58,6 @@ export default function Write() {
     setCurrentTag("");
   };
 
-  const getGroupId = (today) => {
-    const year = today.getFullYear(); //현재 년도
-    const month = today.getMonth() + 1; // 현재 월
-    const date = today.getDate(); // 현제 날짜
-    const hours = today.getHours(); //현재 시간
-    const minutes = today.getMinutes(); //현재 분
-    const seconds = today.getSeconds(); //현재 분
-
-    return `endia1@endia.me-${year}${month}${date}${hours}${minutes}${seconds}`;
-  };
-
-  /* 시퀀스 생성 */
-  useEffect(() => {
-    dispatch(actions.setValue("groupId", getGroupId(today)));
-  }, [dispatch]);
-
   return (
     <>
       <AnimatePresence>
@@ -147,7 +131,6 @@ export default function Write() {
           htmlContent={htmlContent}
           getHtmlContent={getHtmlContent}
           imageMap={imageMap}
-          groupId={getGroupId(today)}
         />
       </Content>
       <Footer className="main-footer">

@@ -24,7 +24,6 @@ router.post("/", upload.single("image"), async (req, res, next) => {
   try {
     const result = await db.Image.create({
       fileName: req.file.filename,
-      groupId: req.body.groupId,
       saveYsno: false,
     });
     return res.json({ id: result.id, fileName: result.fileName });

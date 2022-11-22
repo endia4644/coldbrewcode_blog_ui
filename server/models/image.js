@@ -6,10 +6,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(100),
         allowNull: false,
       },
-      groupId: {
-        type: DataTypes.STRING(106),
-        allowNull: false,
-      },
       saveYsno: {
         type: DataTypes.BOOLEAN,
         default: false,
@@ -21,5 +17,17 @@ module.exports = (sequelize, DataTypes) => {
       collate: "utf8_general_ci",
     }
   );
+  Image.associate = (db) => {
+    db.Image.belongsTo(db.Post, {
+      foreignKey: {
+        allowNull: true,
+      },
+    });
+    db.Image.belongsTo(db.User, {
+      foreignKey: {
+        allowNull: true,
+      },
+    });
+  };
   return Image;
 };

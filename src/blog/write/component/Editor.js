@@ -49,7 +49,6 @@ export default function Editor({
   htmlContent,
   getHtmlContent,
   imageMap,
-  groupId,
   ...rest
 }) {
   const quillRef = useRef(null);
@@ -84,7 +83,6 @@ export default function Editor({
       // multer에 맞는 형식으로 데이터 만들어준다.
       const formData = new FormData();
       formData.append("image", file); // formData는 키-밸류 구조
-      formData.append("groupId", groupId); // 시퀀스ID 주입
       // 백엔드 multer라우터에 이미지를 보낸다.
       try {
         const res = await axios({
