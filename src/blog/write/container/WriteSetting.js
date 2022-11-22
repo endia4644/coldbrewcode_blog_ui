@@ -27,7 +27,13 @@ import { ImageIcon } from "../../../common/component/Icon";
 import { API_HOST } from "../../../common/constant";
 import { actions } from "../state";
 
-export default function WriteSetting({ setLevel }) {
+export default function WriteSetting({
+  setLevel,
+  hashtag,
+  postContent,
+  postName,
+  postImages,
+}) {
   const dispatch = useDispatch();
   const [isSeriesADD, setIsSeriesADD] = useState(false);
   const [seriesInput, setSeriesInput] = useState(null);
@@ -471,7 +477,29 @@ export default function WriteSetting({ setLevel }) {
                     >
                       임시저장
                     </Button>
-                    <Button className="button-type-round button-color-reverse">
+                    <Button
+                      className="button-type-round button-color-reverse"
+                      onClick={() => {
+                        let images = [];
+                        if (postImages) {
+                          images = [...postImages];
+                        }
+                        if (previewImage) {
+                          images.push(previewImage.id);
+                        }
+                        console.log(publicSetting);
+                        console.log(description);
+                        console.log(
+                          previewImage?.fileName
+                            ? `${API_HOST}/${previewImage?.fileName}`
+                            : null
+                        );
+                        console.log(hashtag);
+                        console.log(postName);
+                        console.log(postContent);
+                        console.log(images);
+                      }}
+                    >
                       출간하기
                     </Button>
                   </Space>

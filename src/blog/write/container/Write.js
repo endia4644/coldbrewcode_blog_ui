@@ -23,6 +23,7 @@ export default function Write() {
   const [hashtag, setHashtag] = useState([]);
   const [htmlContent, setHtmlContent] = useState(null);
   const [postName, setPostName] = useState(null);
+  const [imageArray, setImageArray] = useState([]);
 
   const [level, setLevel] = useState(0);
 
@@ -35,6 +36,7 @@ export default function Write() {
   };
 
   const detailSetting = () => {
+    imageArray.length = 0;
     insertHashTag();
 
     setLevel(1);
@@ -43,7 +45,7 @@ export default function Write() {
     dispatch(actions.setValue("hashtag", Array.from(tagRef.current)));
     htmlContent?.match(/[^='/]*\.(gif|jpg|jpeg|bmp|svg|png)/g)?.map((item) => {
       if (imageMap.current.get(item)) {
-        console.log(item);
+        imageArray.push(imageMap.current.get(item));
       }
     });
   };
@@ -75,7 +77,15 @@ export default function Write() {
   return (
     <>
       <AnimatePresence>
-        {level > 0 && <WriteSetting setLevel={setLevel} />}
+        {level > 0 && (
+          <WriteSetting
+            setLevel={setLevel}
+            hashtag={hashtag}
+            postContent={htmlContent}
+            postName={postName}
+            postImages={imageArray}
+          />
+        )}
       </AnimatePresence>
       <Content
         className="main-content main-writer"

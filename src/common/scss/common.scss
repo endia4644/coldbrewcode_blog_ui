@@ -13,18 +13,21 @@ body {
 }
 
 /* 아래의 모든 코드는 영역::코드로 사용 */
-.ant-radio-group::-webkit-scrollbar {
+.ant-radio-group::-webkit-scrollbar,
+.ql-editor::-webkit-scrollbar {
   width: 5px; /* 스크롤바의 너비 */
 }
 
-.ant-radio-group::-webkit-scrollbar-thumb {
+.ant-radio-group::-webkit-scrollbar-thumb,
+.ql-editor::-webkit-scrollbar-thumb {
   height: 30%; /* 스크롤바의 길이 */
   background: $antdGrayColor; /* 스크롤바의 색상 */
 
   border-radius: 10px;
 }
 
-.ant-radio-group::-webkit-scrollbar-track {
+.ant-radio-group::-webkit-scrollbar-track,
+.ql-editor::-webkit-scrollbar-track {
   background: rgba(33, 122, 244, 0.1); /*스크롤바 뒷 배경 색상*/
 }
 
