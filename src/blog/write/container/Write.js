@@ -107,9 +107,12 @@ export default function Write() {
                 <Col key={item.hashtagName}>
                   <Button
                     key={item.hashtagName}
+                    data-hashtag={item.hashtagName}
                     onClick={() => {
                       setHashtag(
-                        hashtag.filter((item) => item.key !== item.hashtagName)
+                        hashtag.filter((tag) => {
+                          return item.key !== tag.hashtagName;
+                        })
                       );
                       tagRef.current.delete(item.hashtagName);
                     }}
