@@ -419,7 +419,6 @@ export default function WriteSetting({ setLevel }) {
                       style={{
                         backgroundColor: "white",
                         marginTop: "auto",
-                        zIndex: 2,
                       }}
                     >
                       <Space>
@@ -450,7 +449,7 @@ export default function WriteSetting({ setLevel }) {
                 )}
               </Row>
             </Content>
-            <Footer className="main-footer">
+            <Footer className="main-footer" style={{ zIndex: 1 }}>
               <Row>
                 <Col flex="auto">
                   <Button
