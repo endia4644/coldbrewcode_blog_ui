@@ -12,6 +12,7 @@ import WriteSetting from "./WriteSetting";
 import { AnimatePresence } from "framer-motion";
 
 export default function Write() {
+  const today = new Date(); // today 객체에 Date()의 결과를 넣어줬다
   const { id: postId } = useParams();
   const dispatch = useDispatch();
 
@@ -40,11 +41,11 @@ export default function Write() {
     dispatch(actions.setValue("postName", postName));
     dispatch(actions.setValue("postContent", htmlContent));
     dispatch(actions.setValue("hashtag", Array.from(tagRef.current)));
-    htmlContent?.match(/[^='/]*\.(gif|jpg|jpeg|bmp|svg|png)/g)?.map(item => {
+    htmlContent?.match(/[^='/]*\.(gif|jpg|jpeg|bmp|svg|png)/g)?.map((item) => {
       if (imageMap.current.get(item)) {
         console.log(item);
       }
-    })
+    });
   };
 
   const insertHashTag = () => {
@@ -55,8 +56,7 @@ export default function Write() {
     setCurrentTag("");
   };
 
-  const getGroupId = () => {
-    const today = new Date(); // today 객체에 Date()의 결과를 넣어줬다
+  const getGroupId = (today) => {
     const year = today.getFullYear(); //현재 년도
     const month = today.getMonth() + 1; // 현재 월
     const date = today.getDate(); // 현제 날짜
@@ -69,7 +69,7 @@ export default function Write() {
 
   /* 시퀀스 생성 */
   useEffect(() => {
-    dispatch(actions.setValue("groupId", getGroupId()));
+    dispatch(actions.setValue("groupId", getGroupId(today)));
   }, [dispatch]);
 
   return (
@@ -134,6 +134,7 @@ export default function Write() {
           htmlContent={htmlContent}
           getHtmlContent={getHtmlContent}
           imageMap={imageMap}
+          groupId={getGroupId(today)}
         />
       </Content>
       <Footer className="main-footer">

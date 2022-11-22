@@ -49,12 +49,11 @@ export default function Editor({
   htmlContent,
   getHtmlContent,
   imageMap,
+  groupId,
   ...rest
 }) {
   const quillRef = useRef(null);
-  const groupId = useSelector((state) => state.write.groupId);
 
-  imageMap.current.set('eee', 'eee')
   useEffect(() => {
     if (!postId) {
       return;
@@ -85,7 +84,6 @@ export default function Editor({
       // multer에 맞는 형식으로 데이터 만들어준다.
       const formData = new FormData();
       formData.append("image", file); // formData는 키-밸류 구조
-      console.log(groupId);
       formData.append("groupId", groupId); // 시퀀스ID 주입
       // 백엔드 multer라우터에 이미지를 보낸다.
       try {
@@ -97,7 +95,10 @@ export default function Editor({
           withCredentials: true,
         })
           .then((response) => {
-            return { id: response?.data?.id ?? null, fileName: response?.data?.fileName ?? null }
+            return {
+              id: response?.data?.id ?? null,
+              fileName: response?.data?.fileName ?? null,
+            };
           })
           .catch((err) => {
             return null;
@@ -198,4 +199,4 @@ export default function Editor({
       ></ReactQuill>
     </>
   );
-};
+}
