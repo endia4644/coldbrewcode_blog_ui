@@ -41,29 +41,33 @@ const reducer = createReducer(INITIAL_STATE, {
     if (!state.fetchInfo.fetchStatusMap[actionType]) {
       state.fetchInfo.fetchStatusMap[actionType] = {};
     }
-    state.fetchInfo.fetchStatusMap[actionType][fetchKey] = status;
+    if (status === FetchStatus.Delete) {
+      state.fetchInfo.fetchStatusMap[actionType] = {};
+    } else {
+      state.fetchInfo.fetchStatusMap[actionType][fetchKey] = status;
 
-    if (status !== FetchStatus.Request) {
-      if (state.fetchInfo.isSlowMap[actionType]) {
-        state.fetchInfo.isSlowMap[actionType][fetchKey] = false;
-      }
-      if (totalCount !== undefined) {
-        if (!state.fetchInfo.totalCountMap[actionType]) {
-          state.fetchInfo.totalCountMap[actionType] = {};
+      if (status !== FetchStatus.Request) {
+        if (state.fetchInfo.isSlowMap[actionType]) {
+          state.fetchInfo.isSlowMap[actionType][fetchKey] = false;
         }
-        state.fetchInfo.totalCountMap[actionType][fetchKey] = totalCount;
-      }
-      if (nextPage !== undefined) {
-        if (!state.fetchInfo.nextPageMap[actionType]) {
-          state.fetchInfo.nextPageMap[actionType] = {};
+        if (totalCount !== undefined) {
+          if (!state.fetchInfo.totalCountMap[actionType]) {
+            state.fetchInfo.totalCountMap[actionType] = {};
+          }
+          state.fetchInfo.totalCountMap[actionType][fetchKey] = totalCount;
         }
-        state.fetchInfo.nextPageMap[actionType][fetchKey] = nextPage;
-      }
-      if (!state.fetchInfo.errorMessageMap[actionType]) {
-        state.fetchInfo.errorMessageMap[actionType] = {};
-      }
-      if (errorMessage) {
-        state.fetchInfo.errorMessageMap[actionType][fetchKey] = errorMessage;
+        if (nextPage !== undefined) {
+          if (!state.fetchInfo.nextPageMap[actionType]) {
+            state.fetchInfo.nextPageMap[actionType] = {};
+          }
+          state.fetchInfo.nextPageMap[actionType][fetchKey] = nextPage;
+        }
+        if (!state.fetchInfo.errorMessageMap[actionType]) {
+          state.fetchInfo.errorMessageMap[actionType] = {};
+        }
+        if (errorMessage) {
+          state.fetchInfo.errorMessageMap[actionType][fetchKey] = errorMessage;
+        }
       }
     }
   },

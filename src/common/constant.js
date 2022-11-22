@@ -4,6 +4,7 @@ export const FetchStatus = {
   Request: 'Request',
   Success: 'Success',
   Fail: 'Fail',
+  Delete: 'Delete'
 };
 export const AuthStatus = {
   Login: 'Login',

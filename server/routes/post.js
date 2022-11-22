@@ -53,12 +53,6 @@ router.post("/", async (req, res, next) => {
         await hashtags.map((r) => newPost.addHashtags(r[0]));
       }
       /* 사용한 이미지의 저장여부를 변경해준다. */
-      console.log(newPost?.id);
-      console.log(newPost?.id);
-      console.log(newPost?.id);
-      console.log(newPost?.id);
-      console.log(newPost?.id);
-      console.log(newPost?.id);
       if (req.body.imageIds.length > 0) {
         await db.Image.update(
           {
@@ -85,7 +79,9 @@ router.post("/", async (req, res, next) => {
           },
         ],
       });
-      return res.send(makeResponse({ data: fullPost }));
+      setTimeout(() => {
+        return res.send(makeResponse({ data: fullPost }));
+      }, 3000)
     });
   } catch (err) {
     console.error(err);

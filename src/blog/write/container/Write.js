@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Content, Footer } from "antd/lib/layout/layout";
 import "react-quill/dist/quill.snow.css";
 import Editor from "../component/Editor";
@@ -6,19 +6,19 @@ import { Button, Col, Divider, Input, Row, Space } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom"; // 설치한 패키지
 import "../scss/write.scss";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { actions } from "../state";
 import WriteSetting from "./WriteSetting";
 import { AnimatePresence } from "framer-motion";
 
+
 export default function Write() {
-  const today = new Date(); // today 객체에 Date()의 결과를 넣어줬다
   const { id: postId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const tagRef = useRef(new Set());
   const imageMap = useRef(new Map());
-  const navigate = useNavigate();
   const [currentTag, setCurrentTag] = useState("");
   const [hashtag, setHashtag] = useState([]);
   const [htmlContent, setHtmlContent] = useState(null);

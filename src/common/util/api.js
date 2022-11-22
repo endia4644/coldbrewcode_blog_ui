@@ -34,6 +34,7 @@ export function callApi({ method = "get", url, params, data }) {
       };
     });
   } catch (err) {
+    console.log(err);
     return {
       isSuccess: false,
       data: null,

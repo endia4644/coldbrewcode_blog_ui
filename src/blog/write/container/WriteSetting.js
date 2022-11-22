@@ -23,9 +23,12 @@ import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { ImageIcon } from "../../../common/component/Icon";
-import { API_HOST } from "../../../common/constant";
-import { actions } from "../state";
+import { API_HOST, FetchStatus } from "../../../common/constant";
+import useFetchInfo from "../../../common/hook/useFetchInfo";
+import { actions, Types } from "../state";
+import { actions as common } from "../../../common/state";
 
 export default function WriteSetting({
   setLevel,
@@ -35,6 +38,12 @@ export default function WriteSetting({
   postImages,
 }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const goBlog = () => {
+    navigate("/blog");
+  };
+
   const [isSeriesADD, setIsSeriesADD] = useState(false);
   const [seriesInput, setSeriesInput] = useState(null);
   const [inputFocus, setInputFocus] = useState(false);
@@ -48,6 +57,53 @@ export default function WriteSetting({
   const [defaultFileList, setDefaultFileList] = useState([]);
   const [permission, setPermission] = useState("public");
   const [description, setDescription] = useState("");
+
+  const { fetchStatus, isFetching } = useFetchInfo(Types.FetchCreatePost);
+  const key = 'updatable';
+  const openMessage = (fetchStatus) => {
+    if (fetchStatus == FetchStatus.Success) {
+      message.success({
+        content: '작성이 완료되었습니다',
+        key,
+        duration: 2,
+      });
+      setTimeout(() => {
+        goBlog();
+        deleteStatus(Types.FetchCreatePost, Types.FetchCreatePost);
+      }, 2000);
+    } else if (fetchStatus == FetchStatus.Success) {
+      message.error({
+        content: '작성 중 오류가 발생했습니다',
+        key,
+        duration: 2,
+      });
+    } else if (fetchStatus == FetchStatus.Request) {
+      message.loading({
+        content: '처리중',
+        key,
+      });
+    }
+  };
+
+  function deleteStatus(actionType, fetchKey) {
+    const params = {
+      actionType,
+      fetchKey,
+      status: FetchStatus.Delete,
+    };
+    dispatch(common.setFetchStatus(params));
+  }
+
+
+
+  useEffect(() => {
+    if (fetchStatus === FetchStatus.Request) {
+      openMessage(fetchStatus);
+    }
+    if (fetchStatus !== FetchStatus.Request) {
+      openMessage(fetchStatus);
+    }
+  }, [fetchStatus]);
 
   const handleCancel = () => setPreviewOpen(false);
 
@@ -163,9 +219,8 @@ export default function WriteSetting({
         <motion.div layoutId={`item-motion`}>
           <div className="content content-detail">
             <Content
-              className={`main-content main-writer main-writer-detail ${
-                isSeriesADD ? "isSeriesADD" : ""
-              }`}
+              className={`main-content main-writer main-writer-detail ${isSeriesADD ? "isSeriesADD" : ""
+                }`}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -408,8 +463,8 @@ export default function WriteSetting({
                                 {item.seriesName}
                                 <span
                                   ref={(element) =>
-                                    (spanRefs.current[item.seriesName] =
-                                      element)
+                                  (spanRefs.current[item.seriesName] =
+                                    element)
                                   }
                                 />
                               </Radio.Button>
@@ -460,6 +515,7 @@ export default function WriteSetting({
                     style={{ fontWeight: 700 }}
                     className="button-border-hide button-type-round"
                     icon={<ArrowLeftOutlined />}
+                    disabled={isFetching}
                     onClick={() => {
                       setLevel(0);
                     }}
@@ -472,11 +528,13 @@ export default function WriteSetting({
                     <Button
                       style={{ fontWeight: 700 }}
                       className="button-border-hide button-type-round"
+                      disabled={isFetching}
                     >
                       임시저장
                     </Button>
                     <Button
                       className="button-type-round button-color-reverse"
+                      disabled={isFetching}
                       onClick={() => {
                         let imageIds = [];
                         let hashtags = [];
@@ -491,18 +549,6 @@ export default function WriteSetting({
                             hashtags.push(item.key);
                           });
                         }
-                        console.log(permission);
-                        console.log(description);
-                        console.log(
-                          previewImage?.fileName
-                            ? `${API_HOST}/${previewImage?.fileName}`
-                            : null
-                        );
-                        console.log(value);
-                        console.log(hashtags);
-                        console.log(postName);
-                        console.log(postContent);
-                        console.log(imageIds);
                         dispatch(
                           actions.fetchCreatePost({
                             postName: postName,
