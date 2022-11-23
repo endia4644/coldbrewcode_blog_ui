@@ -16,7 +16,6 @@ export default function Signup() {
 
   const navigate = useNavigate();
 
-  const { Option } = Select;
   const selectAfter = <>@</>;
   return (
     <AuthLayout onFinish={onFinish}>
@@ -47,28 +46,27 @@ export default function Signup() {
             },
           ]}
         >
-          <Input.Group compact>
+          <Input.Group compact style={{ display: "flex" }}>
             <Input autoFocus addonAfter={selectAfter} placeholder="" />
             <Select
-              defaultValue="lucy"
+              defaultValue="naver.com"
               style={{ width: 120 }}
               options={[
                 {
-                  value: "jack",
-                  label: "Jack",
+                  value: "naver.com",
+                  label: "naver.com",
                 },
                 {
-                  value: "lucy",
-                  label: "Lucy",
+                  value: "daum.net",
+                  label: "daum.net",
                 },
                 {
-                  value: "disabled",
-                  disabled: true,
-                  label: "Disabled",
+                  value: "gmail.com",
+                  label: "gmail.com",
                 },
                 {
-                  value: "Yiminghe",
-                  label: "yiminghe",
+                  value: "직접선택",
+                  label: "직접선택",
                 },
               ]}
             />
