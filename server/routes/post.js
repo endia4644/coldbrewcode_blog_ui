@@ -7,7 +7,7 @@ const { makeResponse } = require("../util");
 
 const router = express.Router();
 
-router.post("/", async (req, res, next) => {
+router.post("/", isLoggedIn, async (req, res, next) => {
   try {
     //* 트랜잭션 설정
     await db.sequelize.transaction(async (t) => {
@@ -32,7 +32,7 @@ router.post("/", async (req, res, next) => {
           likeCnt: 0,
           permission: req.body.permission,
           dltYsno: "N",
-          UserId: 1,
+          UserId: req.user.id,
           SeriesId: series?.id ?? null,
         },
         {
@@ -81,7 +81,7 @@ router.post("/", async (req, res, next) => {
       });
       setTimeout(() => {
         return res.send(makeResponse({ data: fullPost }));
-      }, 3000)
+      }, 2000);
     });
   } catch (err) {
     console.error(err);

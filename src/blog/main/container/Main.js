@@ -8,6 +8,7 @@ import UserInfo from "./UserInfo";
 import Post from "../component/Post";
 import { useDispatch, useSelector } from "react-redux";
 import { actions } from "../state";
+import { actions as authActions } from "../../auth/state";
 import Series from "../component/Series";
 import { UpArrowIcon } from "../../../common/component/Icon";
 import "../scss/main.scss";
@@ -38,12 +39,17 @@ export default function Main() {
   const onTabClick = (target) => {
     dispatch(actions.setValue("activeKey", target));
   };
+
+  function logout() {
+    dispatch(authActions.fetchLogout());
+  }
+
   return (
     <>
       <Header className="site-layout-background main-header fix-menu">
         <Row justify="end">
           <Col>
-            <Settings logout={() => {}} />
+            <Settings logout={logout} />
           </Col>
         </Row>
       </Header>

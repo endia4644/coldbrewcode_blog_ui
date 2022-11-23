@@ -8,7 +8,7 @@ const session = require("express-session");
 const cookie = require("cookie-parser");
 const morgan = require("morgan");
 
-const userRouter = require("./routes/user");
+const authRouter = require("./routes/auth");
 const postRouter = require("./routes/post");
 const commentRouter = require("./routes/comment");
 const seriesRouter = require("./routes/series");
@@ -45,11 +45,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get("/", (req, res) => {
-  res.send("안녕 제로초!");
-});
-
-app.use("/user", userRouter);
+app.use("/auth", authRouter);
 app.use("/post", postRouter);
 app.use("/comment", commentRouter);
 app.use("/series", seriesRouter);

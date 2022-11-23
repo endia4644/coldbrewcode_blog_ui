@@ -9,6 +9,9 @@ import Blog from "./blog/main/container/Main";
 import Write from "./blog/write/container/Write";
 import "antd/dist/antd.min.css";
 import "./common/scss/common.scss";
+import Login from "./blog/auth/container/Login";
+import { actions as authActions } from "./blog/auth/state";
+import { useDispatch } from "react-redux";
 
 export default function App() {
   function setScreenSize() {
@@ -34,6 +37,18 @@ export default function App() {
     getItem(<Link to={"/"}>About</Link>, "/", <CoffeeOutlined />),
     getItem(<Link to={"/blog"}>Blog</Link>, "/blog", <BarsOutlined />),
   ];
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(authActions.fetchUser());
+  }, [dispatch]);
+
+  useEffect(() => {
+    const bodyEl = document.getElementsByTagName("body")[0];
+    const loadingEl = document.getElementById("init-loading");
+    bodyEl.removeChild(loadingEl);
+  }, []);
+
   return (
     <>
       <Layout
@@ -67,6 +82,7 @@ export default function App() {
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/write" element={<Write />} />
             <Route path="/blog/write/:id" element={<Write />} />
+            <Route path="/blog/login" element={<Login />} />
           </Routes>
         </Layout>
       </Layout>
