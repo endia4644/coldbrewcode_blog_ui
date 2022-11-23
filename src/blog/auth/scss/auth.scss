@@ -1,0 +1,26 @@
+@import "./../../../common/scss/vars.scss";
+
+/*
+  $xs: 576px;
+  $sm: 576px;
+  $md: 768px;
+  $lg: 992px;
+  $xl: 1200px;
+  $xxl: 1600px;
+*/
+
+.ant-row {
+  &.ant-row-center {
+    .ant-card-actions {
+      justify-content: space-between;
+      align-items: center;
+    }
+    .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover,
+    .ant-input-affix-wrapper-focused,
+    .ant-input-affix-wrapper:focus {
+      border-color: $subColor;
+      border-right-width: 1px;
+      box-shadow: 0 0 3px 1px $mainColor;
+    }
+  }
+}

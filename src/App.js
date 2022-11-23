@@ -12,6 +12,7 @@ import "./common/scss/common.scss";
 import Login from "./blog/auth/container/Login";
 import { actions as authActions } from "./blog/auth/state";
 import { useDispatch } from "react-redux";
+import Signup from "./blog/auth/container/Signup";
 
 export default function App() {
   function setScreenSize() {
@@ -83,6 +84,7 @@ export default function App() {
             <Route path="/blog/write" element={<Write />} />
             <Route path="/blog/write/:id" element={<Write />} />
             <Route path="/blog/login" element={<Login />} />
+            <Route path="/blog/signup" element={<Signup />} />
           </Routes>
         </Layout>
       </Layout>

@@ -12,7 +12,9 @@ export default function AuthLayout({ children, onFinish }) {
     <>
       <Row justify="center" style={{ marginTop: 100 }}>
         <Col>
-          <Typography.Title>ColdBrewCode</Typography.Title>
+          <Typography.Title style={{ color: "#634426" }}>
+            ColdBrewCode
+          </Typography.Title>
         </Col>
       </Row>
       <Row justify="center">

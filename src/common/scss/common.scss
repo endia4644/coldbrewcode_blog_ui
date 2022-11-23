@@ -129,6 +129,10 @@ a:hover {
   }
 }
 
+.ant-btn {
+  transition-duration: 0.1s;
+}
+
 .ant-btn:active,
 .ant-btn:focus,
 .ant-btn:hover,
@@ -143,9 +147,9 @@ a:hover {
 
 .ant-btn-ghost:focus,
 .ant-btn-ghost:hover {
-  color: $mainColor;
+  color: $fontColor;
   border-color: $mainColor;
-  background: transparent;
+  background: $subColor;
 }
 
 .ant-menu-vertical .ant-menu-item::after,
@@ -199,6 +203,12 @@ a:hover {
       padding: 4px 16px;
       font-size: 14px;
       border-radius: 4px;
+    }
+    &-circle {
+      height: 32px;
+      padding: 4px 16px;
+      font-size: 14px;
+      border-radius: 10px;
     }
   }
 

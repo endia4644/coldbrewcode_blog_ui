@@ -95,18 +95,17 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
         console.error(err);
         return next(err);
       }
-      const info = {
-        id: user.id,
-        email: user.email,
-        nickname: user.nickname,
-        userType: user.userType,
-        profileImg: user.profileImg,
-        commentNoticeYsno: user.commentNoticeYsno,
-        newPostNoticeYsno: user.newPostNoticeYsno,
-      };
       return res.send(
         makeResponse({
-          data: { info },
+          data: {
+            id: user.id,
+            email: user.email,
+            nickname: user.nickname,
+            userType: user.userType,
+            profileImg: user.profileImg,
+            commentNoticeYsno: user.commentNoticeYsno,
+            newPostNoticeYsno: user.newPostNoticeYsno,
+          },
         })
       );
     });
