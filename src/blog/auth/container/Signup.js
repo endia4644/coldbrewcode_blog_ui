@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import AuthLayout from "../component/AuthLayout";
-import { Input, Button, Form, Row, Card, Typography, Select, message } from "antd";
+import { Input, Button, Form, Row, Card, Typography, Select, message, Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { actions } from "../state";
@@ -9,29 +9,30 @@ import useBlockLoginUser from "../hook/useBlockLoginUser";
 export default function Signup() {
   useBlockLoginUser();
   const dispatch = useDispatch();
-  function onFinish({ name }) {
-    const email = `${name}${EMAIL_SUFFIX}`;
-    dispatch(actions.fetchSignup(email));
+  function onFinish() {
+    let email = '';
+    if (!selfSelect) {
+      email = `${id}@${selectedOption}`
+    } else {
+      email = `${id}@${selfSelect}`
+    }
+    console.log(email);
   }
 
   const navigate = useNavigate();
 
   const selectAfter = <>@</>;
 
-  const [selectedOption, setSelectedOption] = useState('');
+  const defaultSelect = 'naver.com';
+
+  const [selectedOption, setSelectedOption] = useState(defaultSelect);
   const [selfSelect, setSelfSelect] = useState('');
   const [id, setId] = useState('');
-  const [email, setEmail] = useState('');
   const selectRef = useRef(null);
 
   useLayoutEffect(() => {
     if (selectRef.current != null) selectRef.current.focus();
   })
-  function emailSend() {
-    if (id === '') {
-      return message.error('이메일을 입력해주세요.');
-    }
-  }
   return (
     <AuthLayout onFinish={onFinish}>
       <Card
@@ -52,25 +53,27 @@ export default function Signup() {
           </Typography.Text>,
         ]}
       >
-        <Form.Item
-          name="name"
-          rules={[
-            {
-              required: true,
-              message: "Please input your email!",
-            },
-          ]}
-        >
-          <Input.Group compact style={{ display: "flex" }}>
+        <Space style={{ display: 'flex' }} size={0}>
+          <Form.Item
+            name="email"
+            rules={[
+              {
+                required: true,
+                message: "이메일을 입력하세요!",
+              },
+            ]}
+          >
             <Input
               value={id}
               onChange={(e) => setId(e.target.value)}
               addonAfter={selectAfter}
               placeholder="" />
+          </Form.Item>
+          <Form.Item>
             {selectedOption !== 'selfSelect' && (
               <Select
-                defaultValue="naver.com"
-                style={{ width: 120, minWidth: 120 }}
+                defaultValue={defaultSelect}
+                style={{ width: 120, minWidth: 120, height: '32.19px' }}
                 onChange={(e) => setSelectedOption(e)}
                 options={[
                   {
@@ -92,17 +95,19 @@ export default function Signup() {
                 ]}
               />
             )}
+          </Form.Item>
+          <Form.Item>
             {selectedOption === 'selfSelect' && (
               <Input
                 ref={selectRef}
                 value={selfSelect}
                 onChange={(e) => setSelfSelect(e.target.value)}
-                onBlur={() => { if (selfSelect === '') setSelectedOption('') }}
-                style={{ width: 120, minWidth: 120 }}
+                onBlur={() => { if (selfSelect === '') setSelectedOption(defaultSelect) }}
+                style={{ width: 120, minWidth: 120, height: '32.19px' }}
                 placeholder="직접 입력하세요." />
             )}
-          </Input.Group>
-        </Form.Item>
+          </Form.Item>
+        </Space>
         <Form.Item>
           <Button
             className="button-type-round button-color-reverse"
@@ -113,7 +118,6 @@ export default function Signup() {
               height: 48,
               border: "1px solid #f8f9fb",
             }}
-            onClick={() => { emailSend() }}
           >
             인증 메일 받기
           </Button>

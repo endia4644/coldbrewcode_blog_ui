@@ -15,6 +15,7 @@
       justify-content: space-between;
       align-items: center;
     }
+
     .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover,
     .ant-input-affix-wrapper-focused,
     .ant-input-affix-wrapper:focus {
@@ -23,4 +24,26 @@
       box-shadow: 0 0 3px 1px $mainColor;
     }
   }
+}
+
+.ant-form-item-control-input-content {
+  .ant-select {
+    .ant-select-selector {
+      height: 100%;
+    }
+  }
+
+  .ant-select:not(.ant-select-disabled):hover .ant-select-selector,
+  .ant-select:not(.ant-select-disabled):active .ant-select-selector,
+  .ant-select:not(.ant-select-disabled):focus .ant-select-selector,
+  .ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
+    border-color: $subColor;
+    box-shadow: 0 0 0 1px #d8b48b;
+  }
+}
+
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  color: $fontColor;
+  font-weight: 600;
+  background-color: $subColor;
 }
