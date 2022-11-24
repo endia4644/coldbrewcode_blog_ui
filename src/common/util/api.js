@@ -39,7 +39,7 @@ export function callApi({ method = "get", url, params, data }) {
       isSuccess: false,
       data: null,
       resultCode: "ERROR",
-      resultMessage: "ERROR",
+      resultMessage: err,
       totalCount: 0,
     };
   }

@@ -15,14 +15,14 @@ module.exports = () => {
           const exUser = await db.User.findOne({ where: { email: email } });
           if (!exUser) {
             return done(null, false, {
-              message: "존재하지 않는 사용자입니다.",
+              message: "아이디나 비밀번호를 다시 확인해주세요.",
             });
           }
           const result = await bcrypt.compare(password, exUser.password);
           if (result) {
             return done(null, exUser);
           } else {
-            return done(null, false, { message: "비밀번호가 틀립니다." });
+            return done(null, false, { message: "아이디나 비밀번호를 다시 확인해주세요." });
           }
         } catch (err) {
           console.error(err);

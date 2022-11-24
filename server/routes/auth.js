@@ -87,7 +87,7 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
       return next(err);
     }
     if (info) {
-      return res.status(401).send(info.message);
+      return res.json(makeResponse({ resultCode: -1, resultMessage: info.message }))
     }
     return req.login(user, async (err) => {
       //세선에다 사용자 정보 저장

@@ -85,7 +85,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
     });
   } catch (err) {
     console.error(err);
-    return res.status(500).send(makeResponse({ resultCode: 999 }));
+    return res.json(makeResponse({ resultCode: -1, resultMessage: '게시글 작성 중 오류가 발생했습니다.' }))
   }
 });
 
@@ -135,7 +135,7 @@ router.patch("/", async (req, res, next) => {
     });
   } catch (err) {
     console.error(err);
-    next(err);
+    res.json(makeResponse({ resultCode: -1, resultMessage: '게시글 수정 중 오류가 발생했습니다.' }))
   }
 });
 
@@ -223,10 +223,10 @@ router.get("/", async (req, res, next) => {
         id: postId,
       },
     });
-    res.send(makeResponse({ data: posts, totalCount: postCnt }));
+    return res.send(makeResponse({ data: posts, totalCount: postCnt }));
   } catch (err) {
     console.error(err);
-    next(err);
+    return res.json(makeResponse({ resultCode: -1, resultMessage: '게시글 작성 중 오류가 발생했습니다.' }))
   }
 });
 
@@ -274,10 +274,10 @@ router.get("/:id", async (req, res, next) => {
         [db.Comment, "createdAt", "DESC"],
       ],
     });
-    res.send(makeResponse({ data: posts }));
+    return res.send(makeResponse({ data: posts }));
   } catch (err) {
     console.error(err);
-    next(err);
+    return res.json(makeResponse({ resultCode: -1, resultMessage: '게시글 조회 중 오류가 발생했습니다.' }))
   }
 });
 
@@ -289,10 +289,10 @@ router.get("/:id/content", async (req, res, next) => {
       },
       attributes: ["postContent"],
     });
-    res.send(makeResponse({ data: posts }));
+    return res.send(makeResponse({ data: posts }));
   } catch (err) {
     console.error(err);
-    next(err);
+    return res.json(makeResponse({ resultCode: -1, resultMessage: '게시글 내용 조회 중 오류가 발생했습니다.' }))
   }
 });
 
@@ -333,10 +333,10 @@ router.delete("/:id", async (req, res, next) => {
         }
       }
     });
-    res.send(makeResponse({ data: "SUCCESS" }));
+    return res.send(makeResponse({ data: "SUCCESS" }));
   } catch (err) {
     console.error(err);
-    next(err);
+    return res.json(makeResponse({ resultCode: -1, resultMessage: '게시글 삭제 중 오류가 발생했습니다.' }))
   }
 });
 
