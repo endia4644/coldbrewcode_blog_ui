@@ -12,6 +12,7 @@ export const Types = {
   FetchSignup: "auth/FetchSignup",
   FetchUser: "auth/FetchUser",
   FetchLogout: "auth/FetchLogout",
+  FetchEmail: "auth/FetchEmail",
 };
 
 export const actions = {
@@ -32,6 +33,10 @@ export const actions = {
   }),
   fetchUser: () => ({
     type: Types.FetchUser,
+  }),
+  fetchEmail: (email) => ({
+    type: Types.FetchEmail,
+    email,
   }),
 };
 

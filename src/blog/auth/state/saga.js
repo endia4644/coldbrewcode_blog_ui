@@ -51,6 +51,14 @@ function* fetchUser() {
   }
 }
 
+function* fetchEmail(action) {
+  const { isSuccess, data } = yield call(callApi, {
+    method: 'post',
+    url: "/auth/email",
+    data: { email: action.email }
+  });
+}
+
 export default function* () {
   yield all([
     takeLeading(
@@ -68,6 +76,10 @@ export default function* () {
     takeLeading(
       Types.FetchLogout,
       makeFetchSaga({ fetchSaga: fetchLogout, canCache: false })
+    ),
+    takeLeading(
+      Types.FetchEmail,
+      makeFetchSaga({ fetchSaga: fetchEmail, canCache: false })
     ),
   ]);
 }
