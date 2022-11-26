@@ -47,59 +47,17 @@ router.post("/email", isNotLoggedIn, async (req, res, next) => {
     }
 
     const id = randomString();
-    // 본인 Gmail 계정
-    const EMAIL = "endia9858@gmail.com";
-    const EMAIL_PW = "onoybeebixsrlhym";
 
-    const newPost = db.Email.create({
-      id: randomString(),
+    const newEmail = await db.Email.create({
+      id: id,
       address: req.body.email
     })
 
-    // 이메일 수신자
-    let receiverEmail = req.body.email;
-
-    // transport 생성
-    let transport = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: EMAIL,
-        pass: EMAIL_PW,
-      },
-    });
-
-    const href = `http://localhost:3000/blog/register?code=${id}`;
-
-    // 전송할 email 내용 작성
-    let mailOptions = {
-      from: EMAIL,
-      to: receiverEmail,
-      subject: "ColdBrewCode 회원가입",
-      html: `
-          <div>
-            <div style="max-width: 100%; width: 400px; margin: 0 auto; padding: 1rem; text-align: justify; background: #f8f9fa; border: 1px solid #dee2e6; box-sizing: border-box; border-radius: 4px; color: #868e96; margin-top: 0.5rem; box-sizing: border-box;" id="ext-gen1043"><b style="black">안녕하세요!</b> 회원가입을 계속하시려면 하단의 링크를 클릭하세요. 만약에 실수로 요청하셨거나, 본인이 요청하지 않았다면, 이 메일을 무시하세요.</div>
-            <a href="${href}" style="width: 400px; text-decoration: none; text-align:center; display:block; margin: 0 auto; margin-top: 1rem; background: #845ef7; padding-top: 1rem; color: white; font-size: 1.25rem; padding-bottom: 1rem; font-weight: 600; border-radius: 4px;" target="_blank">계속하기</a>
-            <div style="text-align: center; margin-top: 1rem; color: #868e96; font-size: 0.85rem;">
-            <div>위 버튼을 클릭하시거나, 다음 링크를 열으세요:<br>
-              <a style="color: #b197fc;" href="${href}" target="_blank">${href}</a></div>
-              <br>
-              <div>이 링크는 24시간동안 유효합니다.</div>
-            </div>
-          </div>
-        `,
-    };
-
-    // email 전송
-    transport.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log(error);
-        return;
-      }
-
-      console.log(info);
-      console.log("send mail success!");
-    });
-    return res.send(makeResponse({ data: 'OK' }));
+    const send = await mailSend(req.body.email, id);
+    if (send) {
+      return res.send(makeResponse({ resultCode: -1, resultMessage: '메일 전송 중 오류가 발생했습니다.' }));
+    }
+    return res.send(makeResponse({ data: newEmail }));
   } catch (err) {
     console.log(err);
     return next(err);
@@ -243,6 +201,53 @@ function randomString() {
     randomstring += chars.substring(rnum, rnum + 1)
   }
   return randomstring
+}
+
+async function mailSend(receiverEmail, id) {
+
+  // 본인 Gmail 계정
+  const EMAIL = "endia9858@gmail.com";
+  const EMAIL_PW = "onoybeebixsrlhym";
+
+  // transport 생성
+  let transport = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: EMAIL,
+      pass: EMAIL_PW,
+    },
+  });
+
+  const href = `http://localhost:3000/blog/register?code=${id}`;
+
+  // 전송할 email 내용 작성
+  let mailOptions = {
+    from: EMAIL,
+    to: receiverEmail,
+    subject: "ColdBrewCode 회원가입",
+    html: `
+          <div>
+            <div style="max-width: 100%; width: 400px; margin: 0 auto; padding: 1rem; text-align: justify; background: #f8f9fa; border: 1px solid #dee2e6; box-sizing: border-box; border-radius: 4px; color: #868e96; margin-top: 0.5rem; box-sizing: border-box;" id="ext-gen1043"><b style="black">안녕하세요!</b> 회원가입을 계속하시려면 하단의 링크를 클릭하세요. 만약에 실수로 요청하셨거나, 본인이 요청하지 않았다면, 이 메일을 무시하세요.</div>
+            <a href="${href}" style="width: 400px; text-decoration: none; text-align:center; display:block; margin: 0 auto; margin-top: 1rem; background: #845ef7; padding-top: 1rem; color: white; font-size: 1.25rem; padding-bottom: 1rem; font-weight: 600; border-radius: 4px;" target="_blank">계속하기</a>
+            <div style="text-align: center; margin-top: 1rem; color: #868e96; font-size: 0.85rem;">
+            <div>위 버튼을 클릭하시거나, 다음 링크를 열으세요:<br>
+              <a style="color: #b197fc;" href="${href}" target="_blank">${href}</a></div>
+              <br>
+              <div>이 링크는 24시간동안 유효합니다.</div>
+            </div>
+          </div>
+        `,
+  };
+
+  // email 전송
+  await transport.sendMail(mailOptions)
+    .then(() => {
+      return;
+    })
+    .catch((err) => {
+      console.error(err);
+      return err;
+    })
 }
 
 module.exports = router;
