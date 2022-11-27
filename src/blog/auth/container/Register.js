@@ -1,10 +1,12 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import AuthLayout from "../component/AuthLayout";
 import { Input, Button, Form, Row, Card, Typography, Select, message, Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { actions } from "../state";
 import useBlockLoginUser from "../hook/useBlockLoginUser";
+
+import { init, send } from 'emailjs-com';
 
 export default function Signup() {
   useBlockLoginUser();

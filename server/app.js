@@ -1,13 +1,15 @@
 const cors = require("cors");
-const bcrypt = require("bcrypt");
 const passport = require("passport");
 const express = require("express");
-const db = require("./models");
-const passportConfig = require("./passport");
 const session = require("express-session");
 const cookie = require("cookie-parser");
-const morgan = require("morgan");
+const morgan = require('morgan');
+const dotenv = require('dotenv');
+const hpp = require('hpp');
+const helmet = require('helmet');
 
+const db = require("./models");
+const passportConfig = require("./passport");
 const authRouter = require("./routes/auth");
 const postRouter = require("./routes/post");
 const commentRouter = require("./routes/comment");
@@ -16,17 +18,27 @@ const hashtagRouter = require("./routes/hashtag");
 const imageRouter = require("./routes/image");
 
 const app = express();
-
-const corsOptions = {
-  origin: "http://localhost:3000",
-  credentials: true,
-};
-
+const prod = process.env.NODE_ENV === 'production';
+dotenv.config();
 db.sequelize.sync();
 passportConfig();
 
-app.use(morgan("dev"));
-app.use(cors(corsOptions));
+if (prod) {
+  app.use(hpp());
+  app.use(helmet());
+  app.use(morgan('combined'));
+  app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  }));
+} else {
+  app.use(morgan('dev'));
+  app.use(cors({
+    origin: true,
+    credentials: true,
+  }));
+}
+
 app.use("/", express.static("uploads"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -39,6 +51,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: false,
+      domain: prod && '.nodebird.com',
     },
   })
 );

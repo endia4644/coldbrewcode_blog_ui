@@ -1,4 +1,4 @@
-import { createReducer, createSetValueAction, FETCH_KEY, setValueReducer } from "../../../common/redux-helper";
+import { createReducer, createSetValueAction, setValueReducer } from "../../../common/redux-helper";
 
 export const Types = {
   SetValue: 'main/SetValue',
