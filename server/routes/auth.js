@@ -53,7 +53,7 @@ router.post("/signup", isNotLoggedIn, async (req, res, next) => {
 
       return res.send(
         makeResponse({
-          data: newUser,
+          data: 'OK',
         })
       );
     });

@@ -11,7 +11,7 @@ import {
 } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { actions } from "../state";
+import { actions, Types } from "../state";
 import {
   EyeInvisibleOutlined,
   EyeTwoTone,
@@ -19,16 +19,25 @@ import {
 } from "@ant-design/icons";
 import useBlockLoginUser from "../hook/useBlockLoginUser";
 import useBlockLNotEmail from "../hook/useBlockNotEmail";
+import useFetchInfo from "../../../common/hook/useFetchInfo";
+import { FetchStatus } from "../../../common/constant";
 
 export default function Register() {
   useBlockLoginUser();
   useBlockLNotEmail();
   const { id } = useParams();
+  const { fetchStatus } = useFetchInfo(Types.FetchSignup);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(actions.fetchGetEmail(id));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    if (fetchStatus === FetchStatus.Success) {
+      navigate('/blog/login')
+    }
+  }, [fetchStatus])
 
   useLayoutEffect(() => {
     emailRef.current.input.value = email;

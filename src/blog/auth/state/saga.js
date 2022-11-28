@@ -34,10 +34,6 @@ function* fetchSignup({ user }) {
     method: "post",
     data: user,
   });
-
-  if (isSuccess && data) {
-    yield put(actions.setUser(data));
-  }
 }
 
 function* fetchUser() {
