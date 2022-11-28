@@ -13,6 +13,7 @@ export const Types = {
   FetchUser: "auth/FetchUser",
   FetchLogout: "auth/FetchLogout",
   FetchEmail: "auth/FetchEmail",
+  FetchGetEmail: "auth/FetchGetEmail",
 };
 
 export const actions = {
@@ -38,11 +39,16 @@ export const actions = {
     type: Types.FetchEmail,
     email,
   }),
+  fetchGetEmail: (id) => ({
+    type: Types.FetchGetEmail,
+    id,
+  }),
 };
 
 const INITIAL_STATE = {
   user: null,
   status: null,
+  email: null,
 };
 const reducer = createReducer(INITIAL_STATE, {
   [Types.SetValue]: setValueReducer,

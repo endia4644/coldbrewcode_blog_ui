@@ -1,15 +1,13 @@
-import produce from 'immer';
+import produce from "immer";
 
 export function createReducer(initialState, handlerMap) {
   return function (state = initialState, action) {
     const handler = handlerMap[action.type];
     if (handler) {
       if (action[NOT_IMMUTABLE]) {
-        console.log('여기')
         return handler(state, action);
       } else {
-        console.log('저기')
-        return produce(state, draft => {
+        return produce(state, (draft) => {
           const handler = handlerMap[action.type];
           handler(draft, action);
         });
@@ -27,6 +25,6 @@ export function setValueReducer(state, action) {
   state[action.key] = action.value;
 }
 
-export const FETCH_PAGE = Symbol('FETCH_PAGE');
-export const FETCH_KEY = Symbol('FETCH_KEY');
-export const NOT_IMMUTABLE = Symbol('NOT_IMMUTABLE');
+export const FETCH_PAGE = Symbol("FETCH_PAGE");
+export const FETCH_KEY = Symbol("FETCH_KEY");
+export const NOT_IMMUTABLE = Symbol("NOT_IMMUTABLE");

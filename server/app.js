@@ -3,10 +3,10 @@ const passport = require("passport");
 const express = require("express");
 const session = require("express-session");
 const cookie = require("cookie-parser");
-const morgan = require('morgan');
-const dotenv = require('dotenv');
-const hpp = require('hpp');
-const helmet = require('helmet');
+const morgan = require("morgan");
+const dotenv = require("dotenv");
+const hpp = require("hpp");
+const helmet = require("helmet");
 
 const db = require("./models");
 const passportConfig = require("./passport");
@@ -16,9 +16,10 @@ const commentRouter = require("./routes/comment");
 const seriesRouter = require("./routes/series");
 const hashtagRouter = require("./routes/hashtag");
 const imageRouter = require("./routes/image");
+const { makeResponse } = require("./util");
 
 const app = express();
-const prod = process.env.NODE_ENV === 'production';
+const prod = process.env.NODE_ENV === "production";
 dotenv.config();
 db.sequelize.sync();
 passportConfig();
@@ -26,17 +27,21 @@ passportConfig();
 if (prod) {
   app.use(hpp());
   app.use(helmet());
-  app.use(morgan('combined'));
-  app.use(cors({
-    origin: 'http://localhost:3000',
-    credentials: true,
-  }));
+  app.use(morgan("combined"));
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
 } else {
-  app.use(morgan('dev'));
-  app.use(cors({
-    origin: true,
-    credentials: true,
-  }));
+  app.use(morgan("dev"));
+  app.use(
+    cors({
+      origin: true,
+      credentials: true,
+    })
+  );
 }
 
 app.use("/", express.static("uploads"));
@@ -51,7 +56,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: false,
-      domain: prod && '.nodebird.com',
+      domain: prod && ".nodebird.com",
     },
   })
 );
@@ -64,6 +69,19 @@ app.use("/comment", commentRouter);
 app.use("/series", seriesRouter);
 app.use("/hashtag", hashtagRouter);
 app.use("/image", imageRouter);
+
+app.use(function (error, req, res, next) {
+  // 에러 헨들링
+  res.send(
+    makeResponse({
+      resultCode: -1,
+      resultMessage:
+        error?.message !== "null"
+          ? error.message
+          : "서비스 오류가 발생했습니다",
+    })
+  );
+});
 
 app.listen(3085, () => {
   console.log(`백엔드 서버 ${3085}번 포트에서 작동중.`);

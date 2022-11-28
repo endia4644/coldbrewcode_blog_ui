@@ -8,59 +8,122 @@ const router = express.Router();
 const { makeResponse } = require("../util");
 const nodemailer = require("nodemailer");
 
-router.post("/", isNotLoggedIn, async (req, res, next) => {
+router.post("/signup", isNotLoggedIn, async (req, res, next) => {
   try {
     const hash = await bcrypt.hash(req.body.password, 12);
-    const exUser = await db.User.findOne({
+    await db.sequelize.transaction(async (t) => {
+      const exUser = await db.User.findOne({
+        where: {
+          email: req.body.email,
+        },
+        transaction: t, // 이 쿼리를 트랜잭션 처리
+      });
+      if (exUser) {
+        // 이미 회원가입 되어있으면
+        return res.status(403).send(
+          makeResponse({
+            resultCode: -1,
+            resultMessage: "이미 가입된 회원입니다.",
+          })
+        );
+      }
+      const newUser = await db.User.create(
+        {
+          email: req.body.email,
+          password: hash,
+          userType: "user",
+          nickName: req.body.nickName,
+          introduce: req.body.introduce,
+          profileImg: "",
+          commentNoticeYsno: "N",
+          newPostNoticeYsno: "N",
+          dltYsno: "N",
+        },
+        {
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        }
+      );
+
+      await db.Email.destroy({
+        where: {
+          address: req.body.email,
+        },
+        transaction: t, // 이 쿼리를 트랜잭션 처리
+      });
+
+      return res.send(
+        makeResponse({
+          data: newUser,
+        })
+      );
+    });
+  } catch (err) {
+    console.error(err?.message);
+    next(new Error(null));
+  }
+});
+
+router.get("/email", isNotLoggedIn, async (req, res, next) => {
+  try {
+    if (!req?.query?.id) {
+      return res.json(
+        makeResponse({
+          resultCode: -1,
+          data: "NOTFIND",
+          resultMessage: "필수값이 누락되었습니다.",
+        })
+      );
+    }
+
+    const email = await db.Email.findOne({
+      attributes: ["address"],
       where: {
-        email: req.body.email,
+        id: req?.query?.id,
       },
     });
-    if (exUser) {
-      // 이미 회원가입 되어있으면
-      return res.status(403).json({
-        errorCode: 403,
-        message: "이미 회원가입되어있습니다.",
-      });
-    }
-    const newUser = await db.User.create({
-      email: req.body.email,
-      password: hash,
-      userType: req.body.userType,
-      nickName: req.body.nickName,
-      profileImg: "",
-      commentNoticeYsno: req.body.commentNoticeYsno,
-      newPostNoticeYsno: req.body.newPostNoticeYsno,
-      dltYsno: "N",
-    });
-    return res.status(200).json(newUser);
+
+    res.send(makeResponse({ data: email ?? "NOTFIND" }));
   } catch (err) {
-    console.log(err);
-    return next(err);
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "오류가 발생했습니다.",
+      })
+    );
   }
 });
 
 router.post("/email", isNotLoggedIn, async (req, res, next) => {
   try {
     if (!req?.body?.email) {
-      return res.json(makeResponse({ resultCode: -1, resultMessage: '필수값이 누락되었습니다.' }))
+      return res.json(
+        makeResponse({
+          resultCode: -1,
+          resultMessage: "필수값이 누락되었습니다.",
+        })
+      );
     }
 
     const id = randomString();
 
     const newEmail = await db.Email.create({
       id: id,
-      address: req.body.email
-    })
+      address: req.body.email,
+    });
 
     const send = await mailSend(req.body.email, id);
     if (send) {
-      return res.send(makeResponse({ resultCode: -1, resultMessage: '메일 전송 중 오류가 발생했습니다.' }));
+      return res.send(
+        makeResponse({
+          resultCode: -1,
+          resultMessage: "메일 전송 중 오류가 발생했습니다.",
+        })
+      );
     }
     return res.send(makeResponse({ data: newEmail }));
   } catch (err) {
-    console.log(err);
-    return next(err);
+    console.error(err);
+    next(err);
   }
 });
 
@@ -81,8 +144,12 @@ router.patch("/", isLoggedIn, async (req, res, next) => {
     });
     return res.send("수정되었습니다.");
   } catch (err) {
-    console.log(err);
-    return next(err);
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "오류가 발생했습니다.",
+      })
+    );
   }
 });
 
@@ -100,8 +167,12 @@ router.delete("/", isLoggedIn, async (req, res, next) => {
     );
     return res.send("삭제되었습니다.");
   } catch (err) {
-    console.log(err);
-    return next(err);
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "처리 중 오류가 발생했습니다.",
+      })
+    );
   }
 });
 
@@ -112,7 +183,9 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
       return next(err);
     }
     if (info) {
-      return res.json(makeResponse({ resultCode: -1, resultMessage: info.message }))
+      return res.json(
+        makeResponse({ resultCode: -1, resultMessage: info.message })
+      );
     }
     return req.login(user, async (err) => {
       //세선에다 사용자 정보 저장
@@ -141,7 +214,14 @@ router.get("/logout", isLoggedIn, (req, res) => {
   if (req.isAuthenticated()) {
     req.logout((done) => {
       if (done) {
-        return res.status(500).send("로그아웃이 실패하였습니다.");
+        return res
+          .status(500)
+          .send(
+            makeResponse({
+              resultCode: -1,
+              resultMessage: "로그아웃이 실패하였습니다.",
+            })
+          );
       } else {
         req.session.destroy(null); // 선택사항
         return res.send(
@@ -168,8 +248,12 @@ router.get("/user", async (req, res, next) => {
     });
     return res.json(makeResponse({ data: user ?? "NOTFIND" }));
   } catch (err) {
-    console.error(err);
-    return res.status(500).send(makeResponse({ resultCode: 999 }));
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "오류가 발생했습니다.",
+      })
+    );
   }
 });
 
@@ -186,25 +270,28 @@ router.post("/profile", isLoggedIn, async (req, res) => {
       }
     );
   } catch (err) {
-    console.error(err);
-    return res.status(500).send(makeResponse({ resultCode: 999 }));
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "오류가 발생했습니다.",
+      })
+    );
   }
   res.json(req.body.filename);
 });
 
 function randomString() {
-  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz'
-  const stringLength = 12
-  let randomstring = ''
+  const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+  const stringLength = 12;
+  let randomstring = "";
   for (let i = 0; i < stringLength; i++) {
-    const rnum = Math.floor(Math.random() * chars.length)
-    randomstring += chars.substring(rnum, rnum + 1)
+    const rnum = Math.floor(Math.random() * chars.length);
+    randomstring += chars.substring(rnum, rnum + 1);
   }
-  return randomstring
+  return randomstring;
 }
 
 async function mailSend(receiverEmail, id) {
-
   // 본인 Gmail 계정
   const EMAIL = "endia9858@gmail.com";
   const EMAIL_PW = "onoybeebixsrlhym";
@@ -240,14 +327,15 @@ async function mailSend(receiverEmail, id) {
   };
 
   // email 전송
-  await transport.sendMail(mailOptions)
+  await transport
+    .sendMail(mailOptions)
     .then(() => {
       return;
     })
     .catch((err) => {
       console.error(err);
       return err;
-    })
+    });
 }
 
 module.exports = router;

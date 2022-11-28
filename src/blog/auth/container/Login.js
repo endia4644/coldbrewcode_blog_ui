@@ -20,7 +20,7 @@ export default function Login() {
     <AuthLayout onFinish={onFinish}>
       <Card
         style={{
-          width: 350,
+          width: "20rem",
         }}
         cover={
           <img

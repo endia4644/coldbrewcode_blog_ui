@@ -1,6 +1,16 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import AuthLayout from "../component/AuthLayout";
-import { Input, Button, Form, Row, Card, Typography, Select, message, Space } from "antd";
+import {
+  Input,
+  Button,
+  Form,
+  Row,
+  Card,
+  Typography,
+  Select,
+  message,
+  Space,
+} from "antd";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { actions } from "../state";
@@ -10,12 +20,12 @@ export default function Signup() {
   useBlockLoginUser();
   const dispatch = useDispatch();
   function onFinish() {
-    let email = '';
+    let email = "";
 
     if (!selfSelect) {
-      email = `${id}@${selectedOption}`
+      email = `${id}@${selectedOption}`;
     } else {
-      email = `${id}@${selfSelect}`
+      email = `${id}@${selfSelect}`;
     }
     dispatch(actions.fetchEmail(email));
   }
@@ -24,22 +34,22 @@ export default function Signup() {
 
   const selectAfter = <>@</>;
 
-  const defaultSelect = 'naver.com';
+  const defaultSelect = "naver.com";
 
   const [selectedOption, setSelectedOption] = useState(defaultSelect);
-  const [selfSelect, setSelfSelect] = useState('');
-  const [id, setId] = useState('');
+  const [selfSelect, setSelfSelect] = useState("");
+  const [id, setId] = useState("");
   const selectRef = useRef(null);
 
   useLayoutEffect(() => {
     if (selectRef.current != null) selectRef.current.focus();
-  })
+  });
 
   return (
     <AuthLayout onFinish={onFinish}>
       <Card
         style={{
-          width: 350,
+          width: "20rem",
         }}
         cover={
           <img
@@ -55,7 +65,7 @@ export default function Signup() {
           </Typography.Text>,
         ]}
       >
-        <Space style={{ display: 'flex' }} size={0}>
+        <Space style={{ display: "flex" }} size={0}>
           <Form.Item
             name="email"
             rules={[
@@ -69,13 +79,14 @@ export default function Signup() {
               value={id}
               onChange={(e) => setId(e.target.value)}
               addonAfter={selectAfter}
-              placeholder="" />
+              placeholder=""
+            />
           </Form.Item>
           <Form.Item>
-            {selectedOption !== 'selfSelect' && (
+            {selectedOption !== "selfSelect" && (
               <Select
                 defaultValue={defaultSelect}
-                style={{ width: 120, minWidth: 120, height: '32.19px' }}
+                style={{ width: 120, minWidth: 120, height: "32.19px" }}
                 onChange={(e) => setSelectedOption(e)}
                 options={[
                   {
@@ -99,14 +110,17 @@ export default function Signup() {
             )}
           </Form.Item>
           <Form.Item>
-            {selectedOption === 'selfSelect' && (
+            {selectedOption === "selfSelect" && (
               <Input
                 ref={selectRef}
                 value={selfSelect}
                 onChange={(e) => setSelfSelect(e.target.value)}
-                onBlur={() => { if (selfSelect === '') setSelectedOption(defaultSelect) }}
-                style={{ width: 120, minWidth: 120, height: '32.19px' }}
-                placeholder="직접 입력하세요." />
+                onBlur={() => {
+                  if (selfSelect === "") setSelectedOption(defaultSelect);
+                }}
+                style={{ width: 120, minWidth: 120, height: "32.19px" }}
+                placeholder="직접 입력하세요."
+              />
             )}
           </Form.Item>
         </Space>

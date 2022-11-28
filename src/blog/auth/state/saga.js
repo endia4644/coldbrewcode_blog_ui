@@ -1,4 +1,5 @@
 import { all, put, call, takeLeading } from "redux-saga/effects";
+import { NOT_FIND } from "../../../common/constant";
 import { callApi } from "../../../common/util/api";
 import { makeFetchSaga } from "../../../common/util/fetch";
 import { actions, Types } from "./index";
@@ -27,13 +28,11 @@ function* fetchLogout() {
   }
 }
 
-function* fetchSignup({ email }) {
+function* fetchSignup({ user }) {
   const { isSuccess, data } = yield call(callApi, {
     url: "/auth/signup",
     method: "post",
-    data: {
-      email,
-    },
+    data: user,
   });
 
   if (isSuccess && data) {
@@ -53,10 +52,21 @@ function* fetchUser() {
 
 function* fetchEmail(action) {
   const { isSuccess, data } = yield call(callApi, {
-    method: 'post',
+    method: "post",
     url: "/auth/email",
-    data: { email: action.email }
+    data: { email: action.email },
   });
+}
+
+function* fetchGetEmail(action) {
+  const { isSuccess, data } = yield call(callApi, {
+    url: "/auth/email",
+    params: { id: action.id },
+  });
+
+  if (isSuccess && data) {
+    yield put(actions.setValue("email", data?.address ?? NOT_FIND));
+  }
 }
 
 export default function* () {
@@ -80,6 +90,10 @@ export default function* () {
     takeLeading(
       Types.FetchEmail,
       makeFetchSaga({ fetchSaga: fetchEmail, canCache: false })
+    ),
+    takeLeading(
+      Types.FetchGetEmail,
+      makeFetchSaga({ fetchSaga: fetchGetEmail, canCache: false })
     ),
   ]);
 }

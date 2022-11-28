@@ -19,6 +19,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(45),
         allowNull: false, //필수
       },
+      introduce: {
+        type: DataTypes.STRING(200),
+        allowNull: true, //비필수
+      },
       profileImg: {
         type: DataTypes.STRING(45),
         allowNull: true, //비필수

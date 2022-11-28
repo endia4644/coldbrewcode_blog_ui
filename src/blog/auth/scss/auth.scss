@@ -36,7 +36,8 @@
   .ant-select:not(.ant-select-disabled):hover .ant-select-selector,
   .ant-select:not(.ant-select-disabled):active .ant-select-selector,
   .ant-select:not(.ant-select-disabled):focus .ant-select-selector,
-  .ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  .ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input)
+    .ant-select-selector {
     border-color: $subColor;
     box-shadow: 0 0 0 1px #d8b48b;
   }
