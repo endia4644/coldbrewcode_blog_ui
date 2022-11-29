@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { actions } from "../state";
 import { actions as authActions } from "../../auth/state";
 import Series from "../components/Series";
-import { UpArrowIcon } from "../../../common/component/Icon";
+import { UpArrowIcon } from "../../../common/components/Icon";
 import "../scss/main.scss";
 
 export default function Main() {

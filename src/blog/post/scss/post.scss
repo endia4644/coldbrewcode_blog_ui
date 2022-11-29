@@ -1,0 +1,89 @@
+@import "./../../../common/scss/vars.scss";
+
+/*
+  $xs: 576px;
+  $sm: 576px;
+  $md: 768px;
+  $lg: 992px;
+  $xl: 1200px;
+  $xxl: 1600px;
+*/
+
+.post {
+  &-wrap {
+    margin-top: 5.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    width: $mainContentSize;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.ant-layout {
+  .ant-row {
+    &.post {
+      &-wrap {
+        justify-content: flex-start;
+      }
+    }
+    .post {
+      &-name {
+        font-size: 3rem;
+      }
+      &-information {
+        font-size: 1rem;
+      }
+      &-content {
+        font-size: 1.125rem;
+        color: var(--text1);
+        transition: color 0.125s ease-in 0s;
+        line-height: 1.7;
+        letter-spacing: -0.004em;
+        word-break: keep-all;
+        overflow-wrap: break-word;
+        &-sidebar {
+          width: 4rem;
+          background: $grayColor;
+          border: 1px solid $antdGrayColor;
+          border-radius: 2rem;
+          padding: 0.5rem;
+          display: flex;
+          flex-direction: column;
+          -webkit-box-align: center;
+          align-items: center;
+        }
+      }
+    }
+
+    .ant-tabs-nav-list {
+      & > .ant-tabs-tab {
+        &:nth-child(1) {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+}
+
+.tag-button {
+  transition: all;
+  transition-duration: 0.5ms;
+  &:hover {
+    background-color: $subColor;
+    cursor: pointer;
+  }
+}
+
+.like-btn {
+  &-active {
+    background-color: $fontColor !important;
+    border: 0;
+    span {
+      color: $subColor !important;
+      transition: all;
+      transition-duration: 100ms;
+      border: 0;
+    }
+  }
+}

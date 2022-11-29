@@ -120,7 +120,7 @@ export default function Post() {
                 onError={handleImgError}
               />
               <Typography.Title>
-                <Link to={`/${item.id}`}>{item.postName}</Link>
+                <Link to={`post/${item.id}`}>{item.postName}</Link>
               </Typography.Title>
               <List.Item.Meta />
               <Typography.Paragraph

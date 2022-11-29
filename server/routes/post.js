@@ -85,7 +85,12 @@ router.post("/", isLoggedIn, async (req, res, next) => {
     });
   } catch (err) {
     console.error(err);
-    return res.json(makeResponse({ resultCode: -1, resultMessage: '게시글 작성 중 오류가 발생했습니다.' }))
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "게시글 작성 중 오류가 발생했습니다.",
+      })
+    );
   }
 });
 
@@ -135,7 +140,12 @@ router.patch("/", async (req, res, next) => {
     });
   } catch (err) {
     console.error(err);
-    res.json(makeResponse({ resultCode: -1, resultMessage: '게시글 수정 중 오류가 발생했습니다.' }))
+    res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "게시글 수정 중 오류가 발생했습니다.",
+      })
+    );
   }
 });
 
@@ -226,13 +236,18 @@ router.get("/", async (req, res, next) => {
     return res.send(makeResponse({ data: posts, totalCount: postCnt }));
   } catch (err) {
     console.error(err);
-    return res.json(makeResponse({ resultCode: -1, resultMessage: '게시글 작성 중 오류가 발생했습니다.' }))
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "게시글 작성 중 오류가 발생했습니다.",
+      })
+    );
   }
 });
 
 router.get("/:id", async (req, res, next) => {
   try {
-    const posts = await db.Post.findAll({
+    const post = await db.Post.findAll({
       where: {
         id: req.params.id,
       },
@@ -274,10 +289,10 @@ router.get("/:id", async (req, res, next) => {
         [db.Comment, "createdAt", "DESC"],
       ],
     });
-    return res.send(makeResponse({ data: posts }));
+    return res.send(makeResponse({ data: post }));
   } catch (err) {
     console.error(err);
-    return res.json(makeResponse({ resultCode: -1, resultMessage: '게시글 조회 중 오류가 발생했습니다.' }))
+    next("게시글 조회 중 오류가 발생했습니다.");
   }
 });
 
@@ -292,7 +307,12 @@ router.get("/:id/content", async (req, res, next) => {
     return res.send(makeResponse({ data: posts }));
   } catch (err) {
     console.error(err);
-    return res.json(makeResponse({ resultCode: -1, resultMessage: '게시글 내용 조회 중 오류가 발생했습니다.' }))
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "게시글 내용 조회 중 오류가 발생했습니다.",
+      })
+    );
   }
 });
 
@@ -336,7 +356,12 @@ router.delete("/:id", async (req, res, next) => {
     return res.send(makeResponse({ data: "SUCCESS" }));
   } catch (err) {
     console.error(err);
-    return res.json(makeResponse({ resultCode: -1, resultMessage: '게시글 삭제 중 오류가 발생했습니다.' }))
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "게시글 삭제 중 오류가 발생했습니다.",
+      })
+    );
   }
 });
 

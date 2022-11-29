@@ -2,7 +2,7 @@ import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Typography } from "antd";
 import React from "react";
 
-export default function Blog() {
+export default function UserInfo() {
   return (
     <>
       <Avatar

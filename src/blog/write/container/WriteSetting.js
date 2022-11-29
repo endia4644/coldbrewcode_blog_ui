@@ -24,7 +24,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { ImageIcon } from "../../../common/component/Icon";
+import { ImageIcon } from "../../../common/components/Icon";
 import { API_HOST, FetchStatus } from "../../../common/constant";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";

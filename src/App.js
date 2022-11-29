@@ -1,19 +1,22 @@
 import { BarsOutlined, CoffeeOutlined } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
 import { Link, Route, Routes } from "react-router-dom";
-import { useLocation } from "react-router-dom";
 import Sider from "antd/lib/layout/Sider";
-import React, { useEffect } from "react";
 import Home from "./home/container/Home";
 import Blog from "./blog/main/container/Main";
 import Write from "./blog/write/container/Write";
-import "antd/dist/antd.min.css";
-import "./common/scss/common.scss";
 import Login from "./blog/auth/container/Login";
+import Register from "./blog/auth/container/Register";
+import Post from "./blog/post/container/Post";
+import Signup from "./blog/auth/container/Signup";
+
+import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { actions as authActions } from "./blog/auth/state";
 import { useDispatch } from "react-redux";
-import Signup from "./blog/auth/container/Signup";
-import Register from "./blog/auth/container/Register";
+
+import "antd/dist/antd.min.css";
+import "./common/scss/common.scss";
 
 export default function App() {
   function setScreenSize() {
@@ -87,6 +90,7 @@ export default function App() {
             <Route path="/blog/login" element={<Login />} />
             <Route path="/blog/signup" element={<Signup />} />
             <Route path="/blog/register/:id" element={<Register />} />
+            <Route path="/blog/post/:id" element={<Post />} />
           </Routes>
         </Layout>
       </Layout>

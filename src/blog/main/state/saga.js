@@ -74,8 +74,6 @@ function* fetchHashtagPost(action, page) {
 }
 
 function* fetchAllSeries(action, page) {
-  console.log("시리즈 호출");
-  console.log(page, action.totalCount);
   if (page <= Math.floor(action.totalCount / 8)) {
     const { isSuccess, data } = yield call(callApi, {
       url: "/series",
