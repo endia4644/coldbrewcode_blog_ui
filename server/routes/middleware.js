@@ -1,18 +1,29 @@
 const fs = require("fs");
 const db = require("../models");
+const { makeResponse } = require("../util");
 
 exports.isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   }
-  return res.status(401).send("로그인이 필요합니다.");
+  return res.status(401).send(
+    makeResponse({
+      resultMessage: "로그인이 필요합니다.",
+      resultCode: -1,
+    })
+  );
 };
 
 exports.isNotLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
     return next();
   }
-  return res.status(401).send("로그인한 사람은 할 수 없습니다.");
+  return res.status(401).send(
+    makeResponse({
+      resultMessage: "로그인한 사람은 할 수 없습니다.",
+      resultCode: -1,
+    })
+  );
 };
 
 exports.isImageExist = async (req, res, next) => {

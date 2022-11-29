@@ -29,7 +29,7 @@ function* fetchLogout() {
 }
 
 function* fetchSignup({ user }) {
-  const { isSuccess, data } = yield call(callApi, {
+  yield call(callApi, {
     url: "/auth/signup",
     method: "post",
     data: user,
