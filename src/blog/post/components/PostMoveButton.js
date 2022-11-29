@@ -1,6 +1,5 @@
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import { Button, Space, Typography } from "antd";
-import Paragraph from "antd/lib/skeleton/Paragraph";
 import { motion, useAnimationControls } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -23,9 +22,16 @@ export default function PostMoveButton({ direction, post }) {
 
   useEffect(() => {
     if (hover) {
-      controls.start({ scale: 6 });
-    } else {
-      controls.start({ scale: 1 });
+      let moveX = 0;
+      if (direction === 'left') {
+        moveX = -10;
+      } else {
+        moveX = 10;
+      }
+      controls.start({
+        x: [0, moveX, 0],
+        transition: { duration: 1 }
+      })
     }
   }, [controls, hover]);
 
