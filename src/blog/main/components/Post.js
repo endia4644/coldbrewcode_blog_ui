@@ -1,5 +1,4 @@
 import {
-  ExpandAltOutlined,
   FieldTimeOutlined,
   HeartOutlined,
   LockOutlined,
@@ -11,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";
-import { elapsedTime } from "./../../../common/util/util.js";
+import { elapsedTime } from "../../../common/util/util.js";
 const { Title } = Typography;
 
 const IconText = ({ icon, text }) => (

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Content, Footer } from "antd/lib/layout/layout";
 import "react-quill/dist/quill.snow.css";
-import Editor from "../component/Editor";
+import Editor from "../components/Editor";
 import { Button, Col, Divider, Input, Row, Space } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom"; // 설치한 패키지
@@ -10,7 +10,6 @@ import { useDispatch } from "react-redux";
 import { actions } from "../state";
 import WriteSetting from "./WriteSetting";
 import { AnimatePresence } from "framer-motion";
-
 
 export default function Write() {
   const { id: postId } = useParams();
@@ -23,7 +22,7 @@ export default function Write() {
   const [hashtag, setHashtag] = useState([]);
   const [htmlContent, setHtmlContent] = useState(null);
   const [postName, setPostName] = useState(null);
-  const [imageArray, setImageArray] = useState([]);
+  const [imageArray] = useState([]);
 
   const [level, setLevel] = useState(0);
 
@@ -45,13 +44,15 @@ export default function Write() {
     dispatch(actions.setValue("hashtag", Array.from(tagRef.current)));
     htmlContent?.match(/[^='/]*\.(gif|jpg|jpeg|bmp|svg|png)/g)?.map((item) => {
       if (imageMap.current.get(item)) {
-        imageArray.push(imageMap.current.get(item));
+        return imageArray.push(imageMap.current.get(item));
+      } else {
+        return false;
       }
     });
   };
 
   const insertHashTag = () => {
-    if (currentTag != "" && !tagRef.current.has(currentTag)) {
+    if (currentTag !== "" && !tagRef.current.has(currentTag)) {
       setHashtag([...hashtag, { key: currentTag, hashtagName: currentTag }]);
       tagRef.current.add(currentTag);
     }

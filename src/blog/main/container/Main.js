@@ -1,15 +1,15 @@
 import { BackTop, Col, Divider, Row, Tabs } from "antd";
 import { Content, Header } from "antd/lib/layout/layout";
 import React, { useEffect } from "react";
-import Settings from "../component/Settings";
-import SideBar from "../component/SideBar";
-import TopBar from "../component/TopBar";
+import Settings from "../components/Settings";
+import SideBar from "../components/SideBar";
+import TopBar from "../components/TopBar";
 import UserInfo from "./UserInfo";
-import Post from "../component/Post";
+import Post from "../components/Post";
 import { useDispatch, useSelector } from "react-redux";
 import { actions } from "../state";
 import { actions as authActions } from "../../auth/state";
-import Series from "../component/Series";
+import Series from "../components/Series";
 import { UpArrowIcon } from "../../../common/component/Icon";
 import "../scss/main.scss";
 

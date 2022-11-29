@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";
-import { elapsedTime } from "./../../../common/util/util.js";
+import { elapsedTime } from "../../../common/util/util.js";
 
 const IconText = ({ icon, text }) => (
   <Space>
@@ -15,7 +15,7 @@ const IconText = ({ icon, text }) => (
 );
 
 export default function Series() {
-  const series = useSelector(state => state.main.series);
+  const series = useSelector((state) => state.main.series);
   const targetRef = useRef(null);
   const dispatch = useDispatch();
   const { isFetching, totalCount } = useFetchInfo(Types.FetchAllSeries);
@@ -23,19 +23,21 @@ export default function Series() {
     let observer;
     if (targetRef.current) {
       observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting && !isFetching) {
-            dispatch(actions.fetchAllSeries({
-              series,
-              totalCount,
-            }));
+            dispatch(
+              actions.fetchAllSeries({
+                series,
+                totalCount,
+              })
+            );
           }
-        })
-      })
+        });
+      });
       observer.observe(targetRef.current);
     }
     return () => observer && observer.disconnect();
-  }, [dispatch, isFetching, series, totalCount])
+  }, [dispatch, isFetching, series, totalCount]);
   return (
     <>
       <List
@@ -47,8 +49,7 @@ export default function Series() {
           lg: 2,
           xl: 2,
           xxl: 2,
-        }
-        }
+        }}
         itemLayout="vertical"
         size="large"
         dataSource={series}
@@ -58,13 +59,21 @@ export default function Series() {
             style={{ paddingTop: 30 }}
             key={`series_${item.id}`}
             actions={[
-              <IconText icon={BookOutlined} text={`${item.postCount}개의 포스트`} key="list-vertical-like-o" />,
-              <IconText icon={FieldTimeOutlined} text={elapsedTime(item.createdAt)} key="list-vertical-star-o" />,
+              <IconText
+                icon={BookOutlined}
+                text={`${item.postCount}개의 포스트`}
+                key="list-vertical-like-o"
+              />,
+              <IconText
+                icon={FieldTimeOutlined}
+                text={elapsedTime(item.createdAt)}
+                key="list-vertical-star-o"
+              />,
             ]}
           >
             <img
               style={{ paddingBottom: 20 }}
-              width={'100%'}
+              width={"100%"}
               alt="logo"
               src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
             />
@@ -74,7 +83,11 @@ export default function Series() {
           </List.Item>
         )}
       />
-      <div className="listPost" style={{ width: '100%', height: 10 }} ref={targetRef} />
+      <div
+        className="listPost"
+        style={{ width: "100%", height: 10 }}
+        ref={targetRef}
+      />
     </>
-  )
+  );
 }

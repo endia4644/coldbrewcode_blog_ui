@@ -21,7 +21,7 @@ import TextArea from "antd/lib/input/TextArea";
 import { Content, Footer } from "antd/lib/layout/layout";
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ImageIcon } from "../../../common/component/Icon";
@@ -41,9 +41,9 @@ export default function WriteSetting({
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const goBlog = () => {
+  const goBlog = useCallback(() => {
     navigate("/blog");
-  };
+  }, [navigate]);
 
   const [isSeriesADD, setIsSeriesADD] = useState(false);
   const [seriesInput, setSeriesInput] = useState(null);
@@ -61,43 +61,50 @@ export default function WriteSetting({
 
   const { fetchStatus, isFetching } = useFetchInfo(Types.FetchCreatePost);
   const key = "updatable";
-  const openMessage = (fetchStatus) => {
-    if (fetchStatus === FetchStatus.Success) {
-      message.success({
-        content: "작성이 완료되었습니다",
-        key,
-        duration: 2,
-      });
-      setTimeout(() => {
-        deleteStatus(Types.FetchCreatePost);
-        deleteStatus(mainType.FetchAllPost);
-        deleteStatus(mainType.FetchAllHashtag);
-        deleteStatus(mainType.FetchAllSeries);
-        goBlog();
-      }, 2000);
-    } else if (fetchStatus === FetchStatus.Success) {
-      message.error({
-        content: "작성 중 오류가 발생했습니다",
-        key,
-        duration: 2,
-      });
-    } else if (fetchStatus === FetchStatus.Request) {
-      message.loading({
-        content: "처리중",
-        key,
-      });
-    }
-  };
 
-  function deleteStatus(actionType, fetchKey) {
-    if (!fetchKey) fetchKey = actionType;
-    const params = {
-      actionType,
-      fetchKey,
-      status: FetchStatus.Delete,
-    };
-    dispatch(common.setFetchStatus(params));
-  }
+  const deleteStatus = useCallback(
+    (fetchKey, actionType) => {
+      if (!fetchKey) fetchKey = actionType;
+      const params = {
+        actionType,
+        fetchKey,
+        status: FetchStatus.Delete,
+      };
+      dispatch(common.setFetchStatus(params));
+    },
+    [dispatch]
+  );
+
+  const openMessage = useCallback(
+    (fetchStatus) => {
+      if (fetchStatus === FetchStatus.Success) {
+        message.success({
+          content: "작성이 완료되었습니다",
+          key,
+          duration: 2,
+        });
+        setTimeout(() => {
+          deleteStatus(Types.FetchCreatePost);
+          deleteStatus(mainType.FetchAllPost);
+          deleteStatus(mainType.FetchAllHashtag);
+          deleteStatus(mainType.FetchAllSeries);
+          goBlog();
+        }, 2000);
+      } else if (fetchStatus === FetchStatus.Success) {
+        message.error({
+          content: "작성 중 오류가 발생했습니다",
+          key,
+          duration: 2,
+        });
+      } else if (fetchStatus === FetchStatus.Request) {
+        message.loading({
+          content: "처리중",
+          key,
+        });
+      }
+    },
+    [deleteStatus, goBlog]
+  );
 
   useEffect(() => {
     if (fetchStatus === FetchStatus.Request) {
@@ -106,7 +113,7 @@ export default function WriteSetting({
     if (fetchStatus !== FetchStatus.Request) {
       openMessage(fetchStatus);
     }
-  }, [fetchStatus]);
+  }, [fetchStatus, openMessage]);
 
   const handleCancel = () => setPreviewOpen(false);
 
@@ -143,7 +150,6 @@ export default function WriteSetting({
       console.log("server res: ", res);
     } catch (err) {
       console.log("Eroor: ", err);
-      const error = new Error("Some error");
       onError({ err });
     }
   };
@@ -209,7 +215,7 @@ export default function WriteSetting({
         });
       }
     }
-  }, [seriesList]);
+  }, [seriesList, prev]);
 
   return (
     <>
@@ -550,7 +556,7 @@ export default function WriteSetting({
                         }
                         if (hashtag) {
                           hashtag.map((item) => {
-                            hashtags.push(item.key);
+                            return hashtags.push(item.key);
                           });
                         }
                         dispatch(

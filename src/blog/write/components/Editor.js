@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import ReactQuill, { Quill } from "react-quill";
 import { API_HOST } from "../../../common/constant";
 import { callApi } from "../../../common/util/api";
@@ -8,7 +8,6 @@ import hljs from "highlight.js";
 
 import "react-quill/dist/quill.snow.css";
 import "highlight.js/styles/github.css";
-import { useSelector } from "react-redux";
 
 const fontFamilyArr = ["NotoSans", "Roboto", "Sono", "NanumGothic"];
 let fonts = Quill.import("attributors/style/font");
@@ -65,10 +64,10 @@ export default function Editor({
       getHtmlContent(data?.[0]?.postContent ?? "");
     };
     fetchData();
-  }, [postId, callApi]);
+  }, [postId, getHtmlContent]);
 
   // 이미지 처리를 하는 핸들러
-  const imageHandler = () => {
+  const imageHandler = useCallback(() => {
     // 1. 이미지를 저장할 input type=file DOM을 만든다.
     const input = document.createElement("input");
     // 속성 써주기
@@ -123,7 +122,7 @@ export default function Editor({
         console.log(error);
       }
     });
-  };
+  }, [imageMap]);
 
   // Quill 에디터에서 사용하고싶은 모듈들을 설정한다.
   // useMemo를 사용해 modules를 만들지 않는다면 매 렌더링 마다 modules가 다시 생성된다.
@@ -159,7 +158,7 @@ export default function Editor({
         modules: ["Resize", "DisplaySize", "Toolbar"],
       },
     };
-  }, []);
+  }, [imageHandler]);
   // 위에서 설정한 모듈들 foramts을 설정한다
   const formats = [
     "size",

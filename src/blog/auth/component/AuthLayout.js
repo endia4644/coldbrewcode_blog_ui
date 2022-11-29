@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Row, Typography, Form } from "antd";
+import { Col, Row, Form } from "antd";
 
 /**
  *

@@ -47,7 +47,3 @@ export default function Search() {
     </>
   );
 }
-
-function dispatch(arg0) {
-  throw new Error("Function not implemented.");
-}
