@@ -47,7 +47,7 @@ function* fetchUser() {
 }
 
 function* fetchEmail(action) {
-  const { isSuccess, data } = yield call(callApi, {
+  yield call(callApi, {
     method: "post",
     url: "/auth/email",
     data: { email: action.email },

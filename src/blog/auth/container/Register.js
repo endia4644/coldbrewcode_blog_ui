@@ -25,6 +25,7 @@ import { FetchStatus } from "../../../common/constant";
 export default function Register() {
   useBlockLoginUser();
   useBlockLNotEmail();
+  const navigate = useNavigate();
   const { id } = useParams();
   const { fetchStatus } = useFetchInfo(Types.FetchSignup);
   const dispatch = useDispatch();
@@ -35,15 +36,13 @@ export default function Register() {
 
   useEffect(() => {
     if (fetchStatus === FetchStatus.Success) {
-      navigate('/blog/login')
+      navigate("/blog/login");
     }
-  }, [fetchStatus])
+  }, [fetchStatus, navigate]);
 
   useLayoutEffect(() => {
     emailRef.current.input.value = email;
   });
-
-  const navigate = useNavigate();
   const passwordRef = useRef(null);
   const email = useSelector((state) => state.auth.email);
   const onFinish = (values) => {

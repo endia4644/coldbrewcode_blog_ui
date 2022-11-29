@@ -304,7 +304,7 @@ async function mailSend(receiverEmail, id) {
     },
   });
 
-  const href = `http://localhost:3000/blog/register?code=${id}`;
+  const href = `http://localhost:3000/blog/register/${id}`;
 
   // 전송할 email 내용 작성
   let mailOptions = {

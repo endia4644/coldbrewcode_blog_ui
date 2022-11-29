@@ -1,10 +1,9 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import AuthLayout from "../component/AuthLayout";
 import {
   Input,
   Button,
   Form,
-  Row,
   Card,
   Typography,
   Select,
@@ -13,12 +12,16 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { actions } from "../state";
+import { actions, Types } from "../state";
+import { actions as common } from "../../../common/state";
 import useBlockLoginUser from "../hook/useBlockLoginUser";
+import useFetchInfo from "../../../common/hook/useFetchInfo";
+import { FetchStatus } from "../../../common/constant";
 
 export default function Signup() {
   useBlockLoginUser();
   const dispatch = useDispatch();
+  const { fetchStatus } = useFetchInfo(Types.FetchEmail);
   function onFinish() {
     let email = "";
 
@@ -44,6 +47,31 @@ export default function Signup() {
   useLayoutEffect(() => {
     if (selectRef.current != null) selectRef.current.focus();
   });
+
+  const key = "mailSend";
+
+  useEffect(() => {
+    if (fetchStatus === FetchStatus.Success) {
+      message.success({
+        content: "회원가입 메일이 발송되었습니다",
+        key,
+        duration: 2,
+      });
+      dispatch(
+        common.setFetchStatus({
+          actionType: Types.FetchEmail,
+          fetchKey: Types.FetchEmail,
+          status: FetchStatus.Delete,
+        })
+      );
+    } else if (fetchStatus === FetchStatus.Request) {
+      message.loading({
+        content: "처리중",
+        key,
+        duration: 2,
+      });
+    }
+  }, [fetchStatus, dispatch]);
 
   return (
     <AuthLayout onFinish={onFinish}>

@@ -62,7 +62,7 @@ export default function WriteSetting({
   const { fetchStatus, isFetching } = useFetchInfo(Types.FetchCreatePost);
   const key = "updatable";
   const openMessage = (fetchStatus) => {
-    if (fetchStatus == FetchStatus.Success) {
+    if (fetchStatus === FetchStatus.Success) {
       message.success({
         content: "작성이 완료되었습니다",
         key,
@@ -75,13 +75,13 @@ export default function WriteSetting({
         deleteStatus(mainType.FetchAllSeries);
         goBlog();
       }, 2000);
-    } else if (fetchStatus == FetchStatus.Success) {
+    } else if (fetchStatus === FetchStatus.Success) {
       message.error({
         content: "작성 중 오류가 발생했습니다",
         key,
         duration: 2,
       });
-    } else if (fetchStatus == FetchStatus.Request) {
+    } else if (fetchStatus === FetchStatus.Request) {
       message.loading({
         content: "처리중",
         key,

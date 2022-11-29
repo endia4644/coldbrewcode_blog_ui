@@ -91,7 +91,6 @@ function* fetchAllSeries(action, page) {
 }
 
 function* FetchAllHashtag(action) {
-  console.log("태그 조회");
   const { isSuccess, data } = yield call(callApi, {
     url: "/hashtag",
   });
