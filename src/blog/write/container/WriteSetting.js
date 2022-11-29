@@ -63,7 +63,7 @@ export default function WriteSetting({
   const key = "updatable";
 
   const deleteStatus = useCallback(
-    (fetchKey, actionType) => {
+    (actionType, fetchKey) => {
       if (!fetchKey) fetchKey = actionType;
       const params = {
         actionType,

@@ -52,7 +52,7 @@ const INITINAL_STATE = {
   hashtag: [],
   hashtagCurrent: "",
   searchCurrent: "",
-  series: {},
+  series: [],
   activeKey: "post",
   sideActiveKey: "0",
 };

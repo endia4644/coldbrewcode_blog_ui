@@ -26,7 +26,6 @@ function* fetchAllPost(action, page) {
 }
 
 function* fetchSearchPost(action, page) {
-  console.log(page, Math.floor(action.totalCount / 8));
   if (page <= Math.floor(action.totalCount / 8)) {
     const { isSuccess, data, totalCount } = yield call(callApi, {
       url: "/post",
@@ -75,6 +74,8 @@ function* fetchHashtagPost(action, page) {
 }
 
 function* fetchAllSeries(action, page) {
+  console.log("시리즈 호출");
+  console.log(page, action.totalCount);
   if (page <= Math.floor(action.totalCount / 8)) {
     const { isSuccess, data } = yield call(callApi, {
       url: "/series",
