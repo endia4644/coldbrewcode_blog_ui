@@ -53,7 +53,7 @@ router.post("/signup", isNotLoggedIn, async (req, res, next) => {
 
       return res.send(
         makeResponse({
-          data: 'OK',
+          data: "OK",
         })
       );
     });
@@ -199,6 +199,7 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
             id: user.id,
             email: user.email,
             nickname: user.nickname,
+            introduce: user.introduce,
             userType: user.userType,
             profileImg: user.profileImg,
             commentNoticeYsno: user.commentNoticeYsno,
@@ -214,14 +215,12 @@ router.get("/logout", isLoggedIn, (req, res) => {
   if (req.isAuthenticated()) {
     req.logout((done) => {
       if (done) {
-        return res
-          .status(500)
-          .send(
-            makeResponse({
-              resultCode: -1,
-              resultMessage: "로그아웃이 실패하였습니다.",
-            })
-          );
+        return res.status(500).send(
+          makeResponse({
+            resultCode: -1,
+            resultMessage: "로그아웃이 실패하였습니다.",
+          })
+        );
       } else {
         req.session.destroy(null); // 선택사항
         return res.send(

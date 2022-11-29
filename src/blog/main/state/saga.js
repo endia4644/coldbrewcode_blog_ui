@@ -5,9 +5,8 @@ import { makeFetchSaga } from "../../../common/util/fetch";
 import { actions as common } from "../../../common/state";
 
 function* fetchAllPost(action, page) {
-  console.log(page, action.totalCount);
   if (page <= Math.floor(action.totalCount / 8)) {
-    const { isSuccess, data, totalCount } = yield call(callApi, {
+    const { isSuccess, data } = yield call(callApi, {
       url: "/post",
       params: {
         limit: 8,
@@ -29,12 +28,21 @@ function* fetchAllPost(action, page) {
 function* fetchSearchPost(action, page) {
   console.log(page, Math.floor(action.totalCount / 8));
   if (page <= Math.floor(action.totalCount / 8)) {
-    const { isSuccess, data } = yield call(callApi, {
+    const { isSuccess, data, totalCount } = yield call(callApi, {
       url: "/post",
       params: { limit: 8, offset: 8 * page, search: action?.search },
     });
     if (isSuccess && data) {
       yield put(actions.setValue("post", data));
+      yield put(
+        common.setFetchStatus({
+          actionType: Types.FetchAllPost,
+          fetchKey: Types.FetchAllPost,
+          totalCount: totalCount,
+          nextPage: 1,
+          errorMessage: null,
+        })
+      );
       yield put(actions.setValue("searchCurrent", action?.search));
       yield put(actions.setValue("activeKey", "post"));
       yield put(actions.setValue("sideActiveKey", null));

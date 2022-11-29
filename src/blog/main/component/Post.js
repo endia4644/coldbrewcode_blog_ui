@@ -69,91 +69,89 @@ export default function Post() {
           </Space>
         </>
       )}
-      {!isFetching && (
-        <List
-          className="main-list"
-          grid={{
-            xs: 1,
-            sm: 1,
-            md: 1,
-            lg: 2,
-            xl: 2,
-            xxl: 2,
-          }}
-          itemLayout="vertical"
-          size="large"
-          dataSource={post}
-          renderItem={(item) => (
-            <>
-              <List.Item
-                className="main-list-item"
-                style={{ paddingTop: 30 }}
-                key={`post_${item.id}`}
-                actions={[
+      <List
+        className="main-list"
+        grid={{
+          xs: 1,
+          sm: 1,
+          md: 1,
+          lg: 2,
+          xl: 2,
+          xxl: 2,
+        }}
+        itemLayout="vertical"
+        size="large"
+        dataSource={post}
+        renderItem={(item) => (
+          <>
+            <List.Item
+              className="main-list-item"
+              style={{ paddingTop: 30 }}
+              key={`post_${item.id}`}
+              actions={[
+                <IconText
+                  icon={FieldTimeOutlined}
+                  text={elapsedTime(item.createdAt)}
+                  key="list-vertical-star-o"
+                />,
+                <IconText
+                  icon={HeartOutlined}
+                  text={item.likeCnt}
+                  key="list-vertical-like-o"
+                />,
+                <IconText
+                  icon={MessageOutlined}
+                  text={item.Comments?.length ?? 0}
+                  key="list-vertical-message"
+                />,
+                item.permission === "private" && (
                   <IconText
-                    icon={FieldTimeOutlined}
-                    text={elapsedTime(item.createdAt)}
-                    key="list-vertical-star-o"
-                  />,
-                  <IconText
-                    icon={HeartOutlined}
-                    text={item.likeCnt}
-                    key="list-vertical-like-o"
-                  />,
-                  <IconText
-                    icon={MessageOutlined}
-                    text={item.Comments?.length ?? 0}
+                    icon={LockOutlined}
+                    text="비공개"
                     key="list-vertical-message"
-                  />,
-                  item.permission === "private" && (
-                    <IconText
-                      icon={LockOutlined}
-                      text="비공개"
-                      key="list-vertical-message"
-                    />
-                  ),
-                ]}
+                  />
+                ),
+              ]}
+            >
+              <img
+                style={{ paddingBottom: 20 }}
+                width={"100%"}
+                alt="logo"
+                src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
+                onError={handleImgError}
+              />
+              <Typography.Title>
+                <Link to={`/${item.id}`}>{item.postName}</Link>
+              </Typography.Title>
+              <List.Item.Meta />
+              <Typography.Paragraph
+                style={{ minHeight: 66 }}
+                ellipsis={{
+                  rows: 3,
+                  expandable: false,
+                }}
               >
-                <img
-                  style={{ paddingBottom: 20 }}
-                  width={"100%"}
-                  alt="logo"
-                  src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-                  onError={handleImgError}
-                />
-                <Typography.Title>
-                  <Link to={`/${item.id}`}>{item.postName}</Link>
-                </Typography.Title>
-                <List.Item.Meta />
-                <Typography.Paragraph
-                  style={{ minHeight: 66 }}
-                  ellipsis={{
-                    rows: 3,
-                    expandable: false,
-                  }}
-                >
-                  {item.postDescription}
-                </Typography.Paragraph>
-                {item.Hashtags && (
-                  <Col>
-                    {item.Hashtags.map((item, i) => (
-                      <Button
-                        key={`button_${i}`}
-                        className="tag-button"
-                        type="primary"
-                        shape="round"
-                        style={{ marginTop: 10, marginRight: 10 }}
-                      >
-                        {item.hashtagName}
-                      </Button>
-                    ))}
-                  </Col>
-                )}
-              </List.Item>
-            </>
-          )}
-        />
-      )}
+                {item.postDescription}
+              </Typography.Paragraph>
+              {item.Hashtags && (
+                <Col>
+                  {item.Hashtags.map((item, i) => (
+                    <Button
+                      key={`button_${i}`}
+                      className="tag-button"
+                      type="primary"
+                      shape="round"
+                      style={{ marginTop: 10, marginRight: 10 }}
+                    >
+                      {item.hashtagName}
+                    </Button>
+                  ))}
+                </Col>
+              )}
+            </List.Item>
+          </>
+        )}
+      />
       <div
         className="listPost"
         style={{ width: "100%", height: 10 }}
