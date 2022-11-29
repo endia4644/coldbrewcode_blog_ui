@@ -1,18 +1,14 @@
-import { HeartFilled, HeartOutlined } from "@ant-design/icons";
+import { HeartFilled } from "@ant-design/icons";
 import {
   Affix,
-  Avatar,
   Badge,
   Button,
   Col,
-  Divider,
   Row,
-  Tabs,
-  Typography,
 } from "antd";
 import { motion } from "framer-motion";
 import React, { useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { actions } from "../state";
 
 export default function SideBar({ id }) {
@@ -40,7 +36,7 @@ export default function SideBar({ id }) {
           <Col>
             <div
               className="post-content-sidebar"
-              style={{ width: 84, borderRadius: 64 }}
+              style={{ width: 84, borderRadius: 12 }}
             >
               <Badge count={activeLikeCount}>
                 <motion.div
@@ -52,9 +48,8 @@ export default function SideBar({ id }) {
                   }}
                 >
                   <Button
-                    className={`like-btn ${
-                      activeLike ? "like-btn-active" : ""
-                    }`}
+                    className={`like-btn ${activeLike ? "like-btn-active" : ""
+                      }`}
                     style={{
                       width: "4rem",
                       height: "4rem",
@@ -62,13 +57,13 @@ export default function SideBar({ id }) {
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
-                      borderRadius: 40,
+                      borderRadius: 12,
                       border: "1px solid #d9d9d9",
                     }}
                     onClick={likeClick}
                     icon={
                       <HeartFilled
-                        style={{ fontSize: "2.5rem", color: "#d9d9d9" }}
+                        style={{ fontSize: "2rem", color: "#d9d9d9" }}
                       />
                     }
                   ></Button>

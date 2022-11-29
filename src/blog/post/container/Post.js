@@ -11,6 +11,8 @@ import "../scss/post.scss";
 import { elapsedTime } from "../../../common/util/util";
 import Hashtag from "../components/Hashtag";
 import SideBar from "../components/SideBar";
+import Topbar from "../components/TopBar";
+import PostMoveButton from "../components/PostMoveButton";
 
 export default function Post() {
   const { id } = useParams();
@@ -51,13 +53,14 @@ export default function Post() {
             <Typography.Title level={5} style={{ fontWeight: 500 }}>
               {elapsedTime(post?.createdAt)}
             </Typography.Title>
+            <Topbar id={id} />
           </Space>
         </Row>
         <Row style={{ marginTop: "1rem" }}>
           {post?.Hashtags && <Hashtag hashtags={post?.Hashtags} />}
         </Row>
         <Divider />
-        <Row style={{ marginTop: "4rem" }}>
+        <Row style={{ marginTop: "4rem", marginBottom: "3rem" }}>
           {post?.Hashtags && (
             <div
               className="post-content"
@@ -68,6 +71,13 @@ export default function Post() {
         <Row justify="center">
           <Col>
             <SideBar id={id} />
+          </Col>
+        </Row>
+        <Divider />
+        <Row justify="center">
+          <Col className="post-button-box" style={{ width: '100%' }}>
+            <PostMoveButton direction='left' />
+            <PostMoveButton direction='right' />
           </Col>
         </Row>
       </Content>

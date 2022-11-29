@@ -27,13 +27,16 @@
         justify-content: flex-start;
       }
     }
+
     .post {
       &-name {
         font-size: 3rem;
       }
+
       &-information {
         font-size: 1rem;
       }
+
       &-content {
         font-size: 1.125rem;
         color: var(--text1);
@@ -42,11 +45,12 @@
         letter-spacing: -0.004em;
         word-break: keep-all;
         overflow-wrap: break-word;
+
         &-sidebar {
           width: 4rem;
           background: $grayColor;
           border: 1px solid $antdGrayColor;
-          border-radius: 2rem;
+          border-radius: 12px;
           padding: 0.5rem;
           display: flex;
           flex-direction: column;
@@ -54,10 +58,104 @@
           align-items: center;
         }
       }
+
+      &-button {
+        width: 340px;
+        min-width: 340px;
+        height: 4rem;
+        font-weight: 700;
+        border-radius: 12px;
+        background-color: $subColor;
+        color: $fontColor;
+
+        .ant-typography {
+          color: $fontColor;
+        }
+
+        &-box {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        &:hover,
+        &:focus {
+          background-color: $fontColor;
+          color: $subColor;
+          border: 1px solid $fontColor;
+          font-weight: 700;
+
+          .ant-typography {
+            color: $subColor;
+          }
+
+          .post-left-arrow,
+          .post-right-arrow {
+            border-color: $subColor;
+            border: 2px solid $subColor;
+          }
+
+        }
+
+        .ant-space-vertical {
+          gap: 2px !important;
+        }
+      }
+
+      &-left {
+        .ant-space-item {
+          display: flex;
+          justify-content: flex-start;
+        }
+
+        &-button {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-start;
+          align-items: center;
+        }
+
+        &-arrow {
+          width: 2rem;
+          height: 2rem;
+          border: 2px solid $fontColor;
+          border-radius: 16px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-right: 15px;
+        }
+      }
+
+      &-right {
+        .ant-space-item {
+          display: flex;
+          justify-content: flex-end;
+        }
+
+        &-button {
+          display: flex;
+          flex-direction: row-reverse;
+          justify-content: flex-start;
+          align-items: center;
+        }
+
+        &-arrow {
+          width: 2rem;
+          height: 2rem;
+          border: 2px solid $fontColor;
+          border-radius: 16px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-left: 15px;
+        }
+      }
     }
 
     .ant-tabs-nav-list {
-      & > .ant-tabs-tab {
+      &>.ant-tabs-tab {
         &:nth-child(1) {
           margin-left: 0;
         }
@@ -69,6 +167,7 @@
 .tag-button {
   transition: all;
   transition-duration: 0.5ms;
+
   &:hover {
     background-color: $subColor;
     cursor: pointer;
@@ -79,6 +178,7 @@
   &-active {
     background-color: $fontColor !important;
     border: 0;
+
     span {
       color: $subColor !important;
       transition: all;
