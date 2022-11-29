@@ -29,6 +29,7 @@ import { API_HOST, FetchStatus } from "../../../common/constant";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";
 import { actions as common } from "../../../common/state";
+import { Types as mainType } from "../../main/state";
 
 export default function WriteSetting({
   setLevel,
@@ -59,33 +60,37 @@ export default function WriteSetting({
   const [description, setDescription] = useState("");
 
   const { fetchStatus, isFetching } = useFetchInfo(Types.FetchCreatePost);
-  const key = 'updatable';
+  const key = "updatable";
   const openMessage = (fetchStatus) => {
     if (fetchStatus == FetchStatus.Success) {
       message.success({
-        content: '작성이 완료되었습니다',
+        content: "작성이 완료되었습니다",
         key,
         duration: 2,
       });
       setTimeout(() => {
+        deleteStatus(Types.FetchCreatePost);
+        deleteStatus(mainType.FetchAllPost);
+        deleteStatus(mainType.FetchAllHashtag);
+        deleteStatus(mainType.FetchAllSeries);
         goBlog();
-        deleteStatus(Types.FetchCreatePost, Types.FetchCreatePost);
       }, 2000);
     } else if (fetchStatus == FetchStatus.Success) {
       message.error({
-        content: '작성 중 오류가 발생했습니다',
+        content: "작성 중 오류가 발생했습니다",
         key,
         duration: 2,
       });
     } else if (fetchStatus == FetchStatus.Request) {
       message.loading({
-        content: '처리중',
+        content: "처리중",
         key,
       });
     }
   };
 
   function deleteStatus(actionType, fetchKey) {
+    if (!fetchKey) fetchKey = actionType;
     const params = {
       actionType,
       fetchKey,
@@ -93,8 +98,6 @@ export default function WriteSetting({
     };
     dispatch(common.setFetchStatus(params));
   }
-
-
 
   useEffect(() => {
     if (fetchStatus === FetchStatus.Request) {
@@ -219,8 +222,9 @@ export default function WriteSetting({
         <motion.div layoutId={`item-motion`}>
           <div className="content content-detail">
             <Content
-              className={`main-content main-writer main-writer-detail ${isSeriesADD ? "isSeriesADD" : ""
-                }`}
+              className={`main-content main-writer main-writer-detail ${
+                isSeriesADD ? "isSeriesADD" : ""
+              }`}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -463,8 +467,8 @@ export default function WriteSetting({
                                 {item.seriesName}
                                 <span
                                   ref={(element) =>
-                                  (spanRefs.current[item.seriesName] =
-                                    element)
+                                    (spanRefs.current[item.seriesName] =
+                                      element)
                                   }
                                 />
                               </Radio.Button>

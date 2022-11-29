@@ -55,7 +55,7 @@ export default function Post() {
       observer.observe(targetRef.current);
     }
     return () => observer && observer.disconnect();
-  }, [dispatch, isFetching, post, totalCount]);
+  }, [dispatch, isFetching, post, totalCount, hashtagCurrent, searchCurrent]);
   return (
     <>
       {searchCurrent && (
