@@ -213,8 +213,13 @@ a:hover {
   }
 
   &-size {
+    &-small {
+      width: 100px;
+      min-width: 100px;
+    }
     &-large {
       width: 205px;
+      min-width: 205px;
     }
   }
 
@@ -238,6 +243,16 @@ a:hover {
       color: white;
       border: 0;
       font-weight: 700;
+    }
+  }
+}
+
+.input {
+  &-type {
+    &-round {
+      .ant-input {
+        border-radius: 4px;
+      }
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Button, Col, Result, Row } from "antd";
+import { Button, Result } from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
 

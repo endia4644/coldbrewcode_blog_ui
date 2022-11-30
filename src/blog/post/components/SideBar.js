@@ -1,21 +1,75 @@
 import { HeartFilled } from "@ant-design/icons";
 import { Affix, Badge, Button, Col, Row } from "antd";
 import { motion } from "framer-motion";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { actions } from "../state";
+import { FetchStatus } from "../../../common/constant";
+import { actions, Types } from "../state";
+import { actions as common } from "../../../common/state";
+import useFetchInfo from "../../../common/hook/useFetchInfo";
 
-export default function SideBar({ id }) {
+export default function SideBar({ id, likeCount, likeYsno }) {
   const dispatch = useDispatch();
   const divRef = useRef(null);
-  const [activeLike, setActiveLike] = useState(false);
-  const [activeLikeCount, setActiveLikeCount] = useState(5);
+  const [activeLike, setActiveLike] = useState(likeYsno);
+  const [activeLikeCount, setActiveLikeCount] = useState(likeCount);
+  const { fetchStatus: addStatus } = useFetchInfo(Types.FetchAddPostLike, id);
+  const { fetchStatus: removeStatus } = useFetchInfo(
+    Types.FetchRemovePostLike,
+    id
+  );
+
+  useEffect(() => {
+    if (addStatus === FetchStatus.Fail) {
+      setActiveLike(!activeLike);
+      setActiveLikeCount(activeLikeCount - 1);
+      dispatch(
+        common.setFetchStatus({
+          actionType: Types.FetchAddPostLike,
+          fetchKey: id,
+          status: FetchStatus.Delete,
+        })
+      );
+    }
+  }, [
+    addStatus,
+    id,
+    setActiveLikeCount,
+    activeLikeCount,
+    setActiveLike,
+    activeLike,
+    dispatch,
+  ]);
+
+  useEffect(() => {
+    if (removeStatus === FetchStatus.Fail) {
+      setActiveLike(!activeLike);
+      setActiveLikeCount(activeLikeCount + 1);
+      dispatch(
+        common.setFetchStatus({
+          actionType: Types.FetchRemovePostLike,
+          fetchKey: id,
+          status: FetchStatus.Delete,
+        })
+      );
+    }
+  }, [
+    removeStatus,
+    id,
+    setActiveLikeCount,
+    activeLikeCount,
+    setActiveLike,
+    activeLike,
+    dispatch,
+  ]);
 
   function likeClick() {
     setActiveLike(!activeLike);
     if (activeLike) {
+      dispatch(actions.fetchRemovePostLike(id));
       setActiveLikeCount(activeLikeCount - 1);
     } else {
+      dispatch(actions.fetchAddPostLike(id));
       setActiveLikeCount(activeLikeCount + 1);
     }
   }

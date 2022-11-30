@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AuthStatus } from "../constant";
 
 export default function useNeedLogin() {
-  const history = useHistory();
-  const status = useSelector(state => state.auth.status);
+  const navigate = useNavigate();
+  const status = useSelector((state) => state.auth.status);
   useEffect(() => {
     if (status === AuthStatus.NotLogin) {
-      history.replace('/login')
+      navigate("/blog/login");
     }
-  }, [status, history])
+  }, [status, navigate]);
 }

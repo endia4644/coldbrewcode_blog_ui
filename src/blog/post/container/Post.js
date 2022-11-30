@@ -1,4 +1,4 @@
-import { Col, Divider, Row, Space, Typography } from "antd";
+import { Button, Col, Divider, Form, Row, Space, Typography } from "antd";
 import React, { useEffect, useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -12,9 +12,11 @@ import { elapsedTime } from "../../../common/util/util";
 import Hashtag from "../components/Hashtag";
 import SideBar from "../components/SideBar";
 import Topbar from "../components/TopBar";
+import Comment from "../components/Comment";
 import PostMoveButton from "../components/PostMoveButton";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { FetchStatus } from "../../../common/constant";
+import TextArea from "antd/lib/input/TextArea";
 
 export default function Post() {
   const { id } = useParams();
@@ -69,7 +71,11 @@ export default function Post() {
                 <Typography.Title level={5} style={{ fontWeight: 500 }}>
                   {elapsedTime(post?.createdAt)}
                 </Typography.Title>
-                <Topbar id={id} />
+                <Topbar
+                  id={id}
+                  likeCount={post?.likeCount}
+                  likeYsno={post?.likeYsno}
+                />
               </Space>
             </Row>
             <Row style={{ marginTop: "1rem" }}>
@@ -86,7 +92,11 @@ export default function Post() {
             </Row>
             <Row justify="center">
               <Col>
-                <SideBar id={id} />
+                <SideBar
+                  id={id}
+                  likeCount={post?.likeCount}
+                  likeYsno={post?.likeYsno}
+                />
               </Col>
             </Row>
             <Divider />
@@ -95,6 +105,46 @@ export default function Post() {
                 <PostMoveButton direction="left" />
                 <PostMoveButton direction="right" />
               </Col>
+            </Row>
+            <Divider />
+            <Row justify="start" style={{ marginTop: "4rem" }}>
+              <Col>
+                <Typography.Title level={3}>0 개의 댓글</Typography.Title>
+              </Col>
+            </Row>
+            <Row justify="start" style={{ marginTop: "2rem" }}>
+              <Col>
+                <Form onFinish={(e) => console.log(e)}>
+                  <Form.Item name="comment">
+                    <TextArea
+                      name="comment"
+                      className="input-type-round"
+                      showCount
+                      maxLength={200}
+                      rows={6}
+                      cols={100}
+                      style={{
+                        resize: "none",
+                      }}
+                    />
+                  </Form.Item>
+                  <Form.Item>
+                    <Button
+                      htmlType="submit"
+                      className="button-type-round button-color-reverse button-size-small"
+                    >
+                      작성하기
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </Col>
+            </Row>
+            <Row justify="start" style={{ marginTop: "2rem" }}>
+              <Comment></Comment>
+              <Comment></Comment>
+              <Comment></Comment>
+              <Comment></Comment>
+              <Comment></Comment>
             </Row>
           </Content>
         </>
