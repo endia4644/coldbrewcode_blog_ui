@@ -22,6 +22,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(10),
         allowNull: false,
       },
+      commentCount: {
+        type: DataTypes.VIRTUAL(DataTypes.INTEGER),
+        set(value) {
+          this.setDataValue("commentCount", value);
+        },
+      },
       likeYsno: {
         type: DataTypes.VIRTUAL(DataTypes.BOOLEAN),
         set(value) {

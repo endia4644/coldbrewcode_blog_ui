@@ -23,7 +23,7 @@ const apiCache = new lruCache({
   maxAge: 1000 * 60 * 2,
 });
 
-const SAGA_CALL_TYPE = call(() => {}).type;
+const SAGA_CALL_TYPE = call(() => { }).type;
 function getIsCallEffect(value) {
   return value && value.type === SAGA_CALL_TYPE;
 }
@@ -41,6 +41,7 @@ export function makeFetchSaga({
     );
     const page = fetchPage !== undefined ? fetchPage : nextPage;
     const iterStack = [];
+    console.log(fetchKey);
     let iter = fetchSaga(action, page);
     let res;
     let checkSlowTask;

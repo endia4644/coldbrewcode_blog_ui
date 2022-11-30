@@ -1,11 +1,11 @@
 module.exports = (sequelize, DataTypes) => {
   const Comment = sequelize.define('Comment', {
     commentContent: {
-      type: DataTypes.TEXT, // 매우 긴 글
+      type: DataTypes.STRING(200), // 매우 긴 글
       allowNull: false,
     },
     commentDepth: {
-      type: DataTypes.TEXT, // 매우 긴 글
+      type: DataTypes.STRING(1),
       allowNull: false,
     },
     dltYsno: {

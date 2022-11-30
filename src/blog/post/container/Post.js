@@ -1,4 +1,4 @@
-import { Button, Col, Divider, Form, Row, Space, Typography } from "antd";
+import { Col, Divider, Row, Space, Typography } from "antd";
 import React, { useEffect, useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -16,13 +16,14 @@ import Comment from "../components/Comment";
 import PostMoveButton from "../components/PostMoveButton";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { FetchStatus } from "../../../common/constant";
-import TextArea from "antd/lib/input/TextArea";
+import CommentForm from "../components/CommentForm";
 
 export default function Post() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const post = useSelector((state) => state.post.post);
+  const comment = useSelector((state) => state.post.comment);
   const { fetchStatus } = useFetchInfo(Types.FetchGetPost, id);
 
   function logout() {
@@ -31,6 +32,7 @@ export default function Post() {
 
   useEffect(() => {
     dispatch(actions.fetchGetPost(id));
+    dispatch(actions.fetchGetZeroLevelComment(id));
   }, [dispatch, id]);
 
   useLayoutEffect(() => {
@@ -114,40 +116,16 @@ export default function Post() {
             </Row>
             <Row justify="start" style={{ marginTop: "2rem" }}>
               <Col>
-                <Form onFinish={(e) => console.log(e)}>
-                  <Form.Item name="comment">
-                    <TextArea
-                      name="comment"
-                      className="input-type-round"
-                      showCount
-                      maxLength={200}
-                      rows={6}
-                      cols={100}
-                      style={{
-                        resize: "none",
-                      }}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    style={{ display: "flex", flexDirection: "row-reverse" }}
-                  >
-                    <Button
-                      htmlType="submit"
-                      className="button-type-round button-color-reverse button-size-small"
-                    >
-                      답글 작성
-                    </Button>
-                  </Form.Item>
-                </Form>
+                <CommentForm postId={id} parentId={null} commentDepth={'0'} comment={comment} />
               </Col>
             </Row>
             <Row
               justify="start"
               style={{ marginTop: "2rem", paddingBottom: "3rem" }}
             >
-              {post.Comments.length > 0 &&
-                post.Comments.map((item) => (
-                  <Comment key={item.id} data={item} />
+              {comment.length > 0 &&
+                comment.map((item) => (
+                  <Comment key={`comment_${item.id}`} data={item} postId={id} />
                 ))}
             </Row>
           </Content>

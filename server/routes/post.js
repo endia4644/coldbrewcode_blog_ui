@@ -260,34 +260,9 @@ router.get("/:id", async (req, res, next) => {
           model: db.Hashtag,
           required: false,
         },
-        {
-          model: db.Comment,
-          as: "Comments",
-          attributes: [
-            "id",
-            "commentContent",
-            "commentDepth",
-            "createdAt",
-            "updatedAt",
-            "dltYsno",
-            [
-              literal(
-                '(SELECT COUNT("ParentId") FROM Comments WHERE `Comments.id` = Comments.ParentId)'
-              ),
-              "childCount",
-            ],
-          ],
-          required: false,
-          where: {
-            commentDepth: {
-              [Op.eq]: 0, // 게시글에서는 1단계 댓글만 조회한다.
-            },
-          },
-        },
       ],
       order: [
         ["createdAt", "DESC"],
-        [db.Comment, "createdAt", "DESC"],
       ],
     });
     if (post) {
@@ -295,8 +270,16 @@ router.get("/:id", async (req, res, next) => {
       const likeCurrentUser = req?.user?.id
         ? await post.hasUser(req.user)
         : false;
+      const commentCount = await db.Comment.count({
+        where: {
+          PostId: {
+            [Op.eq]: req.params.id
+          }
+        }
+      })
       post.set("likeCount", likes.length);
       post.set("likeYsno", likeCurrentUser);
+      post.set("commentCount", commentCount);
     }
     return res.send(makeResponse({ data: post }));
   } catch (err) {

@@ -5,19 +5,106 @@ const db = require("../models");
 const sequelize = require("sequelize");
 const { makeResponse } = require("../util");
 const router = express.Router();
+const { Op } = require("sequelize");
 
 router.post("/", isLoggedIn, async (req, res, next) => {
   try {
-    const newComment = await db.Comment.create({
-      commentContent: req.body.commentContent,
-      commentDepth: req.body.commentDepth,
-      dltYsno: "N",
-      UserId: req.user.id,
-      PostId: req.body.postId,
-      ParentId: req.body.parentId,
+    await db.sequelize.transaction(async (t) => {
+      const newComment = await db.Comment.create({
+        commentContent: req.body.commentContent,
+        commentDepth: req.body.commentDepth,
+        dltYsno: "N",
+        UserId: req.user.id,
+        PostId: req.body.postId,
+        ParentId: req.body.parentId,
+      }, {
+        transaction: t
+      });
+      if (!req.body.parentId) {
+        return res.send(makeResponse({ data: newComment }));
+      } else {
+        const comments = await db.Comment.findOne({
+          where: {
+            id: req.body.parentId,
+          },
+          attributes: [
+            "id",
+            "commentContent",
+            "commentDepth",
+            "createdAt",
+            "updatedAt",
+            "dltYsno",
+          ],
+          include: [
+            {
+              model: db.User,
+              attributes: ["id", "email", "nickname"],
+            },
+            {
+              /* 대댓글을 조회한다. */
+              model: db.Comment,
+              as: "childComment",
+              required: false,
+              /* 
+              서브쿼리로 조회된 댓글의 대댓글 갯수를 조회한다. 
+              1단계 댓글인 경우 2단계 댓글의 수만 조회한다. ( 3단계 수는 가져오지 않는다. )
+            */
+              attributes: [
+                "id",
+                "commentContent",
+                "commentDepth",
+                "createdAt",
+                "updatedAt",
+                "dltYsno",
+                [
+                  sequelize.literal(
+                    '(SELECT COUNT("ParentId") FROM Comments WHERE `childComment.id` = Comments.ParentId)'
+                  ),
+                  "childCount",
+                ],
+              ],
+              include: [
+                {
+                  model: db.User,
+                  attributes: ["id", "email", "nickname"],
+                },
+              ],
+              where: {
+                ParentId: req.body.parentId,
+              },
+              order: [["id", "DESC"]],
+            },
+          ],
+          transaction: t
+        });
+        return res.send(makeResponse({ data: comments }));
+      }
     });
-    const fullComment = await db.Comment.findOne({
-      where: { id: newComment.id },
+  } catch (err) {
+    console.error(err);
+    next("댓글 등록 중 오류가 발생했습니다");
+  }
+});
+
+router.get("/", async (req, res, next) => {
+  try {
+    const comments = await db.Comment.findAll({
+      where: {
+        PostId: {
+          [Op.eq]: req.query.postId,
+        },
+        commentDepth: {
+          [Op.eq]: 0, // 게시글에서는 1단계 댓글만 조회한다.
+        },
+      },
+      attributes: [
+        "id",
+        "commentContent",
+        "commentDepth",
+        "createdAt",
+        "updatedAt",
+        "dltYsno",
+      ],
       include: [
         {
           model: db.User,
@@ -25,10 +112,10 @@ router.post("/", isLoggedIn, async (req, res, next) => {
         },
       ],
     });
-    return res.send(makeResponse({ data: fullComment }));
+    res.send(makeResponse({ data: comments }));
   } catch (err) {
     console.error(err);
-    next("댓글 등록 중 오류가 발생했습니다");
+    next("댓글 조회 중 오류가 발생했습니다");
   }
 });
 

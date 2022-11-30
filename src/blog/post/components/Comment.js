@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Button, Comment, Form } from "antd";
+import { Avatar, Comment } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import TextArea from "antd/lib/input/TextArea";
 import { actions } from "../state";
+import CommentForm from "./CommentForm";
 
-export default function Comments({ data }) {
+export default function Comments({ data, postId }) {
   const dispatch = useDispatch();
   const [expend, setExpend] = useState(false);
   const comment = useSelector((state) => state.post[`comment_${data.id}`]);
 
   useEffect(() => {
-    console.log(data);
-  }, [data]);
-
-  useEffect(() => {
-    dispatch(actions.fetchGetComment(data?.id));
-  }, [dispatch, data?.id]);
+    console.log(`comment_${data.id}`);
+    dispatch(actions.fetchGetComment(postId, `comment_${data.id}`));
+  }, [dispatch, postId]);
 
   return (
     <Comment
@@ -39,34 +36,10 @@ export default function Comments({ data }) {
     >
       {data.commentDepth < 2 && expend && (
         <>
-          <Form onFinish={(e) => console.log(e)}>
-            <Form.Item name="comment">
-              <TextArea
-                name="comment"
-                className="input-type-round"
-                showCount
-                maxLength={200}
-                rows={6}
-                cols={100}
-                style={{
-                  resize: "none",
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              style={{ display: "flex", flexDirection: "row-reverse" }}
-            >
-              <Button
-                htmlType="submit"
-                className="button-type-round button-color-reverse button-size-small"
-              >
-                답글 작성
-              </Button>
-            </Form.Item>
-          </Form>
+          <CommentForm postId parentId={data.id} commentDepth={Number(data.commentDepth) + 1} comment={comment} />
           {comment?.childComment &&
             comment?.childComment.map((item) => (
-              <Comments key={item.id} data={item} />
+              <Comments key={`comment_${item.id}`} data={item} postId={postId} />
             ))}
         </>
       )}

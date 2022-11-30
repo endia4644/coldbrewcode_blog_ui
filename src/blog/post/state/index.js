@@ -11,7 +11,10 @@ export const Types = {
   FetchGetPost: "post/FetchGetPost",
   FetchAddPostLike: "post/FetchAddPostLike",
   FetchRemovePostLike: "post/FetchRemovePostLike",
+  FetchGetZeroLevelComment: "post/FetchGetZeroLevelComment",
   FetchGetComment: "post/FetchGetComment",
+  FetchAddComment: "post/FetchAddComment",
+  FetchAddZeroLevelComment: "post/FetchAddZeroLevelComment",
   FetchUpdateComment: "post/FetchUpdateComment",
   FetchRemoveComment: "post/FetchRemoveComment",
 };
@@ -37,11 +40,34 @@ export const actions = {
     id: id,
     [FETCH_KEY]: id,
   }),
-  fetchGetComment: (id, comment) => ({
-    type: Types.FetchGetComment,
-    id,
+  fetchGetZeroLevelComment: (postId, comment) => ({
+    type: Types.FetchGetZeroLevelComment,
+    postId,
     comment,
-    [FETCH_KEY]: id,
+    [FETCH_KEY]: postId,
+  }),
+  fetchGetComment: (id, fetchKey) => ({
+    type: Types.FetchGetComment,
+    postId: id,
+    [FETCH_KEY]: fetchKey,
+  }),
+  fetchAddComment: ({ postId, parentId, commentContent, commentDepth, comment }) => ({
+    type: Types.FetchAddComment,
+    postId: postId,
+    parentId: parentId,
+    commentContent,
+    commentDepth,
+    comment,
+    [FETCH_KEY]: postId,
+  }),
+  fetchAddZeroLevelComment: ({ postId, parentId, commentContent, commentDepth, comment }) => ({
+    type: Types.FetchAddZeroLevelComment,
+    postId: postId,
+    parentId: parentId,
+    commentContent,
+    commentDepth,
+    comment,
+    [FETCH_KEY]: postId,
   }),
   fetchUpdateComment: (id, comment) => ({
     type: Types.FetchUpdateComment,
@@ -58,6 +84,7 @@ export const actions = {
 
 const INITIAL_STATE = {
   post: null,
+  comment: [],
 };
 const reducer = createReducer(INITIAL_STATE, {
   [Types.SetValue]: setValueReducer,
