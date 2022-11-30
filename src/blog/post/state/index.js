@@ -1,6 +1,7 @@
 import {
   createReducer,
   createSetValueAction,
+  FETCH_KEY,
   setValueReducer,
 } from "../../../common/redux-helper";
 
@@ -14,6 +15,7 @@ export const actions = {
   fetchGetPost: (id) => ({
     type: Types.FetchGetPost,
     id: id,
+    [FETCH_KEY]: id,
   }),
 };
 

@@ -8,7 +8,7 @@ function* fetchGetPost({ id }) {
     url: `/post/${id}`,
   });
   if (isSuccess && data) {
-    yield put(actions.setValue("post", data?.[0]));
+    yield put(actions.setValue("post", data));
   }
 }
 
