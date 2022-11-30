@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux";
 
 import "antd/dist/antd.min.css";
 import "./common/scss/common.scss";
+import NotFound from "./common/container/NotFound";
 
 export default function App() {
   function setScreenSize() {
@@ -91,6 +92,7 @@ export default function App() {
             <Route path="/blog/signup" element={<Signup />} />
             <Route path="/blog/register/:id" element={<Register />} />
             <Route path="/blog/post/:id" element={<Post />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
       </Layout>

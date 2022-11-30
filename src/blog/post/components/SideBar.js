@@ -1,11 +1,5 @@
 import { HeartFilled } from "@ant-design/icons";
-import {
-  Affix,
-  Badge,
-  Button,
-  Col,
-  Row,
-} from "antd";
+import { Affix, Badge, Button, Col, Row } from "antd";
 import { motion } from "framer-motion";
 import React, { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -48,8 +42,9 @@ export default function SideBar({ id }) {
                   }}
                 >
                   <Button
-                    className={`like-btn ${activeLike ? "like-btn-active" : ""
-                      }`}
+                    className={`like-btn ${
+                      activeLike ? "like-btn-active" : ""
+                    }`}
                     style={{
                       width: "4rem",
                       height: "4rem",
