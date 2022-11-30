@@ -239,7 +239,7 @@ router.get("/", async (req, res, next) => {
     return res.json(
       makeResponse({
         resultCode: -1,
-        resultMessage: "게시글 작성 중 오류가 발생했습니다.",
+        resultMessage: "게시글 작성 중 오류가 발생했습니다",
       })
     );
   }
@@ -247,7 +247,7 @@ router.get("/", async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
-    const post = await db.Post.findAll({
+    const post = await db.Post.findOne({
       where: {
         id: req.params.id,
       },
@@ -289,10 +289,58 @@ router.get("/:id", async (req, res, next) => {
         [db.Comment, "createdAt", "DESC"],
       ],
     });
+    if (post) {
+      const likes = await post.getUsers();
+      const likeCurrentUser = req?.user?.id
+        ? await post.hasUser(req.user)
+        : false;
+      post.set("likeCount", likes.length);
+      post.set("likeYsno", likeCurrentUser);
+    }
     return res.send(makeResponse({ data: post }));
   } catch (err) {
     console.error(err);
-    next("게시글 조회 중 오류가 발생했습니다.");
+    next("게시글 조회 중 오류가 발생했습니다");
+  }
+});
+
+router.post("/:id/like", isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await db.Post.findOne({
+      where: {
+        id: req.params.id,
+      },
+    });
+    const user = await db.User.findOne({
+      where: {
+        id: req.user.id,
+      },
+    });
+    await post.addUser(user);
+    return res.send(makeResponse({ data: post }));
+  } catch (err) {
+    console.error(err);
+    next("게시글 찜 등록 중 오류가 발생했습니다");
+  }
+});
+
+router.delete("/:id/like", isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await db.Post.findOne({
+      where: {
+        id: req.params.id,
+      },
+    });
+    const user = await db.User.findOne({
+      where: {
+        id: req.user.id,
+      },
+    });
+    await post.removeUser(user);
+    return res.send(makeResponse({ data: post }));
+  } catch (err) {
+    console.error(err);
+    next("게시글 찜 삭제 중 오류가 발생했습니다");
   }
 });
 

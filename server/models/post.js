@@ -18,13 +18,21 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(500),
         allowNull: true,
       },
-      likeCnt: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
       permission: {
         type: DataTypes.STRING(10),
         allowNull: false,
+      },
+      likeYsno: {
+        type: DataTypes.VIRTUAL(DataTypes.BOOLEAN),
+        set(value) {
+          this.setDataValue("likeYsno", value);
+        },
+      },
+      likeCount: {
+        type: DataTypes.VIRTUAL(DataTypes.INTEGER),
+        set(value) {
+          this.setDataValue("likeCount", value);
+        },
       },
       dltYsno: {
         type: DataTypes.STRING(1),
@@ -38,6 +46,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   Post.associate = (db) => {
     db.Post.belongsTo(db.User);
+    db.Post.belongsToMany(db.User, { through: "PostLikeUser" });
     db.Post.belongsTo(db.Series, {
       foreignKey: {
         allowNull: true,

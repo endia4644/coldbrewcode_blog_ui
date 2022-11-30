@@ -76,9 +76,7 @@ app.use(function (error, req, res, next) {
     makeResponse({
       resultCode: -1,
       resultMessage:
-        error?.message !== "null"
-          ? error.message
-          : "서비스 오류가 발생했습니다",
+        error !== "null" && error ? error : "서비스 오류가 발생했습니다",
     })
   );
 });

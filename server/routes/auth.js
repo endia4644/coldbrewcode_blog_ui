@@ -27,7 +27,7 @@ router.post("/signup", isNotLoggedIn, async (req, res, next) => {
           })
         );
       }
-      const newUser = await db.User.create(
+      await db.User.create(
         {
           email: req.body.email,
           password: hash,
@@ -59,7 +59,7 @@ router.post("/signup", isNotLoggedIn, async (req, res, next) => {
     });
   } catch (err) {
     console.error(err?.message);
-    next(new Error(null));
+    next("null");
   }
 });
 
