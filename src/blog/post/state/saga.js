@@ -26,6 +26,31 @@ function* fetchRemovePostLike({ id }) {
   });
 }
 
+function* fetchGetComment(action) {
+  const { isSuccess, data } = yield call(callApi, {
+    url: `/comment/${action.id}`,
+  });
+
+  if (isSuccess && data) {
+    yield put(actions.setValue(`comment_${data.id}`, data));
+  }
+}
+
+function* fetchUpdateComment({ id, comment }) {
+  yield call(callApi, {
+    method: "patch",
+    url: `/comment/${id}`,
+    data: comment,
+  });
+}
+
+function* fetchRemoveComment({ id }) {
+  yield call(callApi, {
+    method: "delete",
+    url: `/comment/${id}`,
+  });
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function* () {
   yield all([
@@ -40,6 +65,18 @@ export default function* () {
     takeLeading(
       Types.FetchRemovePostLike,
       makeFetchSaga({ fetchSaga: fetchRemovePostLike, canCache: false })
+    ),
+    takeLeading(
+      Types.FetchGetComment,
+      makeFetchSaga({ fetchSaga: fetchGetComment, canCache: false })
+    ),
+    takeLeading(
+      Types.FetchUpdateComment,
+      makeFetchSaga({ fetchSaga: fetchUpdateComment, canCache: false })
+    ),
+    takeLeading(
+      Types.FetchRemoveComment,
+      makeFetchSaga({ fetchSaga: fetchRemoveComment, canCache: false })
     ),
   ]);
 }

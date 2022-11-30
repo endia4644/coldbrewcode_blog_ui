@@ -266,6 +266,7 @@ router.get("/:id", async (req, res, next) => {
           attributes: [
             "id",
             "commentContent",
+            "commentDepth",
             "createdAt",
             "updatedAt",
             "dltYsno",

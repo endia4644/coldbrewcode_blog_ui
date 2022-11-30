@@ -128,23 +128,27 @@ export default function Post() {
                       }}
                     />
                   </Form.Item>
-                  <Form.Item>
+                  <Form.Item
+                    style={{ display: "flex", flexDirection: "row-reverse" }}
+                  >
                     <Button
                       htmlType="submit"
                       className="button-type-round button-color-reverse button-size-small"
                     >
-                      작성하기
+                      답글 작성
                     </Button>
                   </Form.Item>
                 </Form>
               </Col>
             </Row>
-            <Row justify="start" style={{ marginTop: "2rem" }}>
-              <Comment></Comment>
-              <Comment></Comment>
-              <Comment></Comment>
-              <Comment></Comment>
-              <Comment></Comment>
+            <Row
+              justify="start"
+              style={{ marginTop: "2rem", paddingBottom: "3rem" }}
+            >
+              {post.Comments.length > 0 &&
+                post.Comments.map((item) => (
+                  <Comment key={item.id} data={item} />
+                ))}
             </Row>
           </Content>
         </>

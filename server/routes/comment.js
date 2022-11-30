@@ -25,10 +25,10 @@ router.post("/", isLoggedIn, async (req, res, next) => {
         },
       ],
     });
-    return res.send(makeResponse(fullComment));
+    return res.send(makeResponse({ data: fullComment }));
   } catch (err) {
     console.error(err);
-    next(err);
+    next("댓글 등록 중 오류가 발생했습니다");
   }
 });
 
@@ -38,7 +38,14 @@ router.get("/:id", async (req, res, next) => {
       where: {
         id: req.params.id,
       },
-      attributes: ["id", "commentContent", "createdAt", "updatedAt", "dltYsno"],
+      attributes: [
+        "id",
+        "commentContent",
+        "commentDepth",
+        "createdAt",
+        "updatedAt",
+        "dltYsno",
+      ],
       include: [
         {
           model: db.User,
@@ -56,6 +63,7 @@ router.get("/:id", async (req, res, next) => {
           attributes: [
             "id",
             "commentContent",
+            "commentDepth",
             "createdAt",
             "updatedAt",
             "dltYsno",
@@ -79,10 +87,10 @@ router.get("/:id", async (req, res, next) => {
         },
       ],
     });
-    res.send(makeResponse(comments));
+    res.send(makeResponse({ data: comments }));
   } catch (err) {
     console.error(err);
-    next(err);
+    next("댓글 조회 중 오류가 발생했습니다");
   }
 });
 

@@ -6,10 +6,14 @@ import {
 } from "../../../common/redux-helper";
 
 export const Types = {
-  SetValue: "auth/SetValue",
-  FetchGetPost: "auth/FetchGetPost",
-  FetchAddPostLike: "auth/FetchAddPostLike",
-  FetchRemovePostLike: "auth/FetchRemovePostLike",
+  SetValue: "post/SetValue",
+  SetComment: "post/SetComment",
+  FetchGetPost: "post/FetchGetPost",
+  FetchAddPostLike: "post/FetchAddPostLike",
+  FetchRemovePostLike: "post/FetchRemovePostLike",
+  FetchGetComment: "post/FetchGetComment",
+  FetchUpdateComment: "post/FetchUpdateComment",
+  FetchRemoveComment: "post/FetchRemoveComment",
 };
 
 export const actions = {
@@ -19,6 +23,10 @@ export const actions = {
     id: id,
     [FETCH_KEY]: id,
   }),
+  setComment: (comment) => ({
+    type: Types.SetComment,
+    comment,
+  }),
   fetchAddPostLike: (id) => ({
     type: Types.FetchAddPostLike,
     id: id,
@@ -26,6 +34,23 @@ export const actions = {
   }),
   fetchRemovePostLike: (id) => ({
     type: Types.FetchRemovePostLike,
+    id: id,
+    [FETCH_KEY]: id,
+  }),
+  fetchGetComment: (id, comment) => ({
+    type: Types.FetchGetComment,
+    id,
+    comment,
+    [FETCH_KEY]: id,
+  }),
+  fetchUpdateComment: (id, comment) => ({
+    type: Types.FetchUpdateComment,
+    id: id,
+    comment: comment,
+    [FETCH_KEY]: id,
+  }),
+  fetchRemoveComment: (id) => ({
+    type: Types.FetchRemoveComment,
     id: id,
     [FETCH_KEY]: id,
   }),
