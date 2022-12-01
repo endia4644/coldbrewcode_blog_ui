@@ -213,6 +213,13 @@ a:hover {
   }
 
   &-size {
+    &-mini {
+      width: 40px;
+      min-width: 40px;
+      height: 26px;
+      font-size: 12px;
+      padding: 1px;
+    }
     &-small {
       width: 100px;
       min-width: 100px;

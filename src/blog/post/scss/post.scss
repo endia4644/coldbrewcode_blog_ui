@@ -95,7 +95,6 @@
             border-color: $subColor;
             border: 2px solid $subColor;
           }
-
         }
 
         .ant-space-vertical {
@@ -154,8 +153,22 @@
       }
     }
 
+    .ant-comment-content-author {
+      &-name,
+      &-time {
+        width: 100%;
+      }
+      &-name {
+        .ant-row {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+        }
+      }
+    }
+
     .ant-tabs-nav-list {
-      &>.ant-tabs-tab {
+      & > .ant-tabs-tab {
         &:nth-child(1) {
           margin-left: 0;
         }

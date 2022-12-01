@@ -48,10 +48,16 @@ export const actions = {
   }),
   fetchGetComment: (id, fetchKey) => ({
     type: Types.FetchGetComment,
-    postId: id,
+    id,
     [FETCH_KEY]: fetchKey,
   }),
-  fetchAddComment: ({ postId, parentId, commentContent, commentDepth, comment }) => ({
+  fetchAddComment: ({
+    postId,
+    parentId,
+    commentContent,
+    commentDepth,
+    comment,
+  }) => ({
     type: Types.FetchAddComment,
     postId: postId,
     parentId: parentId,
@@ -60,7 +66,13 @@ export const actions = {
     comment,
     [FETCH_KEY]: postId,
   }),
-  fetchAddZeroLevelComment: ({ postId, parentId, commentContent, commentDepth, comment }) => ({
+  fetchAddZeroLevelComment: ({
+    postId,
+    parentId,
+    commentContent,
+    commentDepth,
+    comment,
+  }) => ({
     type: Types.FetchAddZeroLevelComment,
     postId: postId,
     parentId: parentId,
