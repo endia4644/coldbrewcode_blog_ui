@@ -11,6 +11,7 @@ export default function Comments({ data, postId }) {
   const comment = useSelector((state) => state.post[`comment_${data.id}`]);
   const user = useSelector((state) => state.auth.user);
   const contentRef = useRef(null);
+  console.log(data?.User?.id);
 
   return (
     <Comment

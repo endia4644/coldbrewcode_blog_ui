@@ -10,18 +10,47 @@ const { Op } = require("sequelize");
 router.post("/", isLoggedIn, async (req, res, next) => {
   try {
     await db.sequelize.transaction(async (t) => {
-      const newComment = await db.Comment.create({
-        commentContent: req.body.commentContent,
-        commentDepth: req.body.commentDepth,
-        dltYsno: "N",
-        UserId: req.user.id,
-        PostId: req.body.postId,
-        ParentId: req.body.parentId,
-      }, {
-        transaction: t
-      });
+      const newComment = await db.Comment.create(
+        {
+          commentContent: req.body.commentContent,
+          commentDepth: req.body.commentDepth,
+          dltYsno: "N",
+          UserId: req.user.id,
+          PostId: req.body.postId,
+          ParentId: req.body.parentId,
+        },
+        {
+          transaction: t,
+        }
+      );
       if (!req.body.parentId) {
-        return res.send(makeResponse({ data: newComment }));
+        console.log(newComment.id);
+        const comments = await db.Comment.findOne({
+          where: {
+            id: {
+              [Op.eq]: newComment.id,
+            },
+            commentDepth: {
+              [Op.eq]: 0, // 게시글에서는 1단계 댓글만 조회한다.
+            },
+          },
+          attributes: [
+            "id",
+            "commentContent",
+            "commentDepth",
+            "createdAt",
+            "updatedAt",
+            "dltYsno",
+          ],
+          include: [
+            {
+              model: db.User,
+              attributes: ["id", "email", "nickname"],
+            },
+          ],
+          transaction: t,
+        });
+        return res.send(makeResponse({ data: comments }));
       } else {
         const comments = await db.Comment.findOne({
           where: {
@@ -75,7 +104,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
               order: [["id", "DESC"]],
             },
           ],
-          transaction: t
+          transaction: t,
         });
         return res.send(makeResponse({ data: comments }));
       }
