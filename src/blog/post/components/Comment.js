@@ -9,6 +9,7 @@ export default function Comments({ data, postId }) {
   const dispatch = useDispatch();
   const [expend, setExpend] = useState(false);
   const comment = useSelector((state) => state.post[`comment_${data.id}`]);
+  const commentCount = useSelector((state) => state.post.commentCount);
   const user = useSelector((state) => state.auth.user);
   const contentRef = useRef(null);
   console.log(data?.User?.id);
@@ -62,6 +63,7 @@ export default function Comments({ data, postId }) {
             parentId={data.id}
             commentDepth={Number(data.commentDepth) + 1}
             comment={comment}
+            commentCount={commentCount}
           />
           {comment?.childComment &&
             comment?.childComment.map((item) => (

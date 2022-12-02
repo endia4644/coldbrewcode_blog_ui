@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Col, Divider, Row, Space, Typography } from "antd";
 import React, { useEffect, useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,6 +25,7 @@ export default function Post() {
   const navigate = useNavigate();
   const post = useSelector((state) => state.post.post);
   const comment = useSelector((state) => state.post.comment);
+  const commentCount = useSelector((state) => state.post.commentCount);
   const { fetchStatus } = useFetchInfo(Types.FetchGetPost, id);
 
   function logout() {
@@ -111,12 +113,12 @@ export default function Post() {
             <Divider />
             <Row justify="start" style={{ marginTop: "4rem" }}>
               <Col>
-                <Typography.Title level={3}>0 개의 댓글</Typography.Title>
+                <Typography.Title level={3}>{commentCount} 개의 댓글</Typography.Title>
               </Col>
             </Row>
             <Row justify="start" style={{ marginTop: "2rem" }}>
               <Col>
-                <CommentForm postId={id} parentId={null} commentDepth={'0'} comment={comment} />
+                <CommentForm postId={id} parentId={null} commentDepth={'0'} comment={comment} commentCount={commentCount} />
               </Col>
             </Row>
             <Row

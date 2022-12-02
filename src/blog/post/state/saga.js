@@ -9,6 +9,7 @@ function* fetchGetPost({ id }) {
   });
   if (isSuccess && data) {
     yield put(actions.setValue("post", data));
+    yield put(actions.setValue("commentCount",data?.commentCount));
   }
 }
 
@@ -63,6 +64,9 @@ function* fetchAddZeroLevelComment(action) {
   });
 
   if (isSuccess && data) {
+    if(action.commentCount) {
+      yield put(actions.setValue("commentCount", ++action.commentCount));
+    }
     if (action.comment) {
       yield put(actions.setValue("comment", [...action.comment, data]));
     } else {
@@ -85,6 +89,7 @@ function* fetchAddComment(action) {
 
   if (isSuccess && data) {
     yield put(actions.setValue(`comment_${data.id}`, data));
+    yield put(actions.setValue("commentCount", ++action.commentCount));
   }
 }
 
@@ -96,11 +101,15 @@ function* fetchUpdateComment({ id, comment }) {
   });
 }
 
-function* fetchRemoveComment({ id }) {
-  yield call(callApi, {
+function* fetchRemoveComment({ action }) {
+  const { isSuccess, data } = yield call(callApi, {
     method: "delete",
-    url: `/comment/${id}`,
+    url: `/comment/${action.id}`,
   });
+
+  if (isSuccess && data) {
+    yield put(actions.setValue("commentCount", --action.commentCount));
+  }
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

@@ -9,6 +9,7 @@ export default function CommentForm({
   parentId,
   comment,
   commentDepth,
+  commentCount,
 }) {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
@@ -23,6 +24,7 @@ export default function CommentForm({
             commentContent: item.commentContent,
             commentDepth,
             comment,
+            commentCount
           })
         );
       } else {
@@ -33,6 +35,7 @@ export default function CommentForm({
             commentContent: item.commentContent,
             commentDepth,
             comment,
+            commentCount
           })
         );
       }

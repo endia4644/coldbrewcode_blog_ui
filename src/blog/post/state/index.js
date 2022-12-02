@@ -57,6 +57,7 @@ export const actions = {
     commentContent,
     commentDepth,
     comment,
+    commentCount,
   }) => ({
     type: Types.FetchAddComment,
     postId: postId,
@@ -64,6 +65,7 @@ export const actions = {
     commentContent,
     commentDepth,
     comment,
+    commentCount,
     [FETCH_KEY]: postId,
   }),
   fetchAddZeroLevelComment: ({
@@ -72,6 +74,7 @@ export const actions = {
     commentContent,
     commentDepth,
     comment,
+    commentCount
   }) => ({
     type: Types.FetchAddZeroLevelComment,
     postId: postId,
@@ -79,6 +82,7 @@ export const actions = {
     commentContent,
     commentDepth,
     comment,
+    commentCount,
     [FETCH_KEY]: postId,
   }),
   fetchUpdateComment: (id, comment) => ({
@@ -87,9 +91,10 @@ export const actions = {
     comment: comment,
     [FETCH_KEY]: id,
   }),
-  fetchRemoveComment: (id) => ({
+  fetchRemoveComment: (id, commentCount) => ({
     type: Types.FetchRemoveComment,
     id: id,
+    commentCount,
     [FETCH_KEY]: id,
   }),
 };
@@ -97,6 +102,7 @@ export const actions = {
 const INITIAL_STATE = {
   post: null,
   comment: [],
+  commentCount: 0
 };
 const reducer = createReducer(INITIAL_STATE, {
   [Types.SetValue]: setValueReducer,
