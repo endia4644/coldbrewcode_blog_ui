@@ -16,29 +16,16 @@ export default function CommentForm({
 
   function onFinish(item) {
     if (item.commentContent) {
-      if (Number(commentDepth) > 0) {
-        dispatch(
-          actions.fetchAddComment({
-            postId,
-            parentId,
-            commentContent: item.commentContent,
-            commentDepth,
-            comment,
-            commentCount
-          })
-        );
-      } else {
-        dispatch(
-          actions.fetchAddZeroLevelComment({
-            postId,
-            parentId,
-            commentContent: item.commentContent,
-            commentDepth,
-            comment,
-            commentCount
-          })
-        );
-      }
+      dispatch(
+        actions.fetchAddComment({
+          postId,
+          parentId,
+          commentContent: item.commentContent,
+          commentDepth,
+          comment,
+          commentCount
+        })
+      );
     }
     form.resetFields();
   }

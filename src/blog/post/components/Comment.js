@@ -12,9 +12,9 @@ export default function Comments({ data, postId }) {
   const commentCount = useSelector((state) => state.post.commentCount);
   const user = useSelector((state) => state.auth.user);
   const contentRef = useRef(null);
-  console.log(data?.User?.id);
 
   return (
+    (data?.childComment?.length > 0 || data?.dltYsno === 'N') &&
     <Comment
       style={{ width: "100%" }}
       actions={[
@@ -66,13 +66,13 @@ export default function Comments({ data, postId }) {
             commentCount={commentCount}
           />
           {comment?.childComment &&
-            comment?.childComment.map((item) => (
+            comment?.childComment.map((item) => {
               <Comments
-                key={`comment_${item.id}`}
-                data={item}
-                postId={postId}
-              />
-            ))}
+              key={`comment_${item.id}`}
+              data={item}
+              postId={postId}
+            />
+            })}
         </>
       )}
     </Comment>

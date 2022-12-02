@@ -24,7 +24,7 @@ export default function Post() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const post = useSelector((state) => state.post.post);
-  const comment = useSelector((state) => state.post.comment);
+  const comment = useSelector((state) => state.post.comment_0);
   const commentCount = useSelector((state) => state.post.commentCount);
   const { fetchStatus } = useFetchInfo(Types.FetchGetPost, id);
 
@@ -34,7 +34,7 @@ export default function Post() {
 
   useEffect(() => {
     dispatch(actions.fetchGetPost(id));
-    dispatch(actions.fetchGetZeroLevelComment(id));
+    dispatch(actions.fetchGetComment('0',id));
   }, [dispatch, id]);
 
   useLayoutEffect(() => {
