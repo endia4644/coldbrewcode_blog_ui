@@ -9,6 +9,7 @@ function* fetchGetPost({ id }) {
   });
   if (isSuccess && data) {
     yield put(actions.setValue("post", data));
+    yield put(actions.setValue("commentCount", data?.commentCount));
   }
 }
 
@@ -26,27 +27,16 @@ function* fetchRemovePostLike({ id }) {
   });
 }
 
-function* fetchGetZeroLevelComment(action) {
-  const { isSuccess, data } = yield call(callApi, {
-    url: `/comment`,
-    params: {
-      postId: action.postId,
-    },
-  });
-
-  if (isSuccess && data) {
-    console.log(data);
-    yield put(actions.setValue(`comment`, [...data]));
-  }
-}
-
 function* fetchGetComment(action) {
   const { isSuccess, data } = yield call(callApi, {
     url: `/comment/${action.id}`,
+    params: {
+      postId: action.postId
+    }
   });
 
   if (isSuccess && data) {
-    yield put(actions.setValue(`comment_${data.id}`, data));
+    yield put(actions.setValue(`comment_${action.id}`, data));
   }
 }
 
@@ -58,15 +48,15 @@ function* fetchAddZeroLevelComment(action) {
       commentContent: action.commentContent,
       commentDepth: action.commentDepth,
       postId: action.postId,
-      parentId: action.parentId,
-    },
+      parentId: action.parentId
+    }
   });
 
   if (isSuccess && data) {
     if (action.comment) {
-      yield put(actions.setValue("comment", [...action.comment, data]));
+      yield put(actions.setValue('comment', [...action.comment, data]));
     } else {
-      yield put(actions.setValue("comment", [data]));
+      yield put(actions.setValue('comment', [data]));
     }
   }
 }
@@ -79,8 +69,8 @@ function* fetchAddComment(action) {
       commentContent: action.commentContent,
       commentDepth: action.commentDepth,
       postId: action.postId,
-      parentId: action.parentId,
-    },
+      parentId: action.parentId
+    }
   });
 
   if (isSuccess && data) {
@@ -117,10 +107,6 @@ export default function* () {
     takeLeading(
       Types.FetchRemovePostLike,
       makeFetchSaga({ fetchSaga: fetchRemovePostLike, canCache: false })
-    ),
-    takeLeading(
-      Types.FetchGetZeroLevelComment,
-      makeFetchSaga({ fetchSaga: fetchGetZeroLevelComment, canCache: false })
     ),
     takeLeading(
       Types.FetchGetComment,
