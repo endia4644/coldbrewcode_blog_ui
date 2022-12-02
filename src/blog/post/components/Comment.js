@@ -11,7 +11,6 @@ export default function Comments({ data, postId }) {
   const comment = useSelector((state) => state.post[`comment_${data.id}`]);
   const user = useSelector((state) => state.auth.user);
   const contentRef = useRef(null);
-  console.log(data?.User?.id);
 
   return (
     <Comment
@@ -21,7 +20,7 @@ export default function Comments({ data, postId }) {
           key="comment-nested-reply-to"
           onClick={() => {
             if (!expend) {
-              dispatch(actions.fetchGetComment(data.id, `comment_${data.id}`));
+              dispatch(actions.fetchGetComment(data.id, postId));
             }
             setExpend(!expend);
           }}
@@ -42,7 +41,12 @@ export default function Comments({ data, postId }) {
               >
                 수정
               </Button>
-              <Button className="button-type-round button-color-normal button-size-mini">
+              <Button
+                className="button-type-round button-color-normal button-size-mini"
+                onClick={() => {
+                  dispatch(actions.fetchRemoveComment());
+                }}
+              >
                 삭제
               </Button>
             </Col>

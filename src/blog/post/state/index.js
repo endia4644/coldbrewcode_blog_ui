@@ -11,7 +11,6 @@ export const Types = {
   FetchGetPost: "post/FetchGetPost",
   FetchAddPostLike: "post/FetchAddPostLike",
   FetchRemovePostLike: "post/FetchRemovePostLike",
-  FetchGetZeroLevelComment: "post/FetchGetZeroLevelComment",
   FetchGetComment: "post/FetchGetComment",
   FetchAddComment: "post/FetchAddComment",
   FetchAddZeroLevelComment: "post/FetchAddZeroLevelComment",
@@ -40,15 +39,11 @@ export const actions = {
     id: id,
     [FETCH_KEY]: id,
   }),
-  fetchGetZeroLevelComment: (postId, comment) => ({
-    type: Types.FetchGetZeroLevelComment,
-    postId,
-    comment,
-    [FETCH_KEY]: postId,
-  }),
-  fetchGetComment: (id, fetchKey) => ({
+  fetchGetComment: (id, postId, commentCount, fetchKey) => ({
     type: Types.FetchGetComment,
     id,
+    postId,
+    commentCount,
     [FETCH_KEY]: fetchKey,
   }),
   fetchAddComment: ({
@@ -97,6 +92,8 @@ export const actions = {
 const INITIAL_STATE = {
   post: null,
   comment: [],
+  commentCount: 0,
+  comment_0: [],
 };
 const reducer = createReducer(INITIAL_STATE, {
   [Types.SetValue]: setValueReducer,

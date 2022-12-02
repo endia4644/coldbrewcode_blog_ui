@@ -23,7 +23,8 @@ export default function Post() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const post = useSelector((state) => state.post.post);
-  const comment = useSelector((state) => state.post.comment);
+  const comment = useSelector((state) => state.post.comment_0);
+  const commentCount = useSelector((state) => state.post.commentCount);
   const { fetchStatus } = useFetchInfo(Types.FetchGetPost, id);
 
   function logout() {
@@ -32,7 +33,7 @@ export default function Post() {
 
   useEffect(() => {
     dispatch(actions.fetchGetPost(id));
-    dispatch(actions.fetchGetZeroLevelComment(id));
+    dispatch(actions.fetchGetComment(0, id, commentCount));
   }, [dispatch, id]);
 
   useLayoutEffect(() => {
@@ -111,7 +112,7 @@ export default function Post() {
             <Divider />
             <Row justify="start" style={{ marginTop: "4rem" }}>
               <Col>
-                <Typography.Title level={3}>0 개의 댓글</Typography.Title>
+                <Typography.Title level={3}>{commentCount} 개의 댓글</Typography.Title>
               </Col>
             </Row>
             <Row justify="start" style={{ marginTop: "2rem" }}>
