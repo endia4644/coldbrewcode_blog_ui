@@ -32,34 +32,6 @@ function* fetchGetComment(action) {
     url: `/comment/${action.id}`,
     params: {
       postId: action.postId
-<<<<<<< HEAD
-    }
-  });
-
-  if (isSuccess && data) {
-    yield put(actions.setValue(`comment_${action.id}`, data));
-  }
-}
-
-function* fetchAddZeroLevelComment(action) {
-  const { isSuccess, data } = yield call(callApi, {
-    method: "post",
-    url: `/comment`,
-    data: {
-      commentContent: action.commentContent,
-      commentDepth: action.commentDepth,
-      postId: action.postId,
-      parentId: action.parentId
-    }
-  });
-
-  if (isSuccess && data) {
-    if (action.comment) {
-      yield put(actions.setValue('comment', [...action.comment, data]));
-    } else {
-      yield put(actions.setValue('comment', [data]));
-=======
->>>>>>> 6381bbea8319dd0baaae63b4a0c352b5113505d5
     }
   });
 
