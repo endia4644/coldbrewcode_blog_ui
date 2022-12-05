@@ -89,7 +89,7 @@ router.delete("/:id", isLoggedIn, async (req, res, next) => {
       await db.Comment.update(
         { dltYsno: "Y" },
         {
-          where: {
+          where: {  
             id: req.params.id,
           },
           transaction: t,
