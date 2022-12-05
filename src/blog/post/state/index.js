@@ -38,10 +38,11 @@ export const actions = {
     id: id,
     [FETCH_KEY]: id,
   }),
-  fetchGetComment: (id, postId,fetchKey) => ({
+  fetchGetComment: (id, postId, commentCount, fetchKey) => ({
     type: Types.FetchGetComment,
     id,
     postId,
+    commentCount,
     [FETCH_KEY]: fetchKey,
   }),
   fetchAddComment: ({
@@ -80,8 +81,8 @@ export const actions = {
 const INITIAL_STATE = {
   post: null,
   comment: [],
+  commentCount: 0,
   comment_0: [],
-  commentCount: 0
 };
 const reducer = createReducer(INITIAL_STATE, {
   [Types.SetValue]: setValueReducer,

@@ -34,14 +34,19 @@ export default function Post() {
 
   useEffect(() => {
     dispatch(actions.fetchGetPost(id));
-    dispatch(actions.fetchGetComment('0',id));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    dispatch(actions.fetchGetComment(0, id, commentCount));
+  }, [dispatch, id, commentCount]);
 
   useLayoutEffect(() => {
     if (fetchStatus !== FetchStatus.Request && !post) {
       navigate("/blog");
     }
   }, [fetchStatus, navigate, post]);
+
+  console.log('랜더링')
 
   return (
     <>

@@ -10,7 +10,7 @@ const { Op } = require("sequelize");
 router.post("/", isLoggedIn, async (req, res, next) => {
   try {
     await db.sequelize.transaction(async (t) => {
-      const newPost = await db.Comment.create(
+      await db.Comment.create(
         {
           commentContent: req.body.commentContent,
           commentDepth: req.body.commentDepth,
@@ -23,8 +23,9 @@ router.post("/", isLoggedIn, async (req, res, next) => {
           transaction: t,
         }
       );
+      let comments = null;
       if (!req.body.parentId) {
-        const comments = await db.Comment.findAll({
+        comments = await db.Comment.findAll({
           where: {
             PostId: {
               [Op.eq]: req.body.postId,
@@ -40,24 +41,42 @@ router.post("/", isLoggedIn, async (req, res, next) => {
             "createdAt",
             "updatedAt",
             "dltYsno",
-            [
-              sequelize.literal(
-                `(SELECT COUNT("ParentId") FROM Comments WHERE Comments.ParentId = ${newPost.id}})`
-              ),
-              "childCount",
-            ],
           ],
           include: [
             {
               model: db.User,
               attributes: ["id", "email", "nickname"],
             },
+            {
+              /* 대댓글을 조회한다. */
+              model: db.Comment,
+              as: "childComment",
+              required: false,
+              /* 
+              서브쿼리로 조회된 댓글의 대댓글 갯수를 조회한다. 
+              1단계 댓글인 경우 2단계 댓글의 수만 조회한다. ( 3단계 수는 가져오지 않는다. )
+            */
+              attributes: [
+                "id",
+                "commentContent",
+                "commentDepth",
+                "createdAt",
+                "updatedAt",
+                "dltYsno",
+              ],
+              include: [
+                {
+                  model: db.User,
+                  attributes: ["id", "email", "nickname"],
+                },
+              ],
+              order: [["id", "DESC"]],
+            },
           ],
           transaction: t,
         });
-        return res.send(makeResponse({ data: comments }));
       } else {
-        const comments = await db.Comment.findOne({
+        comments = await db.Comment.findOne({
           where: {
             id: req.body.parentId,
           },
@@ -90,12 +109,6 @@ router.post("/", isLoggedIn, async (req, res, next) => {
                 "createdAt",
                 "updatedAt",
                 "dltYsno",
-                [
-                  sequelize.literal(
-                    '(SELECT COUNT("ParentId") FROM Comments WHERE `childComment.id` = Comments.ParentId)'
-                  ),
-                  "childCount",
-                ],
               ],
               include: [
                 {
@@ -103,16 +116,13 @@ router.post("/", isLoggedIn, async (req, res, next) => {
                   attributes: ["id", "email", "nickname"],
                 },
               ],
-              where: {
-                ParentId: req.body.parentId,
-              },
               order: [["id", "DESC"]],
             },
           ],
           transaction: t,
         });
-        return res.send(makeResponse({ data: comments }));
       }
+      return res.send(makeResponse({ data: comments }));
     });
   } catch (err) {
     console.error(err);
@@ -161,11 +171,16 @@ router.get("/", async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
-    if(Number(req.params.id) === 0) {
-      const comments = await db.Comment.findAll({
+    let comments = null;
+    if (Number(req.params.id) === 0) {
+      comments = await db.Comment.findAll({
         where: {
-          PostId: req?.query?.postId,
-          commentDepth: 0,
+          PostId: {
+            [Op.eq]: req.query.postId,
+          },
+          commentDepth: {
+            [Op.eq]: 0, // 게시글에서는 1단계 댓글만 조회한다.
+          },
         },
         attributes: [
           "id",
@@ -189,20 +204,14 @@ router.get("/:id", async (req, res, next) => {
             서브쿼리로 조회된 댓글의 대댓글 갯수를 조회한다. 
             1단계 댓글인 경우 2단계 댓글의 수만 조회한다. ( 3단계 수는 가져오지 않는다. )
           */
-            attributes: ['id'],
-            include: [
-              {
-                model: db.User,
-                attributes: ["id", "email", "nickname"],
-              },
+            attributes: [
+              "id"
             ],
-            order: [["id", "DESC"]],
           },
         ],
       });
-      res.send(makeResponse({ data: comments }));
     } else {
-      const comments = await db.Comment.findOne({
+      comments = await db.Comment.findOne({
         where: {
           id: req.params.id,
         },
@@ -210,12 +219,6 @@ router.get("/:id", async (req, res, next) => {
           "id",
           "commentContent",
           "commentDepth",
-          [
-            sequelize.literal(
-              `(SELECT COUNT("ParentId") FROM Comments WHERE Comments.id = Comments.ParentId})`
-            ),
-            "childCount",
-          ],
           "createdAt",
           "updatedAt",
           "dltYsno",
@@ -241,12 +244,6 @@ router.get("/:id", async (req, res, next) => {
               "createdAt",
               "updatedAt",
               "dltYsno",
-              [
-                sequelize.literal(
-                  '(SELECT COUNT("ParentId") FROM Comments WHERE `childComment.id` = Comments.ParentId)'
-                ),
-                "childCount",
-              ],
             ],
             include: [
               {
@@ -261,8 +258,8 @@ router.get("/:id", async (req, res, next) => {
           },
         ],
       });
-      res.send(makeResponse({ data: comments }));
     }
+    res.send(makeResponse({ data: comments }));
   } catch (err) {
     console.error(err);
     next("댓글 조회 중 오류가 발생했습니다");

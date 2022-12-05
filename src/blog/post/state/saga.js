@@ -9,7 +9,7 @@ function* fetchGetPost({ id }) {
   });
   if (isSuccess && data) {
     yield put(actions.setValue("post", data));
-    yield put(actions.setValue("commentCount",data?.commentCount));
+    yield put(actions.setValue("commentCount", data?.commentCount));
   }
 }
 
@@ -48,8 +48,8 @@ function* fetchAddComment(action) {
       commentContent: action.commentContent,
       commentDepth: action.commentDepth,
       postId: action.postId,
-      parentId: action.parentId,
-    },
+      parentId: action.parentId
+    }
   });
 
   if (isSuccess && data) {
