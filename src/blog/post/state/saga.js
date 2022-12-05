@@ -53,7 +53,7 @@ function* fetchAddComment(action) {
   });
 
   if (isSuccess && data) {
-    if(Number(action.commentDepth) === 0) {
+    if (Number(action.commentDepth) === 0) {
       yield put(actions.setValue('comment_0', data));
     } else {
       yield put(actions.setValue(`comment_${data.id}`, data));
@@ -76,7 +76,7 @@ function* fetchUpdateComment(action) {
   });
 
   if (isSuccess && data) {
-    if(Number(action.commentDepth) === 0) {
+    if (Number(action.commentDepth) === 0) {
       yield put(actions.setValue('comment_0', data));
     } else {
       yield put(actions.setValue(`comment_${data.id}`, data));
@@ -96,7 +96,7 @@ function* fetchRemoveComment(action) {
   });
 
   if (isSuccess && data) {
-    if(Number(action.commentDepth) === 0) {
+    if (Number(action.commentDepth) === 0) {
       yield put(actions.setValue('comment_0', data));
     } else {
       yield put(actions.setValue(`comment_${data.id}`, data));

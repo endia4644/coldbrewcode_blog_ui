@@ -34,7 +34,6 @@ export default function Post() {
 
   useEffect(() => {
     dispatch(actions.fetchGetPost(id));
-    console.log('호출');
   }, [dispatch, id]);
 
   useEffect(() => {
