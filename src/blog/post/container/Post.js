@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Col, Divider, Row, Space, Typography } from "antd";
 import React, { useEffect, useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -33,14 +34,19 @@ export default function Post() {
 
   useEffect(() => {
     dispatch(actions.fetchGetPost(id));
-    dispatch(actions.fetchGetComment(0, id, commentCount));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    dispatch(actions.fetchGetComment(0, id, commentCount));
+  }, [dispatch, id, commentCount]);
 
   useLayoutEffect(() => {
     if (fetchStatus !== FetchStatus.Request && !post) {
       navigate("/blog");
     }
   }, [fetchStatus, navigate, post]);
+
+  console.log('랜더링')
 
   return (
     <>
@@ -117,7 +123,7 @@ export default function Post() {
             </Row>
             <Row justify="start" style={{ marginTop: "2rem" }}>
               <Col>
-                <CommentForm postId={id} parentId={null} commentDepth={'0'} comment={comment} />
+                <CommentForm postId={id} parentId={null} commentDepth={'0'} comment={comment} commentCount={commentCount} />
               </Col>
             </Row>
             <Row

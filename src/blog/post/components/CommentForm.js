@@ -9,33 +9,23 @@ export default function CommentForm({
   parentId,
   comment,
   commentDepth,
+  commentCount,
 }) {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
 
   function onFinish(item) {
     if (item.commentContent) {
-      if (Number(commentDepth) > 0) {
-        dispatch(
-          actions.fetchAddComment({
-            postId,
-            parentId,
-            commentContent: item.commentContent,
-            commentDepth,
-            comment,
-          })
-        );
-      } else {
-        dispatch(
-          actions.fetchAddZeroLevelComment({
-            postId,
-            parentId,
-            commentContent: item.commentContent,
-            commentDepth,
-            comment,
-          })
-        );
-      }
+      dispatch(
+        actions.fetchAddComment({
+          postId,
+          parentId,
+          commentContent: item.commentContent,
+          commentDepth,
+          comment,
+          commentCount
+        })
+      );
     }
     form.resetFields();
   }

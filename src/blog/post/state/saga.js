@@ -32,6 +32,7 @@ function* fetchGetComment(action) {
     url: `/comment/${action.id}`,
     params: {
       postId: action.postId
+<<<<<<< HEAD
     }
   });
 
@@ -57,7 +58,13 @@ function* fetchAddZeroLevelComment(action) {
       yield put(actions.setValue('comment', [...action.comment, data]));
     } else {
       yield put(actions.setValue('comment', [data]));
+=======
+>>>>>>> 6381bbea8319dd0baaae63b4a0c352b5113505d5
     }
+  });
+
+  if (isSuccess && data) {
+    yield put(actions.setValue(`comment_${action.id}`, data));
   }
 }
 
@@ -74,7 +81,12 @@ function* fetchAddComment(action) {
   });
 
   if (isSuccess && data) {
-    yield put(actions.setValue(`comment_${data.id}`, data));
+    if(Number(action.commentDepth) === 0) {
+      yield put(actions.setValue('comment_0', data));
+    } else {
+      yield put(actions.setValue(`comment_${data.id}`, data));
+    }
+    yield put(actions.setValue("commentCount", ++action.commentCount));
   }
 }
 
@@ -86,11 +98,20 @@ function* fetchUpdateComment({ id, comment }) {
   });
 }
 
-function* fetchRemoveComment({ id }) {
-  yield call(callApi, {
+function* fetchRemoveComment({ action }) {
+  const { isSuccess, data } = yield call(callApi, {
     method: "delete",
-    url: `/comment/${id}`,
+    url: `/comment/${action.id}`,
   });
+
+  if (isSuccess && data) {
+    if(Number(action.commentDepth) === 0) {
+      yield put(actions.setValue('comment_0', data));
+    } else {
+      yield put(actions.setValue(`comment_${data.id}`, data));
+    }
+    yield put(actions.setValue("commentCount", --action.commentCount));
+  }
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -115,10 +136,6 @@ export default function* () {
     takeLeading(
       Types.FetchAddComment,
       makeFetchSaga({ fetchSaga: fetchAddComment, canCache: false })
-    ),
-    takeLeading(
-      Types.FetchAddZeroLevelComment,
-      makeFetchSaga({ fetchSaga: fetchAddZeroLevelComment, canCache: false })
     ),
     takeLeading(
       Types.FetchUpdateComment,

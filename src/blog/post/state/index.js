@@ -13,7 +13,6 @@ export const Types = {
   FetchRemovePostLike: "post/FetchRemovePostLike",
   FetchGetComment: "post/FetchGetComment",
   FetchAddComment: "post/FetchAddComment",
-  FetchAddZeroLevelComment: "post/FetchAddZeroLevelComment",
   FetchUpdateComment: "post/FetchUpdateComment",
   FetchRemoveComment: "post/FetchRemoveComment",
 };
@@ -52,6 +51,7 @@ export const actions = {
     commentContent,
     commentDepth,
     comment,
+    commentCount,
   }) => ({
     type: Types.FetchAddComment,
     postId: postId,
@@ -59,21 +59,7 @@ export const actions = {
     commentContent,
     commentDepth,
     comment,
-    [FETCH_KEY]: postId,
-  }),
-  fetchAddZeroLevelComment: ({
-    postId,
-    parentId,
-    commentContent,
-    commentDepth,
-    comment,
-  }) => ({
-    type: Types.FetchAddZeroLevelComment,
-    postId: postId,
-    parentId: parentId,
-    commentContent,
-    commentDepth,
-    comment,
+    commentCount,
     [FETCH_KEY]: postId,
   }),
   fetchUpdateComment: (id, comment) => ({
@@ -82,9 +68,12 @@ export const actions = {
     comment: comment,
     [FETCH_KEY]: id,
   }),
-  fetchRemoveComment: (id) => ({
+  fetchRemoveComment: (id, parentId, commentDepth, commentCount) => ({
     type: Types.FetchRemoveComment,
-    id: id,
+    id,
+    parentId, 
+    commentDepth,
+    commentCount,
     [FETCH_KEY]: id,
   }),
 };
