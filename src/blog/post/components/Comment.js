@@ -8,6 +8,7 @@ import { elapsedTime } from "../../../common/util/util.js";
 export default function Comments({ data, postId, parentId}) {
   const dispatch = useDispatch();
   const [expend, setExpend] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
   const comment = useSelector((state) => state.post[`comment_${data.id}`]);
   const commentCount = useSelector((state) => state.post.commentCount);
   const user = useSelector((state) => state.auth.user);
@@ -40,8 +41,11 @@ export default function Comments({ data, postId, parentId}) {
               <Button
                 className="button-type-round button-color-normal button-size-mini"
                 style={{ marginRight: 5 }}
+                onClick={() => {
+                  setIsUpdate(!isUpdate);
+                }}
               >
-                수정
+                {isUpdate ? '수정 취소' : '수정'}
               </Button>
               <Button
                 className="button-type-round button-color-normal button-size-mini"
@@ -64,7 +68,22 @@ export default function Comments({ data, postId, parentId}) {
       avatar={
         <Avatar src="https://joeschmoe.io/api/v1/random" alt="Han Solo" />
       }
-      content={<p ref={contentRef}>{data?.commentContent}</p>}
+      content={
+        isUpdate ?
+        <CommentForm
+        postId
+        parentId
+        commentId={data?.id}
+        commentDepth={Number(data.commentDepth)}
+        comment={comment}
+        commentCount={commentCount}
+        defaultContent={data?.commentContent}
+        updateYsno={true}
+      />
+         : 
+         <p ref={contentRef}>{data?.commentContent}</p>
+        
+    }
       datetime={<span>{elapsedTime(data?.updatedAt)}</span>}
     >
       {data.commentDepth < 2 && expend && (
@@ -75,6 +94,7 @@ export default function Comments({ data, postId, parentId}) {
             commentDepth={Number(data.commentDepth) + 1}
             comment={comment}
             commentCount={commentCount}
+            updateYsno={false}
           />
           {comment?.childComment &&
             comment?.childComment.map((item) => (
@@ -126,6 +146,7 @@ export default function Comments({ data, postId, parentId}) {
             commentDepth={Number(data.commentDepth) + 1}
             comment={comment}
             commentCount={commentCount}
+            updateYsno={false}
           />
           {comment?.childComment &&
             comment?.childComment.map((item) => (

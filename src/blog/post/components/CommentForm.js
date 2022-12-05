@@ -1,31 +1,47 @@
 import { Button, Form } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import React, { useRef, useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import { actions } from "../state";
 
 export default function CommentForm({
   postId,
   parentId,
+  commentId = null,
   comment,
   commentDepth,
   commentCount,
+  defaultContent = '',
+  updateYsno,
 }) {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
 
   function onFinish(item) {
     if (item.commentContent) {
-      dispatch(
-        actions.fetchAddComment({
-          postId,
-          parentId,
-          commentContent: item.commentContent,
-          commentDepth,
-          comment,
-          commentCount
-        })
-      );
+      if(updateYsno) {
+        dispatch(
+          actions.fetchUpdateComment({
+            id: commentId,
+            parentId,
+            commentContent: item.commentContent,
+            commentDepth,
+            commentCount,
+            postId,
+          })
+        );
+      } else {
+        dispatch(
+          actions.fetchAddComment({
+            postId,
+            parentId,
+            commentContent: item.commentContent,
+            commentDepth,
+            comment,
+            commentCount
+          })
+        );
+      }
     }
     form.resetFields();
   }
@@ -36,6 +52,7 @@ export default function CommentForm({
           <TextArea
             name="commentContent"
             className="input-type-round"
+            defaultValue={defaultContent}
             showCount
             maxLength={200}
             rows={6}
@@ -50,7 +67,7 @@ export default function CommentForm({
             htmlType="submit"
             className="button-type-round button-color-reverse button-size-small"
           >
-            답글 작성
+            {updateYsno ? '수정 완료' : '답글 작성'}
           </Button>
         </Form.Item>
       </Form>

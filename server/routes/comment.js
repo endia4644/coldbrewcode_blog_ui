@@ -83,6 +83,32 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+router.patch("/", async (req, res, next) => {
+  try {
+    await db.sequelize.transaction(async (t) => {
+      await db.Comment.update(
+        { commentContent: req.body.commentContent },
+        {
+          where: {  
+            id: {
+              [Op.eq]: req.params.id,
+            },
+            UserId: {
+              [Op.eq]: req.user.id,
+            },
+          },
+          transaction: t,
+        }
+      );
+      const comments = await getComment({parentId: req.body.parentId, postId: req.body.postId, t});
+      res.send(makeResponse({data: comments }));
+    })
+  } catch (err) {
+    console.error(err);
+    next("댓글 수정 중 오류가 발생했습니다");
+  }
+});
+
 router.delete("/:id", isLoggedIn, async (req, res, next) => {
   try {
     await db.sequelize.transaction(async (t) => {

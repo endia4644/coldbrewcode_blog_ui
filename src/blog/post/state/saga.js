@@ -62,12 +62,26 @@ function* fetchAddComment(action) {
   }
 }
 
-function* fetchUpdateComment({ id, comment }) {
-  yield call(callApi, {
+function* fetchUpdateComment(action) {
+  const { isSuccess, data } = yield call(callApi, {
     method: "patch",
-    url: `/comment/${id}`,
-    data: comment,
+    url: `/comment/${action.id}`,
+    data: {
+      commentContent: action.commentContent,
+      commentDepth: action.commentDepth,
+      parentId: action.parentId,
+      postId: action.postId
+    }
+
   });
+
+  if (isSuccess && data) {
+    if(Number(action.commentDepth) === 0) {
+      yield put(actions.setValue('comment_0', data));
+    } else {
+      yield put(actions.setValue(`comment_${data.id}`, data));
+    }
+  }
 }
 
 function* fetchRemoveComment(action) {
