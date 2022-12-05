@@ -68,12 +68,13 @@ export const actions = {
     comment: comment,
     [FETCH_KEY]: id,
   }),
-  fetchRemoveComment: (id, parentId, commentDepth, commentCount) => ({
+  fetchRemoveComment: (id, parentId, commentDepth, commentCount, postId) => ({
     type: Types.FetchRemoveComment,
     id,
     parentId, 
     commentDepth,
     commentCount,
+    postId,
     [FETCH_KEY]: id,
   }),
 };

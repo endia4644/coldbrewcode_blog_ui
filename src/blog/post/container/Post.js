@@ -34,6 +34,7 @@ export default function Post() {
 
   useEffect(() => {
     dispatch(actions.fetchGetPost(id));
+    console.log('호출');
   }, [dispatch, id]);
 
   useEffect(() => {
@@ -45,8 +46,6 @@ export default function Post() {
       navigate("/blog");
     }
   }, [fetchStatus, navigate, post]);
-
-  console.log('랜더링')
 
   return (
     <>
@@ -132,7 +131,7 @@ export default function Post() {
             >
               {comment.length > 0 &&
                 comment.map((item) => (
-                  <Comment key={`comment_${item.id}`} data={item} postId={id} />
+                  <Comment key={`comment_${item.id}`} data={item} parentId={null} postId={id} />
                 ))}
             </Row>
           </Content>

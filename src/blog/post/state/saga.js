@@ -70,10 +70,15 @@ function* fetchUpdateComment({ id, comment }) {
   });
 }
 
-function* fetchRemoveComment({ action }) {
+function* fetchRemoveComment(action) {
   const { isSuccess, data } = yield call(callApi, {
     method: "delete",
     url: `/comment/${action.id}`,
+    params: {
+      commentDepth: action.commentDepth,
+      parentId: action.parentId,
+      postId: action.postId
+    }
   });
 
   if (isSuccess && data) {
