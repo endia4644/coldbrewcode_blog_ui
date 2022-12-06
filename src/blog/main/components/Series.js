@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";
 import { elapsedTime } from "../../../common/util/util.js";
+import { FetchStatus } from "../../../common/constant";
 
 const IconText = ({ icon, text }) => (
   <Space>
@@ -18,13 +19,13 @@ export default function Series() {
   const series = useSelector((state) => state.main.series);
   const targetRef = useRef(null);
   const dispatch = useDispatch();
-  const { isFetching, totalCount } = useFetchInfo(Types.FetchAllSeries);
+  const { fetchStatus, totalCount } = useFetchInfo(Types.FetchAllSeries);
   useEffect(() => {
     let observer;
     if (targetRef.current) {
       observer = new IntersectionObserver((entries, observer) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && !isFetching) {
+          if (entry.isIntersecting && (fetchStatus === undefined || fetchStatus === FetchStatus.Success)) {
             dispatch(
               actions.fetchAllSeries({
                 series,
@@ -37,7 +38,7 @@ export default function Series() {
       observer.observe(targetRef.current);
     }
     return () => observer && observer.disconnect();
-  }, [dispatch, isFetching, series, totalCount]);
+  }, [dispatch, fetchStatus, series, totalCount]);
   return (
     <>
       <List

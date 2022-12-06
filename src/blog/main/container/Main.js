@@ -16,7 +16,6 @@ import "../scss/main.scss";
 export default function Main() {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(actions.fetchAllPost());
     dispatch(actions.fetchAllSeries());
     dispatch(actions.fetchAllHashtag());
   }, [dispatch]);

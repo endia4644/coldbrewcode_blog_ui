@@ -185,6 +185,23 @@ router.get("/", async (req, res, next) => {
         postName: postName,
         id: postId,
       },
+      attributes: [
+        'id',
+        'postContent',
+        'postName',
+        'postDescription',
+        'postThumnail',
+        'permission',
+        'dltYsno',
+        'createdAt',
+        'updatedAt',
+        [
+          literal(
+            '(SELECT COUNT(1) FROM Comments WHERE Comments.PostId = Post.id)'
+          ),
+          "commentCount",
+        ],
+      ],
       include: [
         {
           model: db.User,
@@ -196,33 +213,9 @@ router.get("/", async (req, res, next) => {
           attributes: ["id", "hashtagName"],
           through: { attributes: [] },
         },
-        {
-          model: db.Comment,
-          as: "Comments",
-          attributes: [
-            "id",
-            "commentContent",
-            "createdAt",
-            "updatedAt",
-            "dltYsno",
-            [
-              literal(
-                '(SELECT COUNT("ParentId") FROM Comments WHERE `Comments.id` = Comments.ParentId)'
-              ),
-              "childCount",
-            ],
-          ],
-          required: false,
-          where: {
-            commentDepth: {
-              [Op.eq]: 0, // 게시글에서는 1단계 댓글만 조회한다.
-            },
-          },
-        },
       ],
       order: [
         ["createdAt", "DESC"],
-        [db.Comment, "createdAt", "DESC"],
       ],
       offset: parseInt(req.query.offset) || 0,
       limit: parseInt(req.query.limit, 10) || 8,
@@ -239,7 +232,7 @@ router.get("/", async (req, res, next) => {
     return res.json(
       makeResponse({
         resultCode: -1,
-        resultMessage: "게시글 작성 중 오류가 발생했습니다",
+        resultMessage: "게시글 조회 중 오류가 발생했습니다",
       })
     );
   }
