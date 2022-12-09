@@ -13,23 +13,25 @@ export default function CommentForm({
   commentCount,
   defaultContent = '',
   updateYsno,
+  setIsUpdate = null
 }) {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
 
   function onFinish(item) {
     if (item.commentContent) {
-      if(updateYsno) {
+      if (updateYsno) {
         dispatch(
-          actions.fetchUpdateComment({
-            id: commentId,
+          actions.fetchUpdateComment(
+            commentId,
             parentId,
-            commentContent: item.commentContent,
+            item.commentContent,
             commentDepth,
             commentCount,
             postId,
-          })
+          )
         );
+        setIsUpdate(false);
       } else {
         dispatch(
           actions.fetchAddComment({
@@ -47,12 +49,11 @@ export default function CommentForm({
   }
   return (
     <>
-      <Form onFinish={onFinish} form={form}>
+      <Form onFinish={onFinish} form={form} initialValues={{ commentContent: defaultContent }}>
         <Form.Item name="commentContent">
           <TextArea
             name="commentContent"
             className="input-type-round"
-            defaultValue={defaultContent}
             showCount
             maxLength={200}
             rows={6}

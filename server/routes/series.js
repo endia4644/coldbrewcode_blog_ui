@@ -28,7 +28,7 @@ router.post('/', async (req, res, next) => {
     })
   } catch (err) {
     console.error(err);
-    return res.json(makeResponse({ resultCode: -1, resultMessage: '시리즈 작성 중 오류가 발생했습니다.' }))
+    next('시리즈 작성 중 오류가 발생했습니다.')
   }
 });
 
@@ -53,7 +53,7 @@ router.get('/', async (req, res, next) => {
     return res.send(makeResponse({ data: series, totalCount: seriesTotalCount }));
   } catch (err) {
     console.error(err);
-    return res.json(makeResponse({ resultCode: -1, resultMessage: '시리즈 게시글 조회 중 오류가 발생했습니다.' }))
+    next('시리즈 게시글 조회 중 오류가 발생했습니다.')
   }
 });
 
@@ -67,7 +67,7 @@ router.get('/name', async (req, res, next) => {
     return res.send(makeResponse({ data: series, totalCount: seriesTotalCount }));
   } catch (err) {
     console.error(err);
-    return res.json(makeResponse({ resultCode: -1, resultMessage: '시리즈 조회 중 오류가 발생했습니다.' }))
+    next('시리즈 조회 중 오류가 발생했습니다.')
   }
 });
 
@@ -99,7 +99,7 @@ router.get('/:id', async (req, res, next) => {
     return res.json(makeResponse({ data: Serieses }));
   } catch (err) {
     console.error(err);
-    return res.json(makeResponse({ resultCode: -1, resultMessage: '시리즈 상세 조회 중 오류가 발생했습니다.' }))
+    next('시리즈 상세 조회 중 오류가 발생했습니다.')
   }
 });
 
@@ -140,7 +140,7 @@ router.delete('/:id', async (req, res, next) => {
     return res.send(makeResponse({ data: 'SUCCESS' }));
   } catch (err) {
     console.error(err);
-    return res.json(makeResponse({ resultCode: -1, resultMessage: '시리즈 삭제 중 오류가 발생했습니다.' }))
+    next('시리즈 삭제 중 오류가 발생했습니다.')
   }
 })
 

@@ -64,8 +64,8 @@ export const actions = {
   }),
   fetchUpdateComment: (id, parentId, commentContent, commentDepth, commentCount, postId) => ({
     type: Types.FetchUpdateComment,
-    id: id,
-    parentId, 
+    id,
+    parentId,
     commentContent: commentContent,
     commentDepth,
     commentCount,
@@ -75,7 +75,7 @@ export const actions = {
   fetchRemoveComment: (id, parentId, commentDepth, commentCount, postId) => ({
     type: Types.FetchRemoveComment,
     id,
-    parentId, 
+    parentId,
     commentDepth,
     commentCount,
     postId,

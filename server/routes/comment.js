@@ -23,7 +23,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
           transaction: t,
         }
       );
-      let comments = await getComment({parentId: req.body.parentId, postId: req.body.postId, t});
+      let comments = await getComment({ parentId: req.body.parentId, postId: req.body.postId, t });
       return res.send(makeResponse({ data: comments }));
     });
   } catch (err) {
@@ -74,7 +74,7 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   try {
     await db.sequelize.transaction(async (t) => {
-      let comments = await getComment({parentId: req.params.id, postId: req.query.postId, t});;
+      let comments = await getComment({ parentId: req.params.id, postId: req.query.postId, t });;
       res.send(makeResponse({ data: comments }));
     });
   } catch (err) {
@@ -83,13 +83,13 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.patch("/", async (req, res, next) => {
+router.patch("/:id", async (req, res, next) => {
   try {
     await db.sequelize.transaction(async (t) => {
       await db.Comment.update(
         { commentContent: req.body.commentContent },
         {
-          where: {  
+          where: {
             id: {
               [Op.eq]: req.params.id,
             },
@@ -100,8 +100,8 @@ router.patch("/", async (req, res, next) => {
           transaction: t,
         }
       );
-      const comments = await getComment({parentId: req.body.parentId, postId: req.body.postId, t});
-      res.send(makeResponse({data: comments }));
+      const comments = await getComment({ parentId: req.body.parentId, postId: req.body.postId, t });
+      res.send(makeResponse({ data: comments }));
     })
   } catch (err) {
     console.error(err);
@@ -115,14 +115,14 @@ router.delete("/:id", isLoggedIn, async (req, res, next) => {
       await db.Comment.update(
         { dltYsno: "Y" },
         {
-          where: {  
+          where: {
             id: req.params.id,
           },
           transaction: t,
         }
       );
-      const comments = await getComment({parentId: req.query.parentId, postId: req.query.postId, t});
-      res.send(makeResponse({data: comments }));
+      const comments = await getComment({ parentId: req.query.parentId, postId: req.query.postId, t });
+      res.send(makeResponse({ data: comments }));
     })
   } catch (err) {
     console.error(err);
@@ -130,7 +130,7 @@ router.delete("/:id", isLoggedIn, async (req, res, next) => {
   }
 });
 
-async function getComment({parentId, postId, t}) {
+async function getComment({ parentId, postId, t }) {
   let comments = null;
   if (!parentId || Number(parentId) === 0) {
     comments = await db.Comment.findAll({

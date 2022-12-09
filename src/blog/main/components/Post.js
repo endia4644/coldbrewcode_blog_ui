@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";
 import { elapsedTime } from "../../../common/util/util.js";
+import { FetchStatus } from "../../../common/constant";
 const { Title } = Typography;
 
 const IconText = ({ icon, text }) => (
@@ -31,7 +32,7 @@ export default function Post() {
   const post = useSelector((state) => state.main.post);
   const hashtagCurrent = useSelector((state) => state.main.hashtagCurrent);
   const searchCurrent = useSelector((state) => state.main.searchCurrent);
-  const { isFetching, totalCount } = useFetchInfo(Types.FetchAllPost);
+  const { fetchStatus, totalCount } = useFetchInfo(Types.FetchAllPost);
   const { totalCount: searchCount } = useFetchInfo(Types.FetchSearchPost);
 
   useEffect(() => {
@@ -39,7 +40,7 @@ export default function Post() {
     if (targetRef.current) {
       observer = new IntersectionObserver((entries, observer) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && !isFetching) {
+          if (entry.isIntersecting && (fetchStatus === undefined || fetchStatus === FetchStatus.Success)) {
             dispatch(
               actions.fetchAllPost(
                 post,
@@ -54,7 +55,7 @@ export default function Post() {
       observer.observe(targetRef.current);
     }
     return () => observer && observer.disconnect();
-  }, [dispatch, isFetching, post, totalCount, hashtagCurrent, searchCurrent]);
+  }, [dispatch, post, totalCount, hashtagCurrent, searchCurrent]);
   return (
     <>
       {searchCurrent && (
