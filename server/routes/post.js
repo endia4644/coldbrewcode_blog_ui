@@ -207,7 +207,7 @@ router.get("/", async (req, res, next) => {
             "dltYsno",
             [
               literal(
-                '(SELECT COUNT("ParentId") FROM Comments WHERE `Comments.id` = Comments.ParentId)'
+                '(SELECT COUNT("ParentId") FROM Comments WHERE `Comments.id` = Comments.ParentId WHERE dltYsno = "N")'
               ),
               "childCount",
             ],
@@ -274,6 +274,9 @@ router.get("/:id", async (req, res, next) => {
         where: {
           PostId: {
             [Op.eq]: req.params.id
+          },
+          dltYsno: {
+            [Op.eq]: 'N'
           }
         }
       })

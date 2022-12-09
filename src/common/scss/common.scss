@@ -215,8 +215,8 @@ a:hover {
   &-size {
     &-mini {
       width: 65px;
-      height: 26px;
-      font-size: 12px;
+      height: 20px;
+      font-size: 10px;
       padding: 1px;
     }
     &-small {
@@ -247,6 +247,13 @@ a:hover {
     &-red {
       background: #fa1131;
       color: white;
+      border: 0;
+      font-weight: 700;
+    }
+
+    &-white {
+      background: white;
+      color: $mainColor;
       border: 0;
       font-weight: 700;
     }
@@ -299,4 +306,12 @@ a:hover {
   background-color: $subColor;
   margin-left: 2rem;
   margin-right: 2rem;
+}
+
+.comment-box {
+  &>.ant-comment:not(:last-child),
+  .ant-comment-nested >.ant-comment:not(:last-child) {
+    border-bottom: 5px solid $grayColor;
+    margin-bottom:1rem;
+  }
 }

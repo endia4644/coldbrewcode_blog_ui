@@ -39,7 +39,7 @@ export default function Comments({ data, postId, parentId}) {
           {user?.id === data?.User?.id && (
             <Col>
               <Button
-                className="button-type-round button-color-normal button-size-mini"
+                className="button-type-round button-color-white button-size-mini"
                 style={{ marginRight: 5 }}
                 onClick={() => {
                   setIsUpdate(!isUpdate);
@@ -48,7 +48,7 @@ export default function Comments({ data, postId, parentId}) {
                 {isUpdate ? '수정 취소' : '수정'}
               </Button>
               <Button
-                className="button-type-round button-color-normal button-size-mini"
+                className="button-type-round button-color-white button-size-mini"
                 onClick={() => {
                   dispatch(actions.fetchRemoveComment(
                     data?.id,

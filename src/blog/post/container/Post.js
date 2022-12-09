@@ -34,7 +34,6 @@ export default function Post() {
 
   useEffect(() => {
     dispatch(actions.fetchGetPost(id));
-    console.log('호출');
   }, [dispatch, id]);
 
   useEffect(() => {
@@ -126,6 +125,7 @@ export default function Post() {
               </Col>
             </Row>
             <Row
+              className="comment-box"
               justify="start"
               style={{ marginTop: "2rem", paddingBottom: "3rem" }}
             >
