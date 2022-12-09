@@ -101,7 +101,7 @@ export default function Post() {
                 />,
                 <IconText
                   icon={MessageOutlined}
-                  text={item.Comments?.length ?? 0}
+                  text={item.commentCount ?? 0}
                   key="list-vertical-message"
                 />,
                 item.permission === "private" && (
