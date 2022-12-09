@@ -1,5 +1,6 @@
 import {
   FieldTimeOutlined,
+  HeartFilled,
   HeartOutlined,
   LockOutlined,
   MessageOutlined,
@@ -95,8 +96,8 @@ export default function Post() {
                   key="list-vertical-star-o"
                 />,
                 <IconText
-                  icon={HeartOutlined}
-                  text={item.likeCnt}
+                  icon={item?.likeYsno ? HeartFilled : HeartOutlined}
+                  text={item?.likeCount}
                   key="list-vertical-like-o"
                 />,
                 <IconText

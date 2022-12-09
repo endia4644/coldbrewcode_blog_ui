@@ -201,6 +201,18 @@ router.get("/", async (req, res, next) => {
           ),
           "commentCount",
         ],
+        [
+          literal(
+            `(SELECT COUNT(1) FROM postlikeuser WHERE UserId = ${req?.user?.id ?? 0 } AND PostId = Post.id)`
+          ),
+          "likeYsno",
+        ],
+        [
+          literal(
+            `(SELECT COUNT(1) FROM postlikeuser WHERE PostId = Post.id)`
+          ),
+          "likeCount",
+        ],
       ],
       include: [
         {
