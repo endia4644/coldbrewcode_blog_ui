@@ -19,7 +19,6 @@ export default function Main() {
     dispatch(actions.fetchAllSeries());
     dispatch(actions.fetchAllHashtag());
   }, [dispatch]);
-
   const hashtag = useSelector((state) => state.main.hashtag);
   const activeKey = useSelector((state) => state.main.activeKey);
   const tabPaneItems = [

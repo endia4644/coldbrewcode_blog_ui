@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { actions, Types } from "../state";
 import { actions as authActions } from "../../auth/state";
+import { actions as commonActions } from "../../../common/state";
+import { actions as mainActions, Types as mainTypes } from "../../main/state";
 import { Content, Header } from "antd/lib/layout/layout";
 import Settings from "../../main/components/Settings";
 
@@ -34,6 +36,13 @@ export default function Post() {
 
   useEffect(() => {
     dispatch(actions.fetchGetPost(id));
+    dispatch(
+      commonActions.setFetchStatus({
+        actionType: mainTypes.FetchAllPost,
+        status: FetchStatus.Delete,
+      })
+    );
+    dispatch(mainActions.setValue("post", []));
   }, [dispatch, id]);
 
   useEffect(() => {
