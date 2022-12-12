@@ -252,6 +252,7 @@ router.get("/", async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
+    const postType = req?.query?.type ?? 'post';
     const post = await db.Post.findOne({
       where: {
         id: req.params.id,
@@ -285,6 +286,36 @@ router.get("/:id", async (req, res, next) => {
           }
         }
       })
+      const next = await db.Post.findOne(
+        { 
+          attributes:["id","postName"],
+          where: {
+            id: {
+              [Op.gt]: req.params.id,
+            }, 
+            [Op.and]: [
+              postType === 'series' && {SeriesId: post.SeriesId}
+            ],
+          },
+          order: [["id", "ASC"]]
+        }
+      )
+      const prev = await db.Post.findOne(
+        { 
+          attributes:["id","postName"],
+          where: {
+            id: {
+              [Op.lt]: req.params.id,
+            }, 
+            [Op.and]: [
+              postType === 'series' && {SeriesId: post.SeriesId}
+            ],
+          },
+          order: [["id", "DESC"]]
+        }
+      )
+      post.set("next", next);
+      post.set("prev", prev);
       post.set("likeCount", likes.length);
       post.set("likeYsno", likeCurrentUser);
       post.set("commentCount", commentCount);

@@ -1,8 +1,8 @@
 import { UserOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Menu, Space } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { AuthStatus } from "../../../common/constant";
 
 /**
@@ -11,6 +11,7 @@ import { AuthStatus } from "../../../common/constant";
  * @param {() => void} param.logout
  */
 export default function Settings({ logout }) {
+  const location = useLocation();
   const status = useSelector((state) => state.auth.status);
   const user = useSelector((state) => state.auth.user);
   const menuItems = [
@@ -45,6 +46,7 @@ export default function Settings({ logout }) {
       default:
     }
   }
+
   return (
     <>
       {status === AuthStatus.Login && (
@@ -82,7 +84,7 @@ export default function Settings({ logout }) {
             shape="round"
             size="large"
           >
-            <Link to={"/blog/login"}>로그인</Link>
+            <Link to={`/blog/login?returnUrl=${location.pathname}`}>로그인</Link>
           </Button>
         </Space>
       )}

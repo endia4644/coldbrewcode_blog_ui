@@ -40,6 +40,18 @@ module.exports = (sequelize, DataTypes) => {
           this.setDataValue("likeCount", value);
         },
       },
+      next: {
+        type: DataTypes.VIRTUAL,
+        set(value) {
+          this.setDataValue("next", value);
+        },
+      },
+      prev: {
+        type: DataTypes.VIRTUAL,
+        set(value) {
+          this.setDataValue("prev", value);
+        },
+      },
       dltYsno: {
         type: DataTypes.STRING(1),
         allowNull: false, //필수

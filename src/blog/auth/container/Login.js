@@ -7,9 +7,11 @@ import useBlockLoginUser from "../hook/useBlockLoginUser";
 import AuthLayout from "../component/AuthLayout";
 import "../scss/auth.scss";
 import { useNavigate } from "react-router-dom";
+import useQuery from "../hook/useQuery";
 
 export default function Login() {
-  useBlockLoginUser();
+  let query = useQuery();
+  useBlockLoginUser(query.get("returnUrl"));
   const dispatch = useDispatch();
   function onFinish({ email, password }) {
     dispatch(actions.fetchLogin(email, password));

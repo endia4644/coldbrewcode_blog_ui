@@ -10,8 +10,10 @@ import { useDispatch } from "react-redux";
 import { actions } from "../state";
 import WriteSetting from "./WriteSetting";
 import { AnimatePresence } from "framer-motion";
+import useNeedLogin from "../../../common/hook/useNeedLogin";
 
 export default function Write() {
+  useNeedLogin();
   const { id: postId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();

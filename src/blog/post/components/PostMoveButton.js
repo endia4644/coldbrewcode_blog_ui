@@ -37,7 +37,7 @@ export default function PostMoveButton({ direction, post }) {
   function onClick(e, id) {
     dispatch(actions.setValue("sideActiveKey", id + ""));
     dispatch(actions.fetchHashtagPost(null, 0, id));
-    navigate("/blog");
+    navigate(`/blog/post/${id}`);
   }
 
   const button = (
@@ -76,7 +76,7 @@ export default function PostMoveButton({ direction, post }) {
           <Typography.Text>
             {direction === "left" ? "이전" : "다음"} 포스트
           </Typography.Text>
-          <Typography.Text>ㅎㅎ</Typography.Text>
+          <Typography.Text>{post.postName}</Typography.Text>
         </Space>
       </Button>
     </>

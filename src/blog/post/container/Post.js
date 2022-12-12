@@ -116,12 +116,14 @@ export default function Post() {
               </Col>
             </Row>
             <Divider />
-            <Row justify="center">
-              <Col className="post-button-box" style={{ width: "100%" }}>
-                <PostMoveButton direction="left" />
-                <PostMoveButton direction="right" />
+            {(post?.prev || post?.next) && 
+              <Row justify="center">
+              <Col className="post-button-box" style={!post?.prev && {justifyContent: 'flex-end'}} >
+                {post?.prev && <PostMoveButton direction="left" post={post?.prev} />}
+                {post?.next && <PostMoveButton direction="right" post={post?.next} />}
               </Col>
             </Row>
+            }
             <Divider />
             <Row justify="start" style={{ marginTop: "4rem" }}>
               <Col>
