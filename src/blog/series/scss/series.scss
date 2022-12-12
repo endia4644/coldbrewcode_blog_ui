@@ -1,0 +1,52 @@
+@import "./../../../common/scss/vars.scss";
+
+/*
+  $xs: 576px;
+  $sm: 576px;
+  $md: 768px;
+  $lg: 992px;
+  $xl: 1200px;
+  $xxl: 1600px;
+*/
+
+.ant-layout-content  {
+  &.main-content {
+    &.series-wrap {
+      margin-top: 9.5rem;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      width: $mainContentSize;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .ant-row {
+      .series {
+        &-title {
+          margin-bottom: 30px;
+          color: $subColor;
+          border-bottom: 5px solid $fontColor;
+        }
+        &-name {
+          font-size: 2.5rem;
+        }
+        &-order {
+          .desc {
+            height:14px;
+            transition: all 0.2s ease;
+            transform: rotateZ(180deg);
+          }
+          .asc {
+            height:12px;
+            transition: all 0.2s ease;
+            transform: rotateZ(0);
+          }
+        }
+      }
+    }
+    .series-line {
+      &.ant-divider {
+        border-top: 5px solid rgba(0,0,0,.06);
+      }
+    }
+  }
+}

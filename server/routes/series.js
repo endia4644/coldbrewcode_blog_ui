@@ -35,17 +35,22 @@ router.post('/', async (req, res, next) => {
 router.get('/', async (req, res, next) => {
   try {
     const series = await db.Series.findAll({
-      attributes: ['id', 'seriesName', [fn('COUNT', col('Posts.id')), 'postCount'], 'createdAt', 'updatedAt'],
+      attributes: ['id', 'seriesName', [fn('COUNT', col('SeriesPost->Post.id')), 'postCount'], 'createdAt', 'updatedAt'],
       include: [{
-        model: db.Post,
-        as: 'Posts',
+        model: db.SeriesPost,
+        as: 'SeriesPost',
         required: false,
         attributes: [],
-        where: {
-          dltYsno: {
-            [Op.eq]: 'N'
+        include: [{
+          model: db.Post,
+          required: false,
+          attributes: [],
+          where: {
+            dltYsno: {
+              [Op.eq]: 'N'
+            }
           }
-        },
+        }]
       }],
       group: ['id'],
     });
@@ -74,26 +79,26 @@ router.get('/name', async (req, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
   try {
-    const Serieses = await db.Series.findOne({
+    const Serieses = await db.Series.findAll({
       where: {
         id: req.params.id
       },
       attributes: ['id', 'seriesName', 'createdAt', 'updatedAt'],
       include: [{
-        model: db.Post,
-        as: 'Posts',
+        model: db.SeriesPost,
+        as: 'SeriesPost',
         required: false,
-        attributes: ['id', 'postContent', 'postName', 'postDescription', 'likeCnt', 'createdAt', 'updatedAt', 'dltYsno'],
+        attributes: ['id'],
         include: [{
-          model: db.User,
-          attributes: ['id', 'email', 'nickname']
-        }],
-        where: {
-          dltYsno: {
-            [Op.eq]: 'N'
+          model: db.Post,
+          as: 'Post',
+          required: false,
+          where: {
+            dltYsno: {
+              [Op.eq]: 'N'
+            },
           }
-        },
-        order: [['id', 'DESC']],
+        }]
       }],
     });
     return res.json(makeResponse({ data: Serieses }));

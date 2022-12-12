@@ -2,7 +2,7 @@
 const express = require("express");
 const { isLoggedIn } = require("./middleware");
 const db = require("../models");
-const { Op, literal } = require("sequelize");
+const { Op, literal, fn, col } = require("sequelize");
 const { makeResponse } = require("../util");
 
 const router = express.Router();
@@ -33,12 +33,32 @@ router.post("/", isLoggedIn, async (req, res, next) => {
           permission: req.body.permission,
           dltYsno: "N",
           UserId: req.user.id,
-          SeriesId: series?.id ?? null,
         },
         {
           transaction: t, // 이 쿼리를 트랜잭션 처리
         }
       );
+      if(series?.id) {
+        const index = await db.SeriesPost.findOne({
+          attributes: [
+            [fn('MAX', col('index')), 'currentIndex']
+         ],
+         where: {
+          SeriesId: series.id
+         },
+         transaction: t, // 이 쿼리를 트랜잭션 처리
+        })
+        await db.SeriesPost.create(
+          {
+            index: index?.dataValues?.currentIndex ? Number(index?.dataValues?.currentIndex) + 1 : 1,
+            PostId: newPost.id,
+            SeriesId: series.id
+          },
+          {
+            transaction: t // 이 쿼리를 트랜잭션 처리
+          }
+        )
+      }
       if (req.body.hashtags) {
         /* 해시태그 테이블 INSERT  */
         const hashtags = await Promise.all(

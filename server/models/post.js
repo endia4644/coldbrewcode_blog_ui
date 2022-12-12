@@ -65,14 +65,10 @@ module.exports = (sequelize, DataTypes) => {
   Post.associate = (db) => {
     db.Post.belongsTo(db.User);
     db.Post.belongsToMany(db.User, { through: "PostLikeUser" });
-    db.Post.belongsTo(db.Series, {
-      foreignKey: {
-        allowNull: true,
-      },
-    });
     db.Post.hasMany(db.Comment);
     db.Post.belongsToMany(db.Hashtag, { through: "PostHashtag" });
     db.Post.hasMany(db.Image);
+    db.Post.hasOne(db.SeriesPost);
   };
   return Post;
 };

@@ -79,7 +79,7 @@ export default function Series() {
               src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
             />
             <Typography.Title>
-              <Link to={`/series/${item.id}`}>{item.seriesName}</Link>
+              <Link to={`/blog/series/${item.id}`}>{item.seriesName}</Link>
             </Typography.Title>
           </List.Item>
         )}

@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     collate: 'utf8_general_ci'
   });
   Series.associate = (db) => {
-    db.Series.hasMany(db.Post);
+    db.Series.hasOne(db.SeriesPost);
   }
   return Series;
 }

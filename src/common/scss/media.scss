@@ -140,7 +140,7 @@
     min-height: 735px;
   }
 }
-
+  
 @media (min-width: $lg) {
 
   /* 
@@ -172,6 +172,7 @@
       padding: 0 10px;
     }
   }
+  
 
   .sub-content {
     .seriesTopButton {
@@ -210,6 +211,10 @@
       margin-top: 3.6rem;
     }
 
+    .series-wrap {
+      margin-top: 7.5rem !important;
+    }
+
     .post-name {
       font-size: 2.25rem !important;
     }
@@ -234,6 +239,20 @@
             width: 100%;
             margin-top: 10px;
           }
+        }
+      }
+    }
+  }
+
+  .ant-layout {
+    .ant-layout-content  {
+      &.main-content {
+        &.series-wrap {
+          width: 100%;
+          padding-left: 1rem;
+          padding-right: 1rem;
+          margin-left: auto;
+          margin-right: auto;
         }
       }
     }
