@@ -5,12 +5,18 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true,
     },
+    posts: {
+      type: DataTypes.VIRTUAL,
+      set(value) {
+        this.setDataValue("posts", value);
+      },
+    },
   }, {
     charset: 'utf8',
     collate: 'utf8_general_ci'
   });
   Series.associate = (db) => {
-    db.Series.hasOne(db.SeriesPost);
+    db.Series.belongsToMany(db.Post, { through: db.SeriesPost });
   }
   return Series;
 }

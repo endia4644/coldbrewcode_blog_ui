@@ -1,21 +1,16 @@
 module.exports = (sequelize, DataTypes) => {
-    const SeriesPost = sequelize.define(
-      "SeriesPost",
-      {
-        index: {
-          type: DataTypes.INTEGER, // 정수
-          allowNull: true,
-        },
+  const SeriesPost = sequelize.define(
+    "SeriesPost",
+    {
+      index: {
+        type: DataTypes.INTEGER, // 정수
+        allowNull: true,
       },
-      {
-        charset: "utf8mb4",
-        collate: "utf8mb4_general_ci",
-      }
-    );
-    SeriesPost.associate = (db) => {
-      db.SeriesPost.belongsTo(db.Series);
-      db.SeriesPost.belongsTo(db.Post);
-    };
-    return SeriesPost;
-  };
-  
+    },
+    {
+      charset: "utf8mb4",
+      collate: "utf8mb4_general_ci",
+    }
+  );
+  return SeriesPost;
+};

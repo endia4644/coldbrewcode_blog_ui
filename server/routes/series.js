@@ -35,22 +35,16 @@ router.post('/', async (req, res, next) => {
 router.get('/', async (req, res, next) => {
   try {
     const series = await db.Series.findAll({
-      attributes: ['id', 'seriesName', [fn('COUNT', col('SeriesPost->Post.id')), 'postCount'], 'createdAt', 'updatedAt'],
+      attributes: ['id', 'seriesName', [fn('COUNT', col('Posts.id')), 'postCount'], 'createdAt', 'updatedAt'],
       include: [{
-        model: db.SeriesPost,
-        as: 'SeriesPost',
+        model: db.Post,
         required: false,
         attributes: [],
-        include: [{
-          model: db.Post,
-          required: false,
-          attributes: [],
-          where: {
-            dltYsno: {
-              [Op.eq]: 'N'
-            }
+        where: {
+          dltYsno: {
+            [Op.eq]: 'N'
           }
-        }]
+        }
       }],
       group: ['id'],
     });
@@ -79,26 +73,18 @@ router.get('/name', async (req, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
   try {
-    const Serieses = await db.Series.findAll({
+    const Serieses = await db.Series.findOne({
       where: {
         id: req.params.id
       },
       attributes: ['id', 'seriesName', 'createdAt', 'updatedAt'],
       include: [{
-        model: db.SeriesPost,
-        as: 'SeriesPost',
-        required: false,
-        attributes: ['id'],
-        include: [{
-          model: db.Post,
-          as: 'Post',
-          required: false,
-          where: {
-            dltYsno: {
-              [Op.eq]: 'N'
-            },
-          }
-        }]
+        model: db.Post,
+        where: {
+          dltYsno: {
+            [Op.eq]: 'N'
+          },
+        }
       }],
     });
     return res.json(makeResponse({ data: Serieses }));
