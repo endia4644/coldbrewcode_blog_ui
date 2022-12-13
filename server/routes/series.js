@@ -87,7 +87,20 @@ router.get('/:id', async (req, res, next) => {
         }
       }],
     });
-    return res.json(makeResponse({ data: Serieses }));
+    const totalCount = await db.Series.count({
+      where: {
+        id: req.params.id
+      },
+      include: [{
+        model: db.Post,
+        where: {
+          dltYsno: {
+            [Op.eq]: 'N'
+          },
+        }
+      }],
+    })
+    return res.json(makeResponse({ data: Serieses, totalCount: totalCount }));
   } catch (err) {
     console.error(err);
     next('시리즈 상세 조회 중 오류가 발생했습니다.')
