@@ -10,6 +10,8 @@ import authReducer from "../blog/auth/state";
 import authSaga from "../blog/auth/state/saga";
 import postReducer from "../blog/post/state";
 import postSaga from "../blog/post/state/saga";
+import seriesReducer from "../blog/series/state";
+import seriesSaga from "../blog/series/state/saga";
 
 const reducer = combineReducers({
   common: commonReducer,
@@ -17,6 +19,7 @@ const reducer = combineReducers({
   write: writeReducer,
   auth: authReducer,
   post: postReducer,
+  series: seriesReducer,
 });
 const sagaMiddleware = createSagaMiddleware();
 const composeEnhancers =
@@ -27,7 +30,7 @@ const store = createStore(
 );
 
 function* rootSaga() {
-  yield all([mainSaga(), writeSaga(), authSaga(), postSaga()]);
+  yield all([mainSaga(), writeSaga(), authSaga(), postSaga(), seriesSaga()]);
 }
 sagaMiddleware.run(rootSaga);
 

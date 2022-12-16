@@ -1,20 +1,21 @@
 import {
   createReducer,
   createSetValueAction,
+  FETCH_KEY,
   setValueReducer,
 } from "../../../common/redux-helper";
 
 export const Types = {
   SetValue: "series/SetValue",
-  FetchAllSeries: "series/FetchAllSeries",
+  FetchSeries: "series/FetchSeries",
 };
 
 export const actions = {
   setValue: createSetValueAction(Types.SetValue),
-  fetchAllSeries: (id, series) => ({
-    type: Types.FetchAllSeries,
+  fetchSeries: ({ id }) => ({
+    type: Types.FetchSeries,
     id,
-    series,
+    [FETCH_KEY]: id,
   }),
 };
 const INITINAL_STATE = {
