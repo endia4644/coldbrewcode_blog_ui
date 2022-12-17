@@ -9,6 +9,7 @@ import { actions as commonActions } from "../../../common/state";
 import { actions as mainActions, Types as mainTypes } from "../../main/state";
 import { Content, Header } from "antd/lib/layout/layout";
 import Settings from "../../main/components/Settings";
+import useQuery from "../../auth/hook/useQuery";
 
 import "../scss/post.scss";
 import { elapsedTime } from "../../../common/util/util";
@@ -23,19 +24,21 @@ import CommentForm from "../components/CommentForm";
 
 export default function Post() {
   const { id } = useParams();
+  let query = useQuery();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const post = useSelector((state) => state.post.post);
   const comment = useSelector((state) => state.post.comment_0);
   const commentCount = useSelector((state) => state.post.commentCount);
   const { fetchStatus } = useFetchInfo(Types.FetchGetPost, id);
+  const postType = query.get("postType") ?? 'post';
 
   function logout() {
     dispatch(authActions.fetchLogout());
   }
 
   useEffect(() => {
-    dispatch(actions.fetchGetPost(id));
+    dispatch(actions.fetchGetPost({ id, postType }));
     dispatch(
       commonActions.setFetchStatus({
         actionType: mainTypes.FetchAllPost,
@@ -116,13 +119,13 @@ export default function Post() {
               </Col>
             </Row>
             <Divider />
-            {(post?.prev || post?.next) && 
+            {(post?.prev || post?.next) &&
               <Row justify="center">
-              <Col className="post-button-box" style={!post?.prev && {justifyContent: 'flex-end'}} >
-                {post?.prev && <PostMoveButton direction="left" post={post?.prev} />}
-                {post?.next && <PostMoveButton direction="right" post={post?.next} />}
-              </Col>
-            </Row>
+                <Col className="post-button-box" style={!post?.prev && { justifyContent: 'flex-end' }} >
+                  {post?.prev && <PostMoveButton direction="left" post={post?.prev} postType={postType} />}
+                  {post?.next && <PostMoveButton direction="right" post={post?.next} postType={postType} />}
+                </Col>
+              </Row>
             }
             <Divider />
             <Row justify="start" style={{ marginTop: "4rem" }}>

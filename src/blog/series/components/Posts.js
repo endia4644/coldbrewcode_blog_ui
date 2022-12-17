@@ -70,7 +70,7 @@ export default function Post({ posts }) {
               }
             >
               <Typography.Title>
-                <Link to={`/blog/post/${item.id}`}>{item.postName}</Link>
+                <Link to={`/blog/post/${item.id}?postType=series`}>{item.postName}</Link>
               </Typography.Title>
               <List.Item.Meta />
               <Typography.Paragraph

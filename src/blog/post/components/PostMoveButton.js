@@ -6,11 +6,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { actions } from "../../main/state";
 
-/**
- *
- * @param {object} hashtags
- */
-export default function PostMoveButton({ direction, post }) {
+export default function PostMoveButton({ direction, post, postType }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const divRef = useRef(null);
@@ -37,7 +33,7 @@ export default function PostMoveButton({ direction, post }) {
   function onClick(e, id) {
     dispatch(actions.setValue("sideActiveKey", id + ""));
     dispatch(actions.fetchHashtagPost(null, 0, id));
-    navigate(`/blog/post/${id}`);
+    navigate(`/blog/post/${id}?postType=${postType}`);
   }
 
   const button = (

@@ -19,9 +19,10 @@ export const Types = {
 
 export const actions = {
   setValue: createSetValueAction(Types.SetValue),
-  fetchGetPost: (id) => ({
+  fetchGetPost: ({ id, postType }) => ({
     type: Types.FetchGetPost,
     id: id,
+    postType: postType,
     [FETCH_KEY]: id,
   }),
   setComment: (comment) => ({

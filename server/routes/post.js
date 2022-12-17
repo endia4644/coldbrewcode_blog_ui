@@ -38,15 +38,15 @@ router.post("/", isLoggedIn, async (req, res, next) => {
           transaction: t, // 이 쿼리를 트랜잭션 처리
         }
       );
-      if(series?.id) {
+      if (series?.id) {
         const index = await db.SeriesPost.findOne({
           attributes: [
             [fn('MAX', col('index')), 'currentIndex']
-         ],
-         where: {
-          SeriesId: series.id
-         },
-         transaction: t, // 이 쿼리를 트랜잭션 처리
+          ],
+          where: {
+            SeriesId: series.id
+          },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
         })
         await db.SeriesPost.create(
           {
@@ -272,7 +272,7 @@ router.get("/", async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
-    const postType = req?.query?.type ?? 'post';
+    const postType = req?.query?.postType ?? 'post';
     const post = await db.Post.findOne({
       where: {
         id: req.params.id,
@@ -306,32 +306,64 @@ router.get("/:id", async (req, res, next) => {
           }
         }
       })
-      const next = await db.Post.findOne(
-        { 
-          attributes:["id","postName"],
+      const series = await db.SeriesPost.findOne({
+        attributes: ['SeriesId', 'index'],
+        where: {
+          PostId: {
+            [Op.eq]: req.params.id
+          }
+        }
+      })
+      let next = null;
+      let prev = null;
+      let nextOp = {};
+      let prevOp = {};
+      /* 시리즈 인 경우 처리 케이스 */
+      if (postType) {
+        const nextPost = await db.SeriesPost.findOne({
+          attributes: ['PostId'],
           where: {
-            id: {
-              [Op.gt]: req.params.id,
-            }, 
-            [Op.and]: [
-              postType === 'series' && {SeriesId: post.SeriesId}
-            ],
+            SeriesId: {
+              [Op.eq]: series.SeriesId
+            },
+            index: {
+              [Op.gt]: series.index
+            }
           },
-          order: [["id", "ASC"]]
+          order: [["index", "ASC"]]
+        });
+        nextOp[Op.eq] = nextPost?.PostId;
+        const prevPost = await db.SeriesPost.findOne({
+          attributes: ['PostId'],
+          where: {
+            SeriesId: {
+              [Op.eq]: series.SeriesId
+            },
+            index: {
+              [Op.lt]: series.index
+            }
+          },
+          order: [["index", "DESC"]]
+        });
+        prevOp[Op.eq] = prevPost?.PostId;
+      } else {
+        nextOp[Op.gt] = req.params.id;
+        prevOp[Op.lt] = req.params.id;
+      }
+      next = await db.Post.findOne(
+        {
+          attributes: ["id", "postName"],
+          where: {
+            id: nextOp,
+          },
         }
       )
-      const prev = await db.Post.findOne(
-        { 
-          attributes:["id","postName"],
+      prev = await db.Post.findOne(
+        {
+          attributes: ["id", "postName"],
           where: {
-            id: {
-              [Op.lt]: req.params.id,
-            }, 
-            [Op.and]: [
-              postType === 'series' && {SeriesId: post.SeriesId}
-            ],
+            id: prevOp,
           },
-          order: [["id", "DESC"]]
         }
       )
       post.set("next", next);

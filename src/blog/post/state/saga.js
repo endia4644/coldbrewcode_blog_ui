@@ -3,9 +3,9 @@ import { callApi } from "../../../common/util/api";
 import { makeFetchSaga } from "../../../common/util/fetch";
 import { actions, Types } from "./index";
 
-function* fetchGetPost({ id }) {
+function* fetchGetPost({ id, postType }) {
   const { isSuccess, data } = yield call(callApi, {
-    url: `/post/${id}`,
+    url: `/post/${id}?postType=${postType}`,
   });
   if (isSuccess && data) {
     yield put(actions.setValue("post", data));
