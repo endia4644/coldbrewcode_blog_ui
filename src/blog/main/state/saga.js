@@ -5,7 +5,6 @@ import { makeFetchSaga } from "../../../common/util/fetch";
 import { actions as common } from "../../../common/state";
 
 function* fetchAllPost(action, page) {
-  console.log(page, Math.floor(action.totalCount / 8))
   if (page <= Math.floor(action.totalCount / 8)) {
     const { isSuccess, data } = yield call(callApi, {
       url: "/post",
