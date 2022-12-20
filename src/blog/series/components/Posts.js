@@ -8,7 +8,6 @@ import {
 import { List, Space, Typography } from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
-import { FO_HOST } from "../../../common/constant.js";
 import { elapsedTime } from "../../../common/util/util.js";
 
 const IconText = ({ icon, text }) => (

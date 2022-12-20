@@ -31,8 +31,6 @@ export default function PostMoveButton({ direction, post, postType }) {
   }, [controls, hover, direction]);
 
   function onClick(e, id) {
-    dispatch(actions.setValue("sideActiveKey", id + ""));
-    dispatch(actions.fetchHashtagPost(null, 0, id));
     navigate(`/blog/post/${id}?postType=${postType}`);
   }
 

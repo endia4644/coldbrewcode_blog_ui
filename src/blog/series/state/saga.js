@@ -4,7 +4,6 @@ import { callApi } from "../../../common/util/api";
 import { makeFetchSaga } from "../../../common/util/fetch";
 
 function* fetchSeries({ id }) {
-  console.log(id);
   const { isSuccess, data } = yield call(callApi, {
     url: `/series/${id}`,
   });

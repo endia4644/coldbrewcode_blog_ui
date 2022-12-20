@@ -39,13 +39,6 @@ export default function Post() {
 
   useEffect(() => {
     dispatch(actions.fetchGetPost({ id, postType }));
-    dispatch(
-      commonActions.setFetchStatus({
-        actionType: mainTypes.FetchAllPost,
-        status: FetchStatus.Delete,
-      })
-    );
-    dispatch(mainActions.setValue("post", []));
   }, [dispatch, id]);
 
   useEffect(() => {
