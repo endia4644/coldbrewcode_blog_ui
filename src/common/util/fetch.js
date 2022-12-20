@@ -91,7 +91,6 @@ export function makeFetchSaga({
             nextPage: isSuccess ? page + 1 : page,
             errorMessage: isSuccess ? "" : apiResult.resultMessage,
           };
-          console.log(params);
           /* Posthashtag, Postsearch 검색은 인덱스를 초기화한다. */
           if (NO_SAVE.includes(actionType)) {
             params.nextPage = 0;
