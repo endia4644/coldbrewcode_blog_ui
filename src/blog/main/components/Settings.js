@@ -1,6 +1,6 @@
 import { UserOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Menu, Space } from "antd";
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { AuthStatus } from "../../../common/constant";

@@ -10,12 +10,16 @@ import "../scss/series.scss";
 import { DownOutlined } from "@ant-design/icons";
 import Posts from "../components/Posts";
 import { UpArrowIcon } from "../../../common/components/Icon";
+import { AuthStatus } from "../../../common/constant";
 
 export default function Series() {
     const { id } = useParams();
     const dispatch = useDispatch();
     const [order, setOrder] = useState(false);
     const series = useSelector(state => state.series.series);
+    const status = useSelector((state) => state.auth.status);
+    const user = useSelector((state) => state.auth.user);
+    const [isUpdate, setIsUpdate] = useState(false);
 
     function logout() {
         dispatch(authActions.fetchLogout());
@@ -55,8 +59,43 @@ export default function Series() {
                 <Row style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <Button icon={<DownOutlined className={order ? 'desc' : 'asc'} />} className={'button-type-round button-color-normal series-order'} onClick={() => { setOrder(!order) }}>{order ? '오름차순' : '내림차순'}</Button>
                 </Row>
-                <Row>
-                    <Posts posts={series?.Posts} />
+                {status === AuthStatus.Login && user?.userType === "admin" && (
+                    <Row style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
+                        {isUpdate &&
+                            <Button
+                                className="button-type-round button-color-white"
+                                style={{ marginRight: 5 }}
+                                onClick={() => {
+                                    setIsUpdate(!isUpdate);
+                                }}
+                            >
+                                적용
+                            </Button>
+                        }
+                        {!isUpdate &&
+                            <>
+                                <Button
+                                    className="button-type-round button-color-white"
+                                    style={{ marginRight: 5 }}
+                                    onClick={() => {
+                                        setIsUpdate(!isUpdate);
+                                    }}
+                                >
+                                    수정
+                                </Button>
+                                <Button
+                                    className="button-type-round button-color-white"
+                                    style={{ marginRight: 5 }}
+                                    onClick={() => { }}
+                                >
+                                    삭제
+                                </Button>
+                            </>
+                        }
+                    </Row>
+                )}
+                <Row style={{ marginTop: 30 }}>
+                    <Posts posts={series?.Posts} isUpdate={isUpdate} />
                 </Row>
             </Content>
             <BackTop>
