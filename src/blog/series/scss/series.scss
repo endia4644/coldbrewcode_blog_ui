@@ -26,6 +26,15 @@
           margin-bottom: 20px;
         }
 
+        &-thumnail {
+          margin-right: 40px;
+
+          img {
+            border-radius: 5px;
+            width: 400px;
+          }
+        }
+
         &-header {
           .text-box {
             li::marker {

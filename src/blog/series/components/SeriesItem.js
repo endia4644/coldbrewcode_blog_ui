@@ -35,9 +35,8 @@ export default function Post({ post, index }) {
         </div>
       </div>
       <div className="series-body">
-        <div className="series-thumnail" style={{ marginRight: 40 }}>
+        <div className="series-thumnail">
           <img
-            style={{ width: 400 }}
             alt="logo"
             src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
             onError={handleImgError}

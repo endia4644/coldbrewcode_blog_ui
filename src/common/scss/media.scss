@@ -262,10 +262,22 @@
     section {
       main {
         .ant-row {
+          ol {
+            padding: 0;
+          }
+
           .series {
             &-body {
               display: flex;
               flex-direction: column;
+            }
+
+            &-thumnail {
+              margin-right: 0px;
+
+              img {
+                width: 100%;
+              }
             }
           }
         }
