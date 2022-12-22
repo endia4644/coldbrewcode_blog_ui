@@ -22,27 +22,43 @@
 
     .ant-row {
       .series {
-        &-title {
-          margin-bottom: 30px;
-          color: $subColor;
-          border-bottom: 5px solid $fontColor;
+        &:not(:last-child) {
+          margin-bottom: 20px;
         }
 
-        &-name {
-          font-size: 2.5rem;
-        }
+        &-header {
+          .text-box {
+            li::marker {
+              font-size: 2rem;
+              font-weight: bold;
+            }
 
-        &-order {
-          .desc {
-            height: 14px;
-            transition: all 0.2s ease;
-            transform: rotateZ(180deg);
+            .ant-typography {
+              display: inline-block;
+              margin-right: 10px;
+            }
           }
+        }
 
-          .asc {
-            height: 12px;
-            transition: all 0.2s ease;
-            transform: rotateZ(0);
+        &-body {
+          padding: 10px;
+          border-radius: 10px;
+          display: flex;
+        }
+
+        &-content {
+          padding: 15px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+
+        &-state {
+          display: flex;
+          justify-content: flex-start;
+
+          &-item {
+            color: grey;
           }
         }
       }
@@ -51,28 +67,6 @@
     .series-line {
       &.ant-divider {
         border-top: 5px solid rgba(0, 0, 0, .06);
-      }
-    }
-
-    .series-post {
-      .ant-list-item {
-        flex-direction: row-reverse;
-
-        &-main {
-          display: flex;
-          flex-direction: column;
-          flex-wrap: wrap;
-          align-content: flex-start;
-        }
-
-        .ant-list-item-extra {
-          margin-right: 40px;
-          margin-left: 0px;
-
-          img {
-            width: 400px;
-          }
-        }
       }
     }
   }

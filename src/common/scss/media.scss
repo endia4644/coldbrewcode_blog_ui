@@ -262,26 +262,10 @@
     section {
       main {
         .ant-row {
-          .series-post {
-            .ant-list-item {
-              flex-direction: column-reverse;
-
-              &-main {
-                display: flex;
-                flex-direction: column;
-                flex-wrap: wrap;
-                align-content: flex-start;
-              }
-
-              .ant-list-item-extra {
-                margin-right: 0px;
-                margin-left: 0px;
-                margin-bottom: 40px;
-
-                img {
-                  width: 100%;
-                }
-              }
+          .series {
+            &-body {
+              display: flex;
+              flex-direction: column;
             }
           }
         }

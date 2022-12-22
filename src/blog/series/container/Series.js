@@ -8,9 +8,9 @@ import { actions } from "./../state";
 import { actions as authActions } from "../../auth/state";
 import "../scss/series.scss";
 import { DownOutlined } from "@ant-design/icons";
-import Posts from "../components/Posts";
 import { UpArrowIcon } from "../../../common/components/Icon";
 import { AuthStatus } from "../../../common/constant";
+import SeriesList from "../components/SeriesList";
 
 export default function Series() {
     const { id } = useParams();
@@ -95,7 +95,7 @@ export default function Series() {
                     </Row>
                 )}
                 <Row style={{ marginTop: 30 }}>
-                    <Posts posts={series?.Posts} isUpdate={isUpdate} />
+                    <SeriesList posts={series?.Posts} isUpdate={isUpdate} />
                 </Row>
             </Content>
             <BackTop>
