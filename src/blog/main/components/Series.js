@@ -2,7 +2,7 @@ import { BookOutlined, FieldTimeOutlined } from "@ant-design/icons";
 import { List, Space, Typography } from "antd";
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";
 import { elapsedTime } from "../../../common/util/util.js";
@@ -16,6 +16,7 @@ const IconText = ({ icon, text }) => (
 );
 
 export default function Series() {
+  const navigate = useNavigate();
   const series = useSelector((state) => state.main.series);
   const targetRef = useRef(null);
   const dispatch = useDispatch();
@@ -73,7 +74,8 @@ export default function Series() {
             ]}
           >
             <img
-              style={{ paddingBottom: 20 }}
+              onClick={() => navigate(`/blog/post/${item?.id}`)}
+              style={{ paddingBottom: 20, cursor: 'pointer' }}
               width={"100%"}
               alt="logo"
               src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"

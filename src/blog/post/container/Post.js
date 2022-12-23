@@ -113,14 +113,16 @@ export default function Post() {
             </Row>
             <Divider />
             {(post?.prev || post?.next) &&
-              <Row justify="center">
-                <Col className="post-button-box" style={!post?.prev && { justifyContent: 'flex-end' }} >
-                  {post?.prev && <PostMoveButton direction="left" post={post?.prev} postType={postType} />}
-                  {post?.next && <PostMoveButton direction="right" post={post?.next} postType={postType} />}
-                </Col>
-              </Row>
+              <>
+                <Row justify="center">
+                  <Col className="post-button-box" style={!post?.prev && { justifyContent: 'flex-end' }} >
+                    {post?.prev && <PostMoveButton direction="left" post={post?.prev} postType={postType} />}
+                    {post?.next && <PostMoveButton direction="right" post={post?.next} postType={postType} />}
+                  </Col>
+                </Row>
+                <Divider />
+              </>
             }
-            <Divider />
             <Row justify="start" style={{ marginTop: "4rem" }}>
               <Col>
                 <Typography.Title level={3}>{commentCount} 개의 댓글</Typography.Title>

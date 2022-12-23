@@ -5,7 +5,6 @@ import SeriesItem from "./SeriesItem.js";
 
 export default function Post({ posts, isUpdate, getList }) {
   const [list, setList] = useState(null);
-
   useEffect(() => {
     setList(posts?.map((item) => {
       return {

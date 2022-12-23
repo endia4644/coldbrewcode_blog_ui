@@ -7,6 +7,7 @@ import {
 } from "@ant-design/icons";
 import { Button, Divider, Space, Typography } from "antd";
 import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { elapsedTime } from "../../../common/util/util.js";
 
 const IconText = ({ icon, text }) => (
@@ -22,6 +23,7 @@ const handleImgError = (e) => {
 };
 
 export default function Post({ post, isUpdate, onRemove = null }) {
+  const navigate = useNavigate();
   return (
     <div style={{ width: '100%', backgroundColor: "white" }} className="series">
       <div className="series-header">
@@ -29,7 +31,7 @@ export default function Post({ post, isUpdate, onRemove = null }) {
           <li>
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
               <Typography.Title>
-                {post.postName}
+                <Link to={`/blog/post/${post.id}?postType=series`}>{post.postName}</Link>
               </Typography.Title>
               {isUpdate &&
                 <Button
@@ -49,6 +51,8 @@ export default function Post({ post, isUpdate, onRemove = null }) {
       <div className="series-body">
         <div className="series-thumnail">
           <img
+            style={{ cursor: 'pointer' }}
+            onClick={() => navigate(`/blog/post/${post?.id}?postType=series`)}
             alt="logo"
             src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
             onError={handleImgError}

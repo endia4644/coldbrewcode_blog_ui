@@ -8,11 +8,11 @@ import {
 import { Button, Col, List, Space, Typography } from "antd";
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";
 import { elapsedTime } from "../../../common/util/util.js";
-import { FetchStatus, FO_HOST } from "../../../common/constant";
+import { FetchStatus } from "../../../common/constant";
 const { Title } = Typography;
 
 const IconText = ({ icon, text }) => (
@@ -29,6 +29,7 @@ const handleImgError = (e) => {
 
 export default function Post() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const targetRef = useRef(null);
   const post = useSelector((state) => state.main.post);
   const hashtagCurrent = useSelector((state) => state.main.hashtagCurrent);
@@ -115,7 +116,8 @@ export default function Post() {
               ]}
             >
               <img
-                style={{ paddingBottom: 20 }}
+                onClick={() => navigate(`/blog/post/${item?.id}`)}
+                style={{ paddingBottom: 20, cursor: 'pointer' }}
                 width={"100%"}
                 alt="logo"
                 src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"

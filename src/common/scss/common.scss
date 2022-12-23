@@ -188,6 +188,15 @@ a:hover {
   font-family: "Roboto", sans-serif;
 }
 
+.ant-typography a:focus-visible,
+.ant-typography a:hover,
+a.ant-typography:focus-visible,
+a.ant-typography:hover,
+.ant-typography a:active,
+a.ant-typography:active {
+  color: $fontColor;
+}
+
 .button {
   &-border {
     &-hide {

@@ -319,7 +319,8 @@ router.get("/:id", async (req, res, next) => {
       let nextOp = {};
       let prevOp = {};
       /* 시리즈 인 경우 처리 케이스 */
-      if (postType) {
+      if (postType === 'series') {
+        console.log('여기')
         const nextPost = await db.SeriesPost.findOne({
           attributes: ['PostId'],
           where: {
