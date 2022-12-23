@@ -77,9 +77,43 @@ router.get('/:id', async (req, res, next) => {
       where: {
         id: req.params.id
       },
-      attributes: ['id', 'seriesName', 'createdAt', 'updatedAt'],
+      attributes: [
+        'id',
+        'seriesName',
+        'createdAt',
+        'updatedAt',
+      ],
       include: [{
         model: db.Post,
+        attributes: [
+          'id',
+          'postContent',
+          'postName',
+          'postDescription',
+          'postThumnail',
+          'permission',
+          'dltYsno',
+          'createdAt',
+          'updatedAt',
+          [
+            literal(
+              '(SELECT COUNT(1) FROM Comments WHERE Comments.PostId = Posts.id AND Comments.dltYsno = "N")'
+            ),
+            "commentCount",
+          ],
+          [
+            literal(
+              `(SELECT COUNT(1) FROM postlikeuser WHERE UserId = ${req?.user?.id ?? 0} AND PostId = Posts.id)`
+            ),
+            "likeYsno",
+          ],
+          [
+            literal(
+              `(SELECT COUNT(1) FROM postlikeuser WHERE PostId = Posts.id)`
+            ),
+            "likeCount",
+          ],
+        ],
         where: {
           dltYsno: {
             [Op.eq]: 'N'
