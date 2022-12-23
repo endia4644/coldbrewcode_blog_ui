@@ -31,7 +31,7 @@
 
           img {
             border-radius: 5px;
-            width: 400px;
+            width: 380px;
           }
         }
 
@@ -68,6 +68,10 @@
 
           &-item {
             color: grey;
+          }
+
+          .ant-divider-vertical {
+            border-left: 1px solid $antdGrayColor;
           }
         }
       }

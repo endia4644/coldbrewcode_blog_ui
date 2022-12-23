@@ -4,30 +4,47 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Settings from "../../main/components/Settings";
-import { actions } from "./../state";
+import { actions, Types } from "./../state";
 import { actions as authActions } from "../../auth/state";
 import "../scss/series.scss";
 import { DownOutlined } from "@ant-design/icons";
 import { UpArrowIcon } from "../../../common/components/Icon";
-import { AuthStatus } from "../../../common/constant";
+import { AuthStatus, FetchStatus } from "../../../common/constant";
 import SeriesList from "../components/SeriesList";
+import useFetchInfo from "../../../common/hook/useFetchInfo";
 
 export default function Series() {
     const { id } = useParams();
     const dispatch = useDispatch();
     const [order, setOrder] = useState(false);
     const series = useSelector(state => state.series.series);
+    const posts = useSelector(state => state.series.posts);
     const status = useSelector((state) => state.auth.status);
     const user = useSelector((state) => state.auth.user);
     const [isUpdate, setIsUpdate] = useState(false);
+    const [list, setList] = useState([]);
+    const fetchInfo = useFetchInfo(Types.FetchUpdateSeries);
 
     function logout() {
         dispatch(authActions.fetchLogout());
     }
 
+    function onsSave() {
+        dispatch(actions.fetchUpdateSeries({ id, posts: list }))
+    }
+
     useEffect(() => {
         dispatch(actions.fetchSeries({ id }))
     }, [dispatch])
+
+    const getList = (list) => {
+        setList(list);
+    }
+
+    useEffect(() => {
+        if (fetchInfo.fetchStatus === FetchStatus.Success) setIsUpdate(false);
+    }, [fetchInfo])
+
 
     return (
         <>
@@ -61,41 +78,56 @@ export default function Series() {
                 </Row>
                 {status === AuthStatus.Login && user?.userType === "admin" && (
                     <Row style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
-                        {isUpdate &&
-                            <Button
-                                className="button-type-round button-color-white"
-                                style={{ marginRight: 5 }}
-                                onClick={() => {
-                                    setIsUpdate(!isUpdate);
-                                }}
-                            >
-                                적용
-                            </Button>
-                        }
-                        {!isUpdate &&
+                        {posts?.length !== 0 &&
                             <>
-                                <Button
-                                    className="button-type-round button-color-white"
-                                    style={{ marginRight: 5 }}
-                                    onClick={() => {
-                                        setIsUpdate(!isUpdate);
-                                    }}
-                                >
-                                    수정
-                                </Button>
-                                <Button
-                                    className="button-type-round button-color-white"
-                                    style={{ marginRight: 5 }}
-                                    onClick={() => { }}
-                                >
-                                    삭제
-                                </Button>
+                                {isUpdate &&
+                                    <>
+                                        <Button
+                                            className="button-type-round button-color-white"
+                                            style={{ marginRight: 5 }}
+                                            onClick={() => {
+                                                setIsUpdate(!isUpdate);
+                                            }}
+                                        >
+                                            취소
+                                        </Button>
+                                        <Button
+                                            className="button-type-round button-color-white"
+                                            style={{ marginRight: 5 }}
+                                            onClick={() => {
+                                                onsSave();
+                                            }}
+                                        >
+                                            적용
+                                        </Button>
+                                    </>
+                                }
+                                {!isUpdate &&
+                                    <>
+                                        <Button
+                                            className="button-type-round button-color-white"
+                                            style={{ marginRight: 5 }}
+                                            onClick={() => {
+                                                setIsUpdate(!isUpdate);
+                                            }}
+                                        >
+                                            수정
+                                        </Button>
+                                        <Button
+                                            className="button-type-round button-color-white"
+                                            style={{ marginRight: 5 }}
+                                            onClick={() => { }}
+                                        >
+                                            삭제
+                                        </Button>
+                                    </>
+                                }
                             </>
                         }
                     </Row>
                 )}
                 <Row style={{ marginTop: 30 }}>
-                    <SeriesList posts={series?.Posts} isUpdate={isUpdate} />
+                    <SeriesList posts={posts} isUpdate={isUpdate} getList={getList} />
                 </Row>
             </Content>
             <BackTop>

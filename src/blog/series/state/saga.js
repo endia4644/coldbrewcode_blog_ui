@@ -7,16 +7,35 @@ function* fetchSeries({ id }) {
   const { isSuccess, data } = yield call(callApi, {
     url: `/series/${id}`,
   });
-  if (isSuccess && data) {
-    yield put(actions.setValue("series", data));
+  if (isSuccess) {
+    yield put(actions.setValue("series", data ?? []));
+    yield put(actions.setValue("posts", data?.Posts ?? []));
   }
 }
+
+function* fetchUpdateSeries({ id, posts }) {
+  const { isSuccess, data } = yield call(callApi, {
+    url: `/series/${id}/order`,
+    method: 'patch',
+    data: {
+      posts
+    }
+  });
+  if (isSuccess && data) {
+    yield put(actions.setValue("posts", data?.Posts));
+  }
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function* () {
   yield all([
     takeEvery(
       Types.FetchSeries,
       makeFetchSaga({ fetchSaga: fetchSeries, canCache: false })
+    ),
+    takeEvery(
+      Types.FetchUpdateSeries,
+      makeFetchSaga({ fetchSaga: fetchUpdateSeries, canCache: false })
     ),
   ]);
 }

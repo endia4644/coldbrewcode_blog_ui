@@ -2,7 +2,7 @@
 const express = require('express');
 const { isLoggedIn } = require('./middleware');
 const db = require('../models');
-const { fn, col, Op } = require("sequelize");
+const { fn, col, Op, literal } = require("sequelize");
 const { makeResponse } = require('../util');
 
 const router = express.Router();
@@ -84,8 +84,9 @@ router.get('/:id', async (req, res, next) => {
           dltYsno: {
             [Op.eq]: 'N'
           },
-        }
+        },
       }],
+      order: [[literal('`Posts->SeriesPost`.`index`'), 'ASC']],
     });
     const totalCount = await db.Series.count({
       where: {
@@ -104,6 +105,76 @@ router.get('/:id', async (req, res, next) => {
   } catch (err) {
     console.error(err);
     next('시리즈 상세 조회 중 오류가 발생했습니다.')
+  }
+});
+
+/**
+ * 시리즈 정렬 순서 변경 API
+ */
+router.patch("/:id/order", async (req, res, next) => {
+  try {
+    //* 트랜잭션 설정
+    await db.sequelize.transaction(async (t) => {
+      await db.SeriesPost.destroy(
+        {
+          where: {
+            SeriesId: req.params.id,
+          },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        }
+      );
+      for (const [index, value] of req.body.posts.entries()) {
+        await db.SeriesPost.create(
+          {
+            index: index + 1,
+            PostId: value.id,
+            SeriesId: req.params.id
+          },
+          {
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+          }
+        );
+      }
+      const Serieses = await db.Series.findOne({
+        where: {
+          id: req.params.id
+        },
+        transaction: t, // 이 쿼리를 트랜잭션 처리
+        attributes: ['id', 'seriesName', 'createdAt', 'updatedAt'],
+        include: [{
+          model: db.Post,
+          where: {
+            dltYsno: {
+              [Op.eq]: 'N'
+            },
+          },
+        }],
+        order: [[literal('`Posts->SeriesPost`.`index`'), 'ASC']],
+      });
+      const totalCount = await db.Series.count({
+        where: {
+          id: req.params.id
+        },
+        transaction: t, // 이 쿼리를 트랜잭션 처리
+        include: [{
+          model: db.Post,
+          where: {
+            dltYsno: {
+              [Op.eq]: 'N'
+            },
+          }
+        }],
+      })
+      res.send(makeResponse({ data: Serieses, totalCount }));
+    });
+  } catch (err) {
+    console.error(err);
+    res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "게시글 수정 중 오류가 발생했습니다.",
+      })
+    );
   }
 });
 

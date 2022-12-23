@@ -279,6 +279,16 @@
                 width: 100%;
               }
             }
+
+            &-state {
+              font-size: 1.3rem;
+
+              .ant-divider-vertical {
+                height: 1.9em;
+                margin-right: 20px;
+                margin-left: 20px;
+              }
+            }
           }
         }
       }

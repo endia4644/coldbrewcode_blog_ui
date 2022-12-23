@@ -8,6 +8,7 @@ import {
 export const Types = {
   SetValue: "series/SetValue",
   FetchSeries: "series/FetchSeries",
+  FetchUpdateSeries: "series/FetchUpdateSeries",
 };
 
 export const actions = {
@@ -17,9 +18,16 @@ export const actions = {
     id,
     [FETCH_KEY]: id,
   }),
+  fetchUpdateSeries: ({ id, posts }) => ({
+    type: Types.FetchUpdateSeries,
+    id,
+    posts,
+  }),
 };
 const INITINAL_STATE = {
   series: [],
+  posts: [],
+  updateList: [],
 };
 
 const reducer = createReducer(INITINAL_STATE, {
