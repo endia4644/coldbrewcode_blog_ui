@@ -1,21 +1,25 @@
-import { BackTop, Button, Col, Divider, Row, Typography } from "antd";
+import { BackTop, Button, Col, Divider, Row, Typography, Modal, message } from "antd";
 import { Content, Header } from "antd/lib/layout/layout";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Settings from "../../main/components/Settings";
 import { actions, Types } from "./../state";
 import { actions as authActions } from "../../auth/state";
+import { actions as commonActions } from "../../../common/state";
+import { Types as mainType } from "../../main/state";
 import "../scss/series.scss";
-import { DownOutlined } from "@ant-design/icons";
+import { CloseCircleOutlined, DownOutlined } from "@ant-design/icons";
 import { UpArrowIcon } from "../../../common/components/Icon";
 import { AuthStatus, FetchStatus } from "../../../common/constant";
 import SeriesList from "../components/SeriesList";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
+const { confirm } = Modal;
 
 export default function Series() {
     const { id } = useParams();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [order, setOrder] = useState(false);
     const series = useSelector(state => state.series.series);
     const posts = useSelector(state => state.series.posts);
@@ -23,7 +27,13 @@ export default function Series() {
     const user = useSelector((state) => state.auth.user);
     const [isUpdate, setIsUpdate] = useState(false);
     const [list, setList] = useState([]);
-    const fetchInfo = useFetchInfo(Types.FetchUpdateSeries);
+    const fetchSeriesInfo = useFetchInfo(Types.FetchSeries, id);
+    const fetchUpdateInfo = useFetchInfo(Types.FetchUpdateSeries, id);
+    const fetchDeleteInfo = useFetchInfo(Types.FetchDeleteSeries, id);
+
+    useEffect(() => {
+        dispatch(actions.fetchSeries({ id }))
+    }, [dispatch])
 
     function logout() {
         dispatch(authActions.fetchLogout());
@@ -33,18 +43,59 @@ export default function Series() {
         dispatch(actions.fetchUpdateSeries({ id, posts: list }))
     }
 
-    useEffect(() => {
-        dispatch(actions.fetchSeries({ id }))
-    }, [dispatch])
-
     const getList = (list) => {
         setList(list);
     }
 
-    useEffect(() => {
-        if (fetchInfo.fetchStatus === FetchStatus.Success) setIsUpdate(false);
-    }, [fetchInfo])
+    const showConfirm = () => {
+        confirm({
+            title: '시리즈를 삭제하시겠습니까?',
+            icon: <CloseCircleOutlined />,
+            okText: "삭제",
+            cancelText: "취소",
+            onOk() {
+                dispatch(actions.fetchDeleteSeries({ id }));
+            },
+        });
+    };
 
+    const key = "seriesDelete";
+
+    useEffect(() => {
+        if (fetchUpdateInfo.fetchStatus === FetchStatus.Success) setIsUpdate(false);
+    }, [fetchUpdateInfo])
+
+    useEffect(() => {
+        if (fetchDeleteInfo.fetchStatus === FetchStatus.Success) {
+            message.success({
+                content: "삭제가 완료되었습니다",
+                key,
+                duration: 2,
+            });
+            dispatch(
+                commonActions.setFetchStatus({
+                    actionType: mainType.FetchAllSeries,
+                    fetchKey: mainType.FetchAllSeries,
+                    status: FetchStatus.Delete,
+                })
+            );
+            setTimeout(() => {
+                navigate('/blog')
+            }, 1000);
+        } else if (fetchDeleteInfo.fetchStatus === FetchStatus.Request) {
+            message.loading({
+                content: "처리중",
+                key,
+            });
+        }
+    }, [fetchDeleteInfo])
+
+    useLayoutEffect(() => {
+        console.log(fetchSeriesInfo.fetchStatus, series);
+        if (fetchSeriesInfo.fetchStatus !== FetchStatus.Request && !series) {
+            navigate("/blog");
+        }
+    }, [fetchSeriesInfo, navigate, series]);
 
     return (
         <>
@@ -78,50 +129,50 @@ export default function Series() {
                 </Row>
                 {status === AuthStatus.Login && user?.userType === "admin" && (
                     <Row style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
-                        {posts?.length !== 0 &&
+                        {isUpdate &&
                             <>
-                                {isUpdate &&
-                                    <>
-                                        <Button
-                                            className="button-type-round button-color-white"
-                                            style={{ marginRight: 5 }}
-                                            onClick={() => {
-                                                setIsUpdate(!isUpdate);
-                                            }}
-                                        >
-                                            취소
-                                        </Button>
-                                        <Button
-                                            className="button-type-round button-color-white"
-                                            style={{ marginRight: 5 }}
-                                            onClick={() => {
-                                                onsSave();
-                                            }}
-                                        >
-                                            적용
-                                        </Button>
-                                    </>
+                                <Button
+                                    className="button-type-round button-color-white"
+                                    style={{ marginRight: 5 }}
+                                    onClick={() => {
+                                        setIsUpdate(!isUpdate);
+                                    }}
+                                >
+                                    취소
+                                </Button>
+                                <Button
+                                    className="button-type-round button-color-white"
+                                    style={{ marginRight: 5 }}
+                                    onClick={() => {
+                                        onsSave();
+                                    }}
+                                >
+                                    적용
+                                </Button>
+                            </>
+                        }
+                        {!isUpdate &&
+                            <>
+                                {posts.length !== 0 &&
+                                    <Button
+                                        className="button-type-round button-color-white"
+                                        style={{ marginRight: 5 }}
+                                        onClick={() => {
+                                            setIsUpdate(!isUpdate);
+                                        }}
+                                    >
+                                        수정
+                                    </Button>
                                 }
-                                {!isUpdate &&
-                                    <>
-                                        <Button
-                                            className="button-type-round button-color-white"
-                                            style={{ marginRight: 5 }}
-                                            onClick={() => {
-                                                setIsUpdate(!isUpdate);
-                                            }}
-                                        >
-                                            수정
-                                        </Button>
-                                        <Button
-                                            className="button-type-round button-color-white"
-                                            style={{ marginRight: 5 }}
-                                            onClick={() => { }}
-                                        >
-                                            삭제
-                                        </Button>
-                                    </>
-                                }
+                                <Button
+                                    className="button-type-round button-color-white"
+                                    style={{ marginRight: 5 }}
+                                    onClick={() => {
+                                        showConfirm();
+                                    }}
+                                >
+                                    삭제
+                                </Button>
                             </>
                         }
                     </Row>

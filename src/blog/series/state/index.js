@@ -9,6 +9,7 @@ export const Types = {
   SetValue: "series/SetValue",
   FetchSeries: "series/FetchSeries",
   FetchUpdateSeries: "series/FetchUpdateSeries",
+  FetchDeleteSeries: "series/FetchDeleteSeries",
 };
 
 export const actions = {
@@ -22,10 +23,16 @@ export const actions = {
     type: Types.FetchUpdateSeries,
     id,
     posts,
+    [FETCH_KEY]: id,
+  }),
+  fetchDeleteSeries: ({ id }) => ({
+    type: Types.FetchDeleteSeries,
+    id,
+    [FETCH_KEY]: id,
   }),
 };
 const INITINAL_STATE = {
-  series: [],
+  series: null,
   posts: [],
   updateList: [],
 };

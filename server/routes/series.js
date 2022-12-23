@@ -85,6 +85,7 @@ router.get('/:id', async (req, res, next) => {
       ],
       include: [{
         model: db.Post,
+        required: false,
         attributes: [
           'id',
           'postContent',
@@ -216,36 +217,20 @@ router.patch("/:id/order", async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
   try {
     await db.sequelize.transaction(async (t) => {
-      await db.Post.update({ dltYsno: 'Y', seriesId: null }, {
-        where: {
-          id: req.params.id,
-        },
-        transaction: t, // 이 쿼리를 트랜잭션 처리
-      })
-      const deletePost = await db.Post.findOne({
-        where: {
-          id: req.params.id,
-        },
-        transaction: t, // 이 쿼리를 트랜잭션 처리
-        attributes: ['SeriesId']
-      })
-      if (deletePost.SeriesId != null) {
-        const seriesCount = await db.Post.count({
+      await db.SeriesPost.destroy(
+        {
           where: {
-            SeriesId: deletePost.SeriesId,
-            dltYsno: 'N'
+            SeriesId: req.params.id,
           },
           transaction: t, // 이 쿼리를 트랜잭션 처리
         })
-        if (seriesCount === 0) {
-          await db.Series.destroy({
-            where: {
-              id: deletePost.SeriesId
-            },
-            transaction: t, // 이 쿼리를 트랜잭션 처리
-          })
-        }
-      }
+      await db.Series.destroy(
+        {
+          where: {
+            id: req.params.id,
+          },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        })
     })
     return res.send(makeResponse({ data: 'SUCCESS' }));
   } catch (err) {

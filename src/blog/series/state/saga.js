@@ -8,7 +8,7 @@ function* fetchSeries({ id }) {
     url: `/series/${id}`,
   });
   if (isSuccess) {
-    yield put(actions.setValue("series", data ?? []));
+    yield put(actions.setValue("series", data ?? null));
     yield put(actions.setValue("posts", data?.Posts ?? []));
   }
 }
@@ -26,6 +26,13 @@ function* fetchUpdateSeries({ id, posts }) {
   }
 }
 
+function* fetchDeleteSeries({ id }) {
+  yield call(callApi, {
+    url: `/series/${id}`,
+    method: 'delete',
+  });
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function* () {
   yield all([
@@ -36,6 +43,10 @@ export default function* () {
     takeEvery(
       Types.FetchUpdateSeries,
       makeFetchSaga({ fetchSaga: fetchUpdateSeries, canCache: false })
+    ),
+    takeEvery(
+      Types.FetchDeleteSeries,
+      makeFetchSaga({ fetchSaga: fetchDeleteSeries, canCache: false })
     ),
   ]);
 }

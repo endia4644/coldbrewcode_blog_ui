@@ -228,9 +228,8 @@ export default function WriteSetting({
         <motion.div layoutId={`item-motion`}>
           <div className="content content-detail">
             <Content
-              className={`main-content main-writer main-writer-detail ${
-                isSeriesADD ? "isSeriesADD" : ""
-              }`}
+              className={`main-content main-writer main-writer-detail ${isSeriesADD ? "isSeriesADD" : ""
+                }`}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -473,8 +472,8 @@ export default function WriteSetting({
                                 {item.seriesName}
                                 <span
                                   ref={(element) =>
-                                    (spanRefs.current[item.seriesName] =
-                                      element)
+                                  (spanRefs.current[item.seriesName] =
+                                    element)
                                   }
                                 />
                               </Radio.Button>
