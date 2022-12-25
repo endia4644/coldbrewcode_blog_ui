@@ -1,12 +1,9 @@
-// @ts-nocheck
-import { Col, Divider, Row, Space, Typography } from "antd";
+import { Button, Col, Divider, Row, Space, Typography } from "antd";
 import React, { useEffect, useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { actions, Types } from "../state";
 import { actions as authActions } from "../../auth/state";
-import { actions as commonActions } from "../../../common/state";
-import { actions as mainActions, Types as mainTypes } from "../../main/state";
 import { Content, Header } from "antd/lib/layout/layout";
 import Settings from "../../main/components/Settings";
 import useQuery from "../../auth/hook/useQuery";
@@ -19,7 +16,7 @@ import Topbar from "../components/TopBar";
 import Comment from "../components/Comment";
 import PostMoveButton from "../components/PostMoveButton";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
-import { FetchStatus } from "../../../common/constant";
+import { AuthStatus, FetchStatus } from "../../../common/constant";
 import CommentForm from "../components/CommentForm";
 
 export default function Post() {
@@ -32,6 +29,9 @@ export default function Post() {
   const commentCount = useSelector((state) => state.post.commentCount);
   const { fetchStatus } = useFetchInfo(Types.FetchGetPost, id);
   const postType = query.get("postType") ?? 'post';
+
+  const status = useSelector((state) => state.auth.status);
+  const user = useSelector((state) => state.auth.user);
 
   function logout() {
     dispatch(authActions.fetchLogout());
@@ -63,13 +63,24 @@ export default function Post() {
             </Row>
           </Header>
           <Content className="post-wrap main-content">
-            <Row>
+            <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography.Title
                 className="post-name"
                 style={{ marginBottom: 0 }}
               >
                 {post?.postName}
               </Typography.Title>
+              {status === AuthStatus.Login && user?.userType === "admin" && (
+                <Button
+                  className="button-type-round button-color-white"
+                  style={{ marginRight: 5 }}
+                  onClick={() => {
+                    navigate(`/blog/write/${id}`)
+                  }}
+                >
+                  수정
+                </Button>
+              )}
             </Row>
             <Row style={{ marginTop: "2rem" }}>
               <Space
@@ -130,7 +141,7 @@ export default function Post() {
             </Row>
             <Row justify="start" style={{ marginTop: "2rem" }}>
               <Col>
-                <CommentForm postId={id} parentId={null} commentDepth={'0'} comment={comment} commentCount={commentCount} />
+                <CommentForm postId={id} parentId={null} commentDepth={'0'} comment={comment} commentCount={commentCount} updateYsno={undefined} />
               </Col>
             </Row>
             <Row
