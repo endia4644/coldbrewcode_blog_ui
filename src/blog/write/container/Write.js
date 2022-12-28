@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Content, Footer } from "antd/lib/layout/layout";
 import "react-quill/dist/quill.snow.css";
 import Editor from "../components/Editor";
@@ -6,7 +6,7 @@ import { Button, Col, Divider, Input, Row, Space } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom"; // 설치한 패키지
 import "../scss/write.scss";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { actions } from "../state";
 import WriteSetting from "./WriteSetting";
 import { AnimatePresence } from "framer-motion";
@@ -25,9 +25,25 @@ export default function Write() {
   const [htmlContent, setHtmlContent] = useState(null);
   const [postName, setPostName] = useState(null);
   const [imageArray] = useState([]);
+  const post = useSelector(state => state.write.post);
 
   const [level, setLevel] = useState(0);
 
+  useEffect(() => {
+    if (!postId) {
+      return;
+    }
+    dispatch(actions.fetchPost(postId));
+  }, [postId, dispatch]);
+
+  useEffect(() => {
+    if (!post) {
+      return;
+    }
+    setPostName(post?.postName);
+    setHashtag(post?.Hashtags ?? []);
+    post?.Hashtags.map(item => tagRef.current.add(item?.key));
+  }, [post]);
   const getHtmlContent = (htmlContent) => {
     setHtmlContent(htmlContent);
   };
@@ -59,6 +75,7 @@ export default function Write() {
       tagRef.current.add(currentTag);
     }
     setCurrentTag("");
+    console.log(tagRef.current);
   };
 
   return (
@@ -71,6 +88,11 @@ export default function Write() {
             postContent={htmlContent}
             postName={postName}
             postImages={imageArray}
+            postThumnail={post?.postThumnail}
+            postDescription={post?.postDescription}
+            postPermission={post?.permission}
+            series={post?.Series?.[0]}
+            postId={postId}
           />
         )}
       </AnimatePresence>

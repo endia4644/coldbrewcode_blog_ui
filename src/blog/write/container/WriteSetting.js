@@ -37,6 +37,11 @@ export default function WriteSetting({
   postContent,
   postName,
   postImages,
+  postThumnail,
+  postDescription,
+  postPermission,
+  series,
+  postId,
 }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -216,6 +221,19 @@ export default function WriteSetting({
       }
     }
   }, [seriesList, prev]);
+
+  /* 수정 시 초기 세팅 */
+  useEffect(() => {
+    if (postPermission) setPermission(postPermission)
+    if (postDescription) setDescription(postDescription);
+    if (series?.seriesName) {
+      setSeriesSelectYsno(true);
+      if (seriesList?.length) {
+        setValue(series?.seriesName);
+        setPrev(series?.seriesName);
+      }
+    }
+  }, [postThumnail, postDescription, series, seriesList])
 
   return (
     <>
@@ -558,18 +576,36 @@ export default function WriteSetting({
                             return hashtags.push(item.key);
                           });
                         }
-                        dispatch(
-                          actions.fetchCreatePost({
-                            postName: postName,
-                            hashtags: hashtags,
-                            postDescription: description,
-                            postContent: postContent,
-                            postThumnail: `${previewImage?.fileName ?? null}`,
-                            permission: permission,
-                            seriesName: value,
-                            imageIds: imageIds,
-                          })
-                        );
+                        if (postId) {
+                          dispatch(
+                            actions.fetchUpdatePost({
+                              postId: postId,
+                              postName: postName,
+                              hashtags: hashtags,
+                              postDescription: description,
+                              postContent: postContent,
+                              postThumnail: `${previewImage?.fileName ?? postThumnail}`,
+                              permission: permission,
+                              seriesOriId: series?.id,
+                              seriesOriName: series?.seriesName,
+                              seriesName: value,
+                              imageIds: imageIds,
+                            })
+                          );
+                        } else {
+                          dispatch(
+                            actions.fetchCreatePost({
+                              postName: postName,
+                              hashtags: hashtags,
+                              postDescription: description,
+                              postContent: postContent,
+                              postThumnail: `${previewImage?.fileName ?? null}`,
+                              permission: permission,
+                              seriesName: value,
+                              imageIds: imageIds,
+                            })
+                          );
+                        }
                       }}
                     >
                       출간하기

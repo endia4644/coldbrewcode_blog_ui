@@ -6,6 +6,7 @@ import {
 
 export const Types = {
   SetValue: "write/SetValue",
+  FetchPost: "write/FetchPost",
   FetchCreatePost: "write/FetchCreatePost",
   FetchUpdatePost: "write/FetchUpdatePost",
   FetchAllSeries: "write/FetchAllSeries",
@@ -14,13 +15,34 @@ export const Types = {
 
 export const actions = {
   setValue: createSetValueAction(Types.SetValue),
-  fetchUpdatePost: (postId, postName, description, htmlContent) => ({
-    type: Types.FetchUpdatePost,
-    postId,
-    postName,
-    description,
-    htmlContent,
+  fetchPost: (id) => ({
+    type: Types.FetchPost,
+    id,
   }),
+  fetchUpdatePost: ({ postId,
+    postName,
+    hashtags,
+    postDescription,
+    postContent,
+    postThumnail,
+    permission,
+    seriesOriId,
+    seriesOriName,
+    seriesName,
+    imageIds }) => ({
+      type: Types.FetchUpdatePost,
+      postId,
+      postName,
+      hashtags,
+      postDescription,
+      postContent,
+      postThumnail,
+      permission,
+      seriesOriId,
+      seriesOriName,
+      seriesName,
+      imageIds,
+    }),
   fetchCreatePost: ({
     postName,
     hashtags,

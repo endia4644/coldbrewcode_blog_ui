@@ -3,8 +3,17 @@ import { actions, Types } from ".";
 import { callApi } from "../../../common/util/api";
 import { makeFetchSaga } from "../../../common/util/fetch";
 
-function* fetchCreatePost(action) {
+function* fetchPost(action) {
   const { isSuccess, data } = yield call(callApi, {
+    url: `/post/detail/${action.id}`,
+  });
+  if (isSuccess && data) {
+    yield put(actions.setValue("post", data));
+  }
+}
+
+function* fetchCreatePost(action) {
+  yield call(callApi, {
     method: "post",
     url: "/post",
     data: {
@@ -18,34 +27,26 @@ function* fetchCreatePost(action) {
       imageIds: action.imageIds,
     },
   });
-  if (isSuccess && data) {
-    if (action.post) {
-      yield put(actions.setValue("post", [...action.post, ...data]));
-    } else {
-      yield put(actions.setValue("post", data));
-    }
-  }
 }
 
 function* fetchUpdatePost(action) {
-  const { isSuccess, data } = yield call(callApi, {
+  yield call(callApi, {
     method: "patch",
     url: "/post",
     data: {
       postId: action.postId,
       postName: action.postName,
-      postDescription: action.description,
-      postContent: action.htmlContent,
-      permission: "public",
+      hashtags: action.hashtags,
+      postDescription: action.postDescription,
+      postContent: action.postContent,
+      postThumnail: action.postThumnail,
+      permission: action.permission,
+      seriesOriId: action.seriesOriId,
+      seriesOriName: action.seriesOriName,
+      seriesName: action.seriesName,
+      imageIds: action.imageIds,
     },
   });
-  if (isSuccess && data) {
-    if (action.post) {
-      yield put(actions.setValue("post", [...action.post, ...data]));
-    } else {
-      yield put(actions.setValue("post", data));
-    }
-  }
 }
 
 function* fetchAllSeries(action) {
@@ -85,6 +86,10 @@ function* fetchCreateSeries(action) {
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function* () {
   yield all([
+    takeEvery(
+      Types.FetchPost,
+      makeFetchSaga({ fetchSaga: fetchPost, canCache: false })
+    ),
     takeEvery(
       Types.FetchCreatePost,
       makeFetchSaga({ fetchSaga: fetchCreatePost, canCache: false })

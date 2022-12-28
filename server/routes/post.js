@@ -118,13 +118,55 @@ router.patch("/", async (req, res, next) => {
   try {
     //* 트랜잭션 설정
     await db.sequelize.transaction(async (t) => {
+      let series = null;
+      if (req.body.seriesName) {
+        if (req.body.seriesName !== req.body.seriesOriName) {
+          const seriesPost = await db.SeriesPost.findOne({
+            attributes: ['index'],
+            where: {
+              SeriesId: {
+                [Op.eq]: req.body.seriesOriId,
+              },
+            },
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+          });
+          await db.SeriesPost.destroy({
+            where: {
+              SeriesId: {
+                [Op.eq]: req.body.seriesOriId,
+              },
+              PostId: {
+                [Op.eq]: req.body.postId,
+              },
+            },
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+          });
+          if (seriesPost) {
+            await db.SeriesPost.update(
+              {
+                index: -1
+              },
+              {
+                where: {
+                  SeriesId: {
+                    [Op.eq]: req.body.seriesOriId,
+                  },
+                  index: {
+                    [Op.gt]: seriesPost?.dataValues?.index
+                  }
+                },
+                transaction: t, // 이 쿼리를 트랜잭션 처리
+              });
+          }
+        }
+      }
       const newPost = await db.Post.update(
         {
           postName: req.body.postName,
           postContent: req.body.postContent,
           postDescription: req.body.postDescription,
+          postThumnail: req.body.postThumnail,
           permission: req.body.permission,
-          SeriesId: req.body.seriesId,
         },
         {
           where: {
@@ -133,19 +175,19 @@ router.patch("/", async (req, res, next) => {
           transaction: t, // 이 쿼리를 트랜잭션 처리
         }
       );
-      if (req.body.hashtags) {
-        /* 해시태그 테이블 INSERT  */
-        const hashtags = await Promise.all(
-          req.body.hashtags.map((tag) =>
-            db.Hashtag.findOrCreate({
-              where: { hashtagName: tag },
-              transaction: t, // 이 쿼리를 트랜잭션 처리
-            })
-          )
-        );
-        /* 매핑 테이블 INSERT  */
-        await hashtags.map((r) => newPost.addHashtags(r[0]));
-      }
+      // if (req.body.hashtags) {
+      //   /* 해시태그 테이블 INSERT  */
+      //   const hashtags = await Promise.all(
+      //     req.body.hashtags.map((tag) =>
+      //       db.Hashtag.findOrCreate({
+      //         where: { hashtagName: tag },
+      //         transaction: t, // 이 쿼리를 트랜잭션 처리
+      //       })
+      //     )
+      //   );
+      //   /* 매핑 테이블 INSERT  */
+      //   await hashtags.map((r) => newPost.addHashtags(r[0]));
+      // }
       const fullPost = await db.Post.findOne({
         where: { id: req.body.postId },
         transaction: t, // 이 쿼리를 트랜잭션 처리
@@ -269,6 +311,43 @@ router.get("/", async (req, res, next) => {
     );
   }
 });
+
+router.get("/detail/:id", async (req, res, next) => {
+  try {
+    const post = await db.Post.findOne({
+      where: {
+        id: req.params.id,
+      },
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "email", "nickName"],
+        },
+        {
+          model: db.Hashtag,
+          required: false,
+          attributes: [['hashtagName', 'key'], 'hashtagName'],
+          through: {
+            attributes: []
+          }
+        },
+        {
+          model: db.Series,
+          required: false,
+          attributes: ['id', 'seriesName'],
+          through: {
+            attributes: []
+          }
+        }
+      ],
+    });
+    return res.send(makeResponse({ data: post }));
+  } catch (err) {
+    console.error(err);
+    next("게시글 조회 중 오류가 발생했습니다");
+  }
+});
+
 
 router.get("/:id", async (req, res, next) => {
   try {
