@@ -34,6 +34,9 @@ export default function Write() {
       return;
     }
     dispatch(actions.fetchPost(postId));
+    return () => {
+      dispatch(actions.setValue('post', null));
+    }
   }, [postId, dispatch]);
 
   useEffect(() => {
