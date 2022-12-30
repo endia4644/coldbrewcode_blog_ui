@@ -121,7 +121,7 @@ router.get('/:id', async (req, res, next) => {
           },
         },
       }],
-      order: [[literal('`Posts->SeriesPost`.`index`'), 'ASC']],
+      order: [[literal('`Posts->SeriesPost`.`idx`'), 'ASC']],
     });
     const totalCount = await db.Series.count({
       where: {
@@ -158,10 +158,10 @@ router.patch("/:id/order", async (req, res, next) => {
           transaction: t, // 이 쿼리를 트랜잭션 처리
         }
       );
-      for (const [index, value] of req.body.posts.entries()) {
+      for (const [idx, value] of req.body.posts.entries()) {
         await db.SeriesPost.create(
           {
-            index: index + 1,
+            idx: idx + 1,
             PostId: value.id,
             SeriesId: req.params.id
           },
@@ -184,7 +184,7 @@ router.patch("/:id/order", async (req, res, next) => {
             },
           },
         }],
-        order: [[literal('`Posts->SeriesPost`.`index`'), 'ASC']],
+        order: [[literal('`Posts->SeriesPost`.`idx`'), 'ASC']],
       });
       const totalCount = await db.Series.count({
         where: {

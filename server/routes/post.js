@@ -13,15 +13,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
     await db.sequelize.transaction(async (t) => {
       let series = null;
       if (req.body.seriesName) {
-        series = await db.Series.findOne({
-          attributes: ["id"],
-          where: {
-            seriesName: {
-              [Op.eq]: req.body.seriesName,
-            },
-          },
-          transaction: t, // 이 쿼리를 트랜잭션 처리
-        });
+        series = await findSeriesIdBySeriesName(req.body.seriesName, t);
       }
       const newPost = await db.Post.create(
         {
@@ -39,25 +31,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
         }
       );
       if (series?.id) {
-        const index = await db.SeriesPost.findOne({
-          attributes: [
-            [fn('MAX', col('index')), 'currentIndex']
-          ],
-          where: {
-            SeriesId: series.id
-          },
-          transaction: t, // 이 쿼리를 트랜잭션 처리
-        })
-        await db.SeriesPost.create(
-          {
-            index: index?.dataValues?.currentIndex ? Number(index?.dataValues?.currentIndex) + 1 : 1,
-            PostId: newPost.id,
-            SeriesId: series.id
-          },
-          {
-            transaction: t // 이 쿼리를 트랜잭션 처리
-          }
-        )
+        await createSeriesPost(series.id, newPost.id, t);
       }
       if (req.body.hashtags) {
         /* 해시태그 테이블 INSERT  */
@@ -119,62 +93,38 @@ router.patch("/", async (req, res, next) => {
     //* 트랜잭션 설정
     await db.sequelize.transaction(async (t) => {
       let series = null;
-      if (req.body.seriesName) {
-        if (req.body.seriesName !== req.body.seriesOriName) {
-          const seriesPost = await db.SeriesPost.findOne({
-            attributes: ['index'],
-            where: {
-              SeriesId: {
-                [Op.eq]: req.body.seriesOriId,
-              },
-            },
-            transaction: t, // 이 쿼리를 트랜잭션 처리
-          });
-          await db.SeriesPost.destroy({
-            where: {
-              SeriesId: {
-                [Op.eq]: req.body.seriesOriId,
-              },
-              PostId: {
-                [Op.eq]: req.body.postId,
-              },
-            },
-            transaction: t, // 이 쿼리를 트랜잭션 처리
-          });
-          if (seriesPost) {
-            await db.SeriesPost.update(
-              {
-                index: -1
-              },
-              {
-                where: {
-                  SeriesId: {
-                    [Op.eq]: req.body.seriesOriId,
-                  },
-                  index: {
-                    [Op.gt]: seriesPost?.dataValues?.index
-                  }
-                },
-                transaction: t, // 이 쿼리를 트랜잭션 처리
-              });
+      /* 기존 시리즈가 있는 경우 */
+      if (req.body.seriesOriId) {
+        /* 선택된 시리즈가 있는 경우 */
+        if (req.body.seriesName) {
+          /* 선택된 시리즈가 기존과 다른 경우 
+             1. 기존 시리즈 인덱스 조회
+             2. 기존 시리즈 데이터 삭제
+             3. 삭제된 시리즈보다 인덱스가 낮은 컬럼 업데이트
+           */
+          if (req.body.seriesName !== req.body.seriesOriName) {
+            series = await findSeriesIdBySeriesName(req.body.seriesName, t);
+            const seriesPost = await findSeriesIdx(req.body.seriesOriId, req.body.postId, t);
+            await upleteSeriesPost(req.body.seriesOriId, req.body.postId, seriesPost?.dataValues?.idx, t);
+            if (series?.id) {
+              await createSeriesPost(series.id, req.body.postId, t);
+            }
+          }
+        } else {
+          /* 선택된 시리즈가 없는 경우 (시리즈 삭제) */
+          const seriesPost = await findSeriesIdx(req.body.seriesOriId, req.body.postId, t);
+          await upleteSeriesPost(req.body.seriesOriId, req.body.postId, seriesPost?.dataValues?.idx, t);
+        }
+        /* 기존 시리즈가 없는 경우 */
+      } else {
+        /* 선택된 시리즈가 있는 경우 */
+        if (req.body.seriesName) {
+          series = await findSeriesIdBySeriesName(req.body.seriesName, t);
+          if (series?.id) {
+            await createSeriesPost(series.id, req.body.postId, t);
           }
         }
       }
-      const newPost = await db.Post.update(
-        {
-          postName: req.body.postName,
-          postContent: req.body.postContent,
-          postDescription: req.body.postDescription,
-          postThumnail: req.body.postThumnail,
-          permission: req.body.permission,
-        },
-        {
-          where: {
-            id: req.body.postId,
-          },
-          transaction: t, // 이 쿼리를 트랜잭션 처리
-        }
-      );
       // if (req.body.hashtags) {
       //   /* 해시태그 테이블 INSERT  */
       //   const hashtags = await Promise.all(
@@ -188,17 +138,7 @@ router.patch("/", async (req, res, next) => {
       //   /* 매핑 테이블 INSERT  */
       //   await hashtags.map((r) => newPost.addHashtags(r[0]));
       // }
-      const fullPost = await db.Post.findOne({
-        where: { id: req.body.postId },
-        transaction: t, // 이 쿼리를 트랜잭션 처리
-        include: [
-          {
-            model: db.User,
-            attributes: ["id", "email", "nickName"],
-          },
-        ],
-      });
-      res.send(makeResponse({ data: fullPost }));
+      res.send(makeResponse({ data: 'OK' }));
     });
   } catch (err) {
     console.error(err);
@@ -386,7 +326,7 @@ router.get("/:id", async (req, res, next) => {
         }
       })
       const series = await db.SeriesPost.findOne({
-        attributes: ['SeriesId', 'index'],
+        attributes: ['SeriesId', 'idx'],
         where: {
           PostId: {
             [Op.eq]: req.params.id
@@ -405,11 +345,11 @@ router.get("/:id", async (req, res, next) => {
             SeriesId: {
               [Op.eq]: series.SeriesId
             },
-            index: {
-              [Op.gt]: series.index
+            idx: {
+              [Op.gt]: series.idx
             }
           },
-          order: [["index", "ASC"]]
+          order: [["idx", "ASC"]]
         });
         nextOp[Op.eq] = nextPost?.PostId;
         const prevPost = await db.SeriesPost.findOne({
@@ -418,11 +358,11 @@ router.get("/:id", async (req, res, next) => {
             SeriesId: {
               [Op.eq]: series.SeriesId
             },
-            index: {
-              [Op.lt]: series.index
+            idx: {
+              [Op.lt]: series.idx
             }
           },
-          order: [["index", "DESC"]]
+          order: [["idx", "DESC"]]
         });
         prevOp[Op.eq] = prevPost?.PostId;
       } else {
@@ -568,3 +508,106 @@ router.delete("/:id", async (req, res, next) => {
 });
 
 module.exports = router;
+
+/**
+ * 
+ * @param {*} seriesId 
+ * @param {*} postId 
+ * @param {*} t 
+ * @returns {object} seriesPost
+ * @description 시리즈에서 해당하는 포스트의 목차순서를 조회합니다.
+ */
+async function findSeriesIdx(seriesId, postId, t) {
+  const seriesPost = await db.SeriesPost.findOne({
+    attributes: ['idx'],
+    where: {
+      SeriesId: {
+        [Op.eq]: seriesId,
+      },
+      PostId: {
+        [Op.eq]: postId,
+      },
+    },
+    transaction: t, // 이 쿼리를 트랜잭션 처리
+  });
+
+  return seriesPost;
+}
+
+async function findSeriesIdBySeriesName(seriesName, t) {
+  return await db.Series.findOne({
+    attributes: ["id"],
+    where: {
+      seriesName: {
+        [Op.eq]: seriesName,
+      },
+    },
+    transaction: t, // 이 쿼리를 트랜잭션 처리
+  });
+}
+
+/**
+ * 
+ * @param {*} seriesId 
+ * @param {*} postId 
+ * @param {*} t 
+ * @description 시리즈, 포스트 연관 테이블 INSERT 함수
+ */
+async function createSeriesPost(seriesId, postId, t) {
+  const idx = await db.SeriesPost.findOne({
+    attributes: [
+      [fn('MAX', col('idx')), 'currentidx']
+    ],
+    where: {
+      SeriesId: seriesId
+    },
+    transaction: t, // 이 쿼리를 트랜잭션 처리
+  })
+  await db.SeriesPost.create(
+    {
+      idx: idx?.dataValues?.currentidx ? Number(idx?.dataValues?.currentidx) + 1 : 1,
+      PostId: postId,
+      SeriesId: seriesId
+    },
+    {
+      transaction: t // 이 쿼리를 트랜잭션 처리
+    }
+  )
+}
+
+/**
+ * 
+ * @param {*} seriesId 
+ * @param {*} postId 
+ * @param {*} idx 
+ * @param {*} t 
+ * @description 시리즈, 포스트 연관 테이블 UPDATE, DELETE 함수
+ */
+async function upleteSeriesPost(seriesId, postId, idx, t) {
+  await db.SeriesPost.destroy({
+    where: {
+      SeriesId: {
+        [Op.eq]: seriesId,
+      },
+      PostId: {
+        [Op.eq]: postId,
+      },
+    },
+    transaction: t, // 이 쿼리를 트랜잭션 처리
+  });
+  await db.SeriesPost.update(
+    {
+      idx: literal('idx -1')
+    },
+    {
+      where: {
+        SeriesId: {
+          [Op.eq]: seriesId,
+        },
+        idx: {
+          [Op.gt]: idx
+        }
+      },
+      transaction: t, // 이 쿼리를 트랜잭션 처리
+    });
+}

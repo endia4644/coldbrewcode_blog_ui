@@ -78,7 +78,6 @@ export default function Write() {
       tagRef.current.add(currentTag);
     }
     setCurrentTag("");
-    console.log(tagRef.current);
   };
 
   return (

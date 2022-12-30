@@ -29,7 +29,7 @@ import { API_HOST, FetchStatus } from "../../../common/constant";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";
 import { actions as common } from "../../../common/state";
-import { Types as mainType } from "../../main/state";
+import { Types as mainType, actions as mainActions } from "../../main/state";
 
 export default function WriteSetting({
   setLevel,
@@ -89,10 +89,6 @@ export default function WriteSetting({
           duration: 2,
         });
         setTimeout(() => {
-          deleteStatus(Types.FetchCreatePost);
-          deleteStatus(mainType.FetchAllPost);
-          deleteStatus(mainType.FetchAllHashtag);
-          deleteStatus(mainType.FetchAllSeries);
           goBlog();
         }, 2000);
       } else if (fetchStatus === FetchStatus.Success) {
@@ -125,6 +121,16 @@ export default function WriteSetting({
   const handlePreview = async () => {
     setPreviewOpen(true);
   };
+
+  useEffect(() => {
+    return () => {
+      deleteStatus(Types.FetchCreatePost);
+      deleteStatus(mainType.FetchAllPost);
+      deleteStatus(mainType.FetchAllHashtag);
+      deleteStatus(mainType.FetchAllSeries);
+      dispatch(mainActions.setValue('post', []));
+    }
+  }, [])
 
   const beforeUpload = (file) => {
     const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";

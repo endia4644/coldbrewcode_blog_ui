@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
   const SeriesPost = sequelize.define(
     "SeriesPost",
     {
-      index: {
+      idx: {
         type: DataTypes.INTEGER, // 정수
         allowNull: true,
       },
