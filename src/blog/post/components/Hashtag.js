@@ -23,6 +23,7 @@ export default function Hashtag({ hashtags }) {
           <Button
             key={item.id}
             className="button-type-circle button-color-normal"
+            style={{ marginRight: 10 }}
             onClick={(e) => onClick(e, item.id)}
           >
             {item.hashtagName}

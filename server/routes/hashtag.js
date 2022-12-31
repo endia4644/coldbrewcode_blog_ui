@@ -1,7 +1,7 @@
 // @ts-nocheck
 const express = require('express');
 const db = require('../models');
-const { fn, col, QueryTypes } = require("sequelize");
+const { literal, fn, col, QueryTypes } = require("sequelize");
 const { makeResponse } = require('../util');
 
 const router = express.Router();
@@ -17,18 +17,17 @@ router.get('/', async (req, res, next) => {
       }
     );
     const hashtags = await db.Hashtag.findAll({
-      attributes: ['id', 'hashtagName', [fn('COUNT', col('Hashtag.id')), 'postCount']],
+      attributes: ['id', 'hashtagName', [fn('COUNT', col('Posts->PostHashtag.PostId')), 'postCount']],
       include: {
         model: db.Post,
+        require: true,
         attributes: [],
-        through: {
-          attributes: [],
-        }
       },
       order: [
         ['createdAt', 'DESC'],
       ],
-      group: ['id', 'hashtagName']
+      group: ['id', 'hashtagName'],
+      having: literal('count(`Posts->PostHashtag`.`PostId`) > 0')
     })
 
     res.send(makeResponse({ data: [...hashtagAll, ...hashtags], totalCount: totalCount }));

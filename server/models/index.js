@@ -18,6 +18,7 @@ db.Series = require("./series")(sequelize, Sequelize);
 db.Image = require("./image")(sequelize, Sequelize);
 db.Email = require("./email")(sequelize, Sequelize);
 db.SeriesPost = require("./seriespost")(sequelize, Sequelize);
+db.PostHashtag = require("./posthashtag")(sequelize, Sequelize);
 
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {

@@ -125,19 +125,35 @@ router.patch("/", async (req, res, next) => {
           }
         }
       }
-      // if (req.body.hashtags) {
-      //   /* 해시태그 테이블 INSERT  */
-      //   const hashtags = await Promise.all(
-      //     req.body.hashtags.map((tag) =>
-      //       db.Hashtag.findOrCreate({
-      //         where: { hashtagName: tag },
-      //         transaction: t, // 이 쿼리를 트랜잭션 처리
-      //       })
-      //     )
-      //   );
-      //   /* 매핑 테이블 INSERT  */
-      //   await hashtags.map((r) => newPost.addHashtags(r[0]));
-      // }
+      if (req.body.hashtags) {
+        /* 기존 해시태그 모두 삭제 */
+        await db.PostHashtag.destroy({
+          where: {
+            PostId: {
+              [Op.eq]: req.body.postId
+            }
+          },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        })
+        /* 해시태그 테이블 SELECT OR INSERT  */
+        const hashtags = await Promise.all(
+          req.body.hashtags.map((tag) =>
+            db.Hashtag.findOrCreate({
+              where: { hashtagName: tag },
+              transaction: t, // 이 쿼리를 트랜잭션 처리
+            })
+          )
+        );
+        /* 매핑 테이블 INSERT  */
+        const zzz = await Promise.all(
+          hashtags.map((r) => db.PostHashtag.create({
+            PostId: req.body.postId,
+            HashtagId: r[0]?.dataValues?.id
+          }, {
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+          }))
+        );
+      }
       res.send(makeResponse({ data: 'OK' }));
     });
   } catch (err) {
