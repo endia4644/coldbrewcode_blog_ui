@@ -300,6 +300,7 @@ export default function WriteSetting({
                     포스트 설명
                   </Typography.Title>
                   <TextArea
+                    defaultValue={postDescription ?? ''}
                     showCount
                     maxLength={100}
                     onChange={(e) => {
@@ -312,7 +313,7 @@ export default function WriteSetting({
                   <Col>
                     <Typography.Title level={3}>공개 설정</Typography.Title>
                     <Radio.Group
-                      defaultValue="public"
+                      defaultValue={postPermission ?? 'public'}
                       onChange={(e) => {
                         setPermission(e.target.value);
                       }}

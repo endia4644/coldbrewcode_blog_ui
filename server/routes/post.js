@@ -44,7 +44,14 @@ router.post("/", isLoggedIn, async (req, res, next) => {
           )
         );
         /* 매핑 테이블 INSERT  */
-        await hashtags.map((r) => newPost.addHashtags(r[0]));
+        await Promise.all(
+          hashtags.map((r) => db.PostHashtag.create({
+            PostId: req.body.postId,
+            HashtagId: r[0]?.dataValues?.id
+          }, {
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+          }))
+        );
       }
       /* 사용한 이미지의 저장여부를 변경해준다. */
       if (req.body.imageIds.length > 0) {
@@ -52,6 +59,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
           {
             saveYsno: true,
             PostId: newPost?.id ?? null,
+            UserId: req.user.id ?? null,
           },
           {
             where: {
@@ -125,16 +133,10 @@ router.patch("/", async (req, res, next) => {
           }
         }
       }
+      /* 수정된 해시태그가 있는 경우 */
       if (req.body.hashtags) {
-        /* 기존 해시태그 모두 삭제 */
-        await db.PostHashtag.destroy({
-          where: {
-            PostId: {
-              [Op.eq]: req.body.postId
-            }
-          },
-          transaction: t, // 이 쿼리를 트랜잭션 처리
-        })
+        /* 기존 게시글,해시태그 매핑 모두 삭제 */
+        deleteHashtagAllByPostId(req.body.postId, t);
         /* 해시태그 테이블 SELECT OR INSERT  */
         const hashtags = await Promise.all(
           req.body.hashtags.map((tag) =>
@@ -145,7 +147,7 @@ router.patch("/", async (req, res, next) => {
           )
         );
         /* 매핑 테이블 INSERT  */
-        const zzz = await Promise.all(
+        await Promise.all(
           hashtags.map((r) => db.PostHashtag.create({
             PostId: req.body.postId,
             HashtagId: r[0]?.dataValues?.id
@@ -153,7 +155,55 @@ router.patch("/", async (req, res, next) => {
             transaction: t, // 이 쿼리를 트랜잭션 처리
           }))
         );
+      } else {
+        /* 수정된 해시태그가 없는 경우 */
+        const hashtag = await db.PostHashtag.findAll({
+          where: {
+            PostId: {
+              [Op.eq]: req.body.postId
+            }
+          },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        })
+        /* 게시글에 해시태그가 있는 경우 */
+        if (hashtag) {
+          /* 기존 게시글,해시태그 매핑 모두 삭제 */
+          deleteHashtagAllByPostId(req.body.postId, t);
+        }
       }
+      /* 사용한 이미지의 저장여부를 변경해준다. */
+      if (req.body.imageIds.length > 0) {
+        await db.Image.update(
+          {
+            saveYsno: true,
+            PostId: req.body.postId ?? null,
+            UserId: req.user.id ?? null
+          },
+          {
+            where: {
+              id: {
+                [Op.in]: req.body.imageIds,
+              },
+            },
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+          }
+        );
+      }
+      /* 게시글 메인데이터를 업데이트 */
+      await db.Post.update(
+        {
+          postDescription: req.body.postDescription,
+          postThumnail: req.body.postThumnail,
+          permission: req.body.permission
+        },
+        {
+          where: {
+            id: {
+              [Op.eq]: req.body.postId
+            }
+          },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        })
       res.send(makeResponse({ data: 'OK' }));
     });
   } catch (err) {
@@ -626,4 +676,15 @@ async function upleteSeriesPost(seriesId, postId, idx, t) {
       },
       transaction: t, // 이 쿼리를 트랜잭션 처리
     });
+}
+
+async function deleteHashtagAllByPostId(postId, t) {
+  await db.PostHashtag.destroy({
+    where: {
+      PostId: {
+        [Op.eq]: postId
+      }
+    },
+    transaction: t, // 이 쿼리를 트랜잭션 처리
+  })
 }
