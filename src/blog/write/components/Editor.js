@@ -64,12 +64,12 @@ export default function Editor({
       getHtmlContent(data?.postContent ?? "");
       if (data?.images?.length > 0) {
         data?.images?.map((item) => {
-          imageMap.current.set(item.fileName, item.id)
+          return imageMap.current.set(item.fileName, item.id)
         })
       }
     };
     fetchData();
-  }, [postId, getHtmlContent]);
+  }, []);
 
   // 이미지 처리를 하는 핸들러
   const imageHandler = useCallback(() => {

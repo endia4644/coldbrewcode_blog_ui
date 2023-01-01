@@ -65,7 +65,8 @@ export default function WriteSetting({
   const [permission, setPermission] = useState("public");
   const [description, setDescription] = useState("");
 
-  const { fetchStatus, isFetching } = useFetchInfo(Types.FetchCreatePost);
+  const { fetchStatus: cfetchStatus, isFetching: cisFetching } = useFetchInfo(Types.FetchCreatePost);
+  const { fetchStatus: ufetchStatus, isFetching: uisFetching } = useFetchInfo(Types.FetchUpdatePost);
   const key = "updatable";
 
   const deleteStatus = useCallback(
@@ -82,8 +83,8 @@ export default function WriteSetting({
   );
 
   const openMessage = useCallback(
-    (fetchStatus) => {
-      if (fetchStatus === FetchStatus.Success) {
+    (status) => {
+      if (status === FetchStatus.Success) {
         message.success({
           content: "작성이 완료되었습니다",
           key,
@@ -91,31 +92,44 @@ export default function WriteSetting({
         });
         setTimeout(() => {
           goBlog();
-        }, 2000);
-      } else if (fetchStatus === FetchStatus.Success) {
+        }, 500);
+      } else if (status === FetchStatus.Success) {
         message.error({
           content: "작성 중 오류가 발생했습니다",
           key,
           duration: 2,
         });
-      } else if (fetchStatus === FetchStatus.Request) {
+      } else if (status === FetchStatus.Request) {
         message.loading({
           content: "처리중",
           key,
         });
       }
     },
-    [deleteStatus, goBlog]
+    [goBlog]
   );
 
   useEffect(() => {
-    if (fetchStatus === FetchStatus.Request) {
-      openMessage(fetchStatus);
+    if (!postId) {
+      if (cfetchStatus === FetchStatus.Request) {
+        openMessage(cfetchStatus);
+      }
+      if (cfetchStatus !== FetchStatus.Request) {
+        openMessage(cfetchStatus);
+      }
     }
-    if (fetchStatus !== FetchStatus.Request) {
-      openMessage(fetchStatus);
+  }, [cfetchStatus, openMessage]);
+
+  useEffect(() => {
+    if (postId) {
+      if (ufetchStatus === FetchStatus.Request) {
+        openMessage(ufetchStatus);
+      }
+      if (ufetchStatus !== FetchStatus.Request) {
+        openMessage(ufetchStatus);
+      }
     }
-  }, [fetchStatus, openMessage]);
+  }, [ufetchStatus, openMessage]);
 
   const handleCancel = () => setPreviewOpen(false);
 
@@ -126,6 +140,7 @@ export default function WriteSetting({
   useEffect(() => {
     return () => {
       deleteStatus(Types.FetchCreatePost);
+      deleteStatus(Types.FetchUpdatePost);
       deleteStatus(mainType.FetchAllPost);
       deleteStatus(mainType.FetchAllHashtag);
       deleteStatus(mainType.FetchAllSeries);
@@ -240,7 +255,7 @@ export default function WriteSetting({
         setPrev(series?.seriesName);
       }
     }
-    if (postThumbnail) {
+    if (postThumbnail && postThumbnail !== "null") {
       setDefaultFileList([{
         name: postThumbnail,
         thumbUrl: `${API_HOST}/${postThumbnail}`,
@@ -250,7 +265,7 @@ export default function WriteSetting({
         id: postThumbnailId,
       });
     }
-  }, [postThumbnail, postDescription, series, seriesList])
+  }, [postThumbnail, postDescription, series, seriesList, postPermission, postThumbnailId])
 
   return (
     <>
@@ -328,6 +343,7 @@ export default function WriteSetting({
                       onChange={(e) => {
                         setPermission(e.target.value);
                       }}
+                      value={permission}
                       className="permission"
                       style={{
                         display: "flex",
@@ -560,7 +576,7 @@ export default function WriteSetting({
                     style={{ fontWeight: 700 }}
                     className="button-border-hide button-type-round"
                     icon={<ArrowLeftOutlined />}
-                    disabled={isFetching}
+                    disabled={cisFetching}
                     onClick={() => {
                       setLevel(0);
                     }}
@@ -573,13 +589,13 @@ export default function WriteSetting({
                     <Button
                       style={{ fontWeight: 700 }}
                       className="button-border-hide button-type-round"
-                      disabled={isFetching}
+                      disabled={cisFetching}
                     >
                       임시저장
                     </Button>
                     <Button
                       className="button-type-round button-color-reverse"
-                      disabled={isFetching}
+                      disabled={cisFetching || uisFetching}
                       onClick={() => {
                         let imageIds = [];
                         let hashtags = [];

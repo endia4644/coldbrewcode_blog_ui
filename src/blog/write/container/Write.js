@@ -11,7 +11,6 @@ import { actions } from "../state";
 import WriteSetting from "./WriteSetting";
 import { AnimatePresence } from "framer-motion";
 import useNeedLogin from "../../../common/hook/useNeedLogin";
-import { API_HOST } from "../../../common/constant";
 
 export default function Write() {
   useNeedLogin();
