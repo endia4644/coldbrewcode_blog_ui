@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
       fileName: {
         type: DataTypes.STRING(100),
         allowNull: false,
+        unique: true,
       },
       saveYsno: {
         type: DataTypes.BOOLEAN,

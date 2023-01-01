@@ -91,7 +91,7 @@ router.get('/:id', async (req, res, next) => {
           'postContent',
           'postName',
           'postDescription',
-          'postThumnail',
+          'postThumbnail',
           'permission',
           'dltYsno',
           'createdAt',

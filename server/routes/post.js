@@ -20,7 +20,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
           postName: req.body.postName,
           postContent: req.body.postContent,
           postDescription: req.body.postDescription,
-          postThumnail: req.body.postThumnail,
+          postThumbnail: req.body.postThumbnail,
           likeCnt: 0,
           permission: req.body.permission,
           dltYsno: "N",
@@ -46,7 +46,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
         /* 매핑 테이블 INSERT  */
         await Promise.all(
           hashtags.map((r) => db.PostHashtag.create({
-            PostId: req.body.postId,
+            PostId: newPost?.id,
             HashtagId: r[0]?.dataValues?.id
           }, {
             transaction: t, // 이 쿼리를 트랜잭션 처리
@@ -171,6 +171,22 @@ router.patch("/", async (req, res, next) => {
           deleteHashtagAllByPostId(req.body.postId, t);
         }
       }
+      /* 포스트의 기존 이미지의 사용여부를 N으로 변경한다. */
+      await db.Image.update(
+        {
+          saveYsno: false,
+          PostId: null,
+          UserId: null
+        },
+        {
+          where: {
+            PostId: {
+              [Op.eq]: req.body.postId,
+            },
+          },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        }
+      );
       /* 사용한 이미지의 저장여부를 변경해준다. */
       if (req.body.imageIds.length > 0) {
         await db.Image.update(
@@ -192,8 +208,9 @@ router.patch("/", async (req, res, next) => {
       /* 게시글 메인데이터를 업데이트 */
       await db.Post.update(
         {
+          postContent: req.body.postContent,
           postDescription: req.body.postDescription,
-          postThumnail: req.body.postThumnail,
+          postThumbnail: req.body.postThumbnail,
           permission: req.body.permission
         },
         {
@@ -258,7 +275,7 @@ router.get("/", async (req, res, next) => {
         'postContent',
         'postName',
         'postDescription',
-        'postThumnail',
+        'postThumbnail',
         'permission',
         'dltYsno',
         'createdAt',
@@ -324,6 +341,21 @@ router.get("/detail/:id", async (req, res, next) => {
       where: {
         id: req.params.id,
       },
+      attributes: [
+        'id',
+        'postContent',
+        'postName',
+        'postDescription',
+        'postThumbnail',
+        [
+          literal(
+            `(SELECT id FROM images WHERE PostId = Post.id AND fileName = Post.postThumbnail)`
+          ),
+          "postThumbnailId",
+        ],
+        'permission',
+        'dltYsno',
+      ],
       include: [
         {
           model: db.User,
@@ -506,13 +538,32 @@ router.delete("/:id/like", isLoggedIn, async (req, res, next) => {
 
 router.get("/:id/content", async (req, res, next) => {
   try {
-    const posts = await db.Post.findAll({
+    const post = await db.Post.findOne({
       where: {
         id: req.params.id,
       },
-      attributes: ["postContent"],
+      attributes: ["id", "postContent", "postThumbnail"],
     });
-    return res.send(makeResponse({ data: posts }));
+    /* 컨텐츠 영역에서 사용한 이미지 정보 조회 */
+    const images = await db.Image.findAll({
+      where: {
+        PostId: {
+          [Op.eq]: post?.id
+        },
+        saveYsno: {
+          [Op.eq]: 1
+        },
+        fileName: {
+          [Op.ne]: post?.postThumbnail
+        }
+      }
+    })
+    return res.send(makeResponse({
+      data: {
+        postContent: post?.postContent,
+        images: images
+      }
+    }));
   } catch (err) {
     console.error(err);
     return res.json(

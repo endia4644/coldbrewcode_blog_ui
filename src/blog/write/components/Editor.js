@@ -61,7 +61,12 @@ export default function Editor({
         method: "get",
         url: `/post/${postId}/content`,
       });
-      getHtmlContent(data?.[0]?.postContent ?? "");
+      getHtmlContent(data?.postContent ?? "");
+      if (data?.images?.length > 0) {
+        data?.images?.map((item) => {
+          imageMap.current.set(item.fileName, item.id)
+        })
+      }
     };
     fetchData();
   }, [postId, getHtmlContent]);

@@ -37,7 +37,8 @@ export default function WriteSetting({
   postContent,
   postName,
   postImages,
-  postThumnail,
+  postThumbnail,
+  postThumbnailId,
   postDescription,
   postPermission,
   series,
@@ -239,7 +240,17 @@ export default function WriteSetting({
         setPrev(series?.seriesName);
       }
     }
-  }, [postThumnail, postDescription, series, seriesList])
+    if (postThumbnail) {
+      setDefaultFileList([{
+        name: postThumbnail,
+        thumbUrl: `${API_HOST}/${postThumbnail}`,
+      }]);
+      setPreviewImage({
+        fileName: postThumbnail,
+        id: postThumbnailId,
+      });
+    }
+  }, [postThumbnail, postDescription, series, seriesList])
 
   return (
     <>
@@ -275,7 +286,7 @@ export default function WriteSetting({
                     customRequest={uploadImage}
                     onChange={handleOnChange}
                     listType="picture-card"
-                    defaultFileList={defaultFileList}
+                    fileList={defaultFileList}
                     className="image-upload-grid"
                     onPreview={handlePreview}
                     beforeUpload={beforeUpload}
@@ -591,7 +602,7 @@ export default function WriteSetting({
                               hashtags: hashtags,
                               postDescription: description,
                               postContent: postContent,
-                              postThumnail: `${previewImage?.fileName ?? postThumnail}`,
+                              postThumbnail: `${previewImage?.fileName ?? ''}`,
                               permission: permission,
                               seriesOriId: series?.id,
                               seriesOriName: series?.seriesName,
@@ -606,7 +617,7 @@ export default function WriteSetting({
                               hashtags: hashtags,
                               postDescription: description,
                               postContent: postContent,
-                              postThumnail: `${previewImage?.fileName ?? null}`,
+                              postThumbnail: `${previewImage?.fileName ?? null}`,
                               permission: permission,
                               seriesName: value,
                               imageIds: imageIds,

@@ -14,9 +14,15 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(1000),
         allowNull: true,
       },
-      postThumnail: {
+      postThumbnail: {
         type: DataTypes.STRING(500),
         allowNull: true,
+      },
+      postThumbnailId: {
+        type: DataTypes.VIRTUAL(DataTypes.INTEGER),
+        set(value) {
+          this.setDataValue("postThumbnailId", value);
+        },
       },
       permission: {
         type: DataTypes.STRING(10),

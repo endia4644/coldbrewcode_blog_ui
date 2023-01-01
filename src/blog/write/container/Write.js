@@ -11,6 +11,7 @@ import { actions } from "../state";
 import WriteSetting from "./WriteSetting";
 import { AnimatePresence } from "framer-motion";
 import useNeedLogin from "../../../common/hook/useNeedLogin";
+import { API_HOST } from "../../../common/constant";
 
 export default function Write() {
   useNeedLogin();
@@ -45,8 +46,8 @@ export default function Write() {
     }
     setPostName(post?.postName);
     setHashtag(post?.Hashtags ?? []);
-    post?.Hashtags.map(item => tagRef.current.add(item?.key));
   }, [post]);
+
   const getHtmlContent = (htmlContent) => {
     setHtmlContent(htmlContent);
   };
@@ -90,7 +91,8 @@ export default function Write() {
             postContent={htmlContent}
             postName={postName}
             postImages={imageArray}
-            postThumnail={post?.postThumnail}
+            postThumbnail={post?.postThumbnail}
+            postThumbnailId={post?.postThumbnailId}
             postDescription={post?.postDescription}
             postPermission={post?.permission}
             series={post?.Series?.[0]}
