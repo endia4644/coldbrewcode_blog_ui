@@ -1,0 +1,16 @@
+@import "./../../../common/scss/vars.scss";
+
+/*
+  $xs: 576px;
+  $sm: 576px;
+  $md: 768px;
+  $lg: 992px;
+  $xl: 1200px;
+  $xxl: 1600px;
+*/
+
+.tag-button {
+  background-color: $subColor;
+  color: $fontColor;
+  border: 0;
+}

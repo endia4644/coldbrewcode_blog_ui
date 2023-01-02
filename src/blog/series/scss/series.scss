@@ -21,10 +21,18 @@
     }
 
     .ant-row {
+      ol {
+        >.series:nth-child(n + 2) {
+          border-top: 1px solid rgba(0, 0, 0, 0.06);
+          padding-top: 20px;
+        }
+      }
+
       .series {
         &:not(:last-child) {
           margin-bottom: 20px;
         }
+
 
         &-thumnail {
           margin-right: 40px;
@@ -32,6 +40,8 @@
           img {
             border-radius: 5px;
             width: 380px;
+            max-height: 256px;
+            object-fit: cover;
           }
         }
 

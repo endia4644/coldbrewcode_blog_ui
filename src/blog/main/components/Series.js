@@ -6,7 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";
 import { elapsedTime } from "../../../common/util/util.js";
-import { FetchStatus } from "../../../common/constant";
+import { API_HOST, FetchStatus } from "../../../common/constant";
+import defaultImg from "./../../../common/images/beans.svg";
 
 const IconText = ({ icon, text }) => (
   <Space>
@@ -14,6 +15,10 @@ const IconText = ({ icon, text }) => (
     {text}
   </Space>
 );
+
+const handleImgError = (e) => {
+  e.target.src = defaultImg;
+};
 
 export default function Series() {
   const navigate = useNavigate();
@@ -73,13 +78,17 @@ export default function Series() {
               />,
             ]}
           >
-            <img
-              onClick={() => navigate(`/blog/post/${item?.id}`)}
-              style={{ paddingBottom: 20, cursor: 'pointer' }}
-              width={"100%"}
-              alt="logo"
-              src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-            />
+            <div className="thumbnail-wrappper">
+              <div className="thumbnail">
+                <img
+                  onClick={() => navigate(`/blog/series/${item.id}`)}
+                  style={{ cursor: 'pointer' }}
+                  alt="logo"
+                  src={`${API_HOST}/${item?.postThumbnail}`}
+                  onError={handleImgError}
+                />
+              </div>
+            </div>
             <Typography.Title>
               <Link to={`/blog/series/${item.id}`}>{item.seriesName}</Link>
             </Typography.Title>

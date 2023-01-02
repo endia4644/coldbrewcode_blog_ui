@@ -2,7 +2,7 @@ import { UserOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Menu, Space } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AuthStatus } from "../../../common/constant";
 
 /**
@@ -12,6 +12,7 @@ import { AuthStatus } from "../../../common/constant";
  */
 export default function Settings({ logout }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const status = useSelector((state) => state.auth.status);
   const user = useSelector((state) => state.auth.user);
   const menuItems = [
@@ -37,6 +38,7 @@ export default function Settings({ logout }) {
       case "1":
         break;
       case "2":
+        navigate('/blog/like/post')
         break;
       case "3":
         break;

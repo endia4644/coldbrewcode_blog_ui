@@ -14,7 +14,6 @@ import { actions, Types } from "../state";
 import { elapsedTime } from "../../../common/util/util.js";
 import { API_HOST, FetchStatus } from "../../../common/constant";
 import defaultImg from "./../../../common/images/beans.svg";
-const { Title } = Typography;
 
 const IconText = ({ icon, text }) => (
   <Space>
@@ -31,11 +30,9 @@ export default function Post() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const targetRef = useRef(null);
-  const post = useSelector((state) => state.main.post);
-  const hashtagCurrent = useSelector((state) => state.main.hashtagCurrent);
-  const searchCurrent = useSelector((state) => state.main.searchCurrent);
+  const post = useSelector((state) => state.like.post);
+
   const { fetchStatus, totalCount } = useFetchInfo(Types.FetchAllPost);
-  const { totalCount: searchCount } = useFetchInfo(Types.FetchSearchPost);
 
   useEffect(() => {
     let observer;
@@ -47,8 +44,6 @@ export default function Post() {
               actions.fetchAllPost(
                 post,
                 totalCount,
-                hashtagCurrent,
-                searchCurrent
               )
             );
           }
@@ -57,20 +52,9 @@ export default function Post() {
       observer.observe(targetRef.current);
     }
     return () => observer && observer.disconnect();
-  }, [dispatch, post, totalCount, hashtagCurrent, searchCurrent]);
+  }, [dispatch, post, totalCount]);
   return (
     <>
-      {searchCurrent && (
-        <>
-          <Space style={{ marginLeft: 30 }}>
-            <Title level={5}>총</Title>
-            <Title level={3} style={{ color: "#d8b48b" }}>
-              {searchCount}
-            </Title>
-            <Title level={5}>개의 포스트를 찾았습니다.</Title>
-          </Space>
-        </>
-      )}
       <List
         className="main-list"
         grid={{
