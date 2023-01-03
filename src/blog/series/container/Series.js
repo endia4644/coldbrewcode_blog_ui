@@ -91,7 +91,6 @@ export default function Series() {
     }, [fetchDeleteInfo])
 
     useLayoutEffect(() => {
-        console.log(fetchSeriesInfo.fetchStatus, series);
         if (fetchSeriesInfo.fetchStatus !== FetchStatus.Request && !series) {
             navigate("/blog");
         }

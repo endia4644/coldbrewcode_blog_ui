@@ -6,7 +6,7 @@ import { makeFetchSaga } from "../../../common/util/fetch";
 function* fetchAllPost(action, page) {
   if (page <= Math.floor(action.totalCount / 8)) {
     const { isSuccess, data } = yield call(callApi, {
-      url: "/post",
+      url: "/post/like",
       params: {
         limit: 8,
         offset: 8 * page,

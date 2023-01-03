@@ -335,6 +335,83 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.get("/like", async (req, res, next) => {
+  try {
+    const posts = await db.Post.findAll({
+      attributes: [
+        'id',
+        'postContent',
+        'postName',
+        'postDescription',
+        'postThumbnail',
+        'permission',
+        'dltYsno',
+        'createdAt',
+        'updatedAt',
+        [
+          literal(
+            '(SELECT COUNT(1) FROM Comments WHERE Comments.PostId = Post.id AND Comments.dltYsno = "N")'
+          ),
+          "commentCount",
+        ],
+        [
+          literal(
+            `(SELECT COUNT(1) FROM postlikeuser WHERE PostId = Post.id)`
+          ),
+          "likeCount",
+        ],
+      ],
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "email", "nickName"],
+        },
+        {
+          model: db.Hashtag,
+          required: false,
+          attributes: ["id", "hashtagName"],
+          through: { attributes: [] },
+        },
+        {
+          model: db.User,
+          attributes: [],
+          as: 'likedUser',
+          through: {
+            attributes: [],
+            where: {
+              UserId: req?.user?.id
+            },
+          }
+        },
+      ],
+      order: [
+        ["createdAt", "DESC"],
+      ],
+      offset: parseInt(req.query.offset) || 0,
+      limit: parseInt(req.query.limit, 10) || 8,
+    });
+    const totalCount = await db.Post.count({
+      include: [
+        {
+          model: db.User,
+          attributes: [],
+          as: 'likedUser',
+          through: {
+            attributes: [],
+            where: {
+              UserId: req?.user?.id
+            },
+          }
+        },
+      ]
+    });
+    return res.send(makeResponse({ data: posts, totalCount }));
+  } catch (err) {
+    console.error(err);
+    next("게시글 조회 중 오류가 발생했습니다");
+  }
+});
+
 router.get("/detail/:id", async (req, res, next) => {
   try {
     const post = await db.Post.findOne({
@@ -403,15 +480,23 @@ router.get("/:id", async (req, res, next) => {
           model: db.Hashtag,
           required: false,
         },
+        {
+          model: db.User,
+          attributes: [],
+          as: 'likedUser',
+          through: {
+            attributes: [],
+          }
+        },
       ],
       order: [
         ["createdAt", "DESC"],
       ],
     });
     if (post) {
-      const likes = await post.getUsers();
+      const likes = await post.getLikedUser();
       const likeCurrentUser = req?.user?.id
-        ? await post.hasUser(req.user)
+        ? await post.hasLikedUser(req.user)
         : false;
       const commentCount = await db.Comment.count({
         where: {
@@ -498,18 +583,11 @@ router.get("/:id", async (req, res, next) => {
 
 router.post("/:id/like", isLoggedIn, async (req, res, next) => {
   try {
-    const post = await db.Post.findOne({
-      where: {
-        id: req.params.id,
-      },
-    });
-    const user = await db.User.findOne({
-      where: {
-        id: req.user.id,
-      },
-    });
-    await post.addUser(user);
-    return res.send(makeResponse({ data: post }));
+    await db.PostLikeUser.create({
+      PostId: req.params.id,
+      UserId: req.user.id,
+    })
+    return res.send(makeResponse({ data: 'OK' }));
   } catch (err) {
     console.error(err);
     next("게시글 찜 등록 중 오류가 발생했습니다");
@@ -518,18 +596,13 @@ router.post("/:id/like", isLoggedIn, async (req, res, next) => {
 
 router.delete("/:id/like", isLoggedIn, async (req, res, next) => {
   try {
-    const post = await db.Post.findOne({
+    await db.PostLikeUser.destroy({
       where: {
-        id: req.params.id,
-      },
-    });
-    const user = await db.User.findOne({
-      where: {
-        id: req.user.id,
-      },
-    });
-    await post.removeUser(user);
-    return res.send(makeResponse({ data: post }));
+        PostId: req.params.id,
+        UserId: req.user.id,
+      }
+    })
+    return res.send(makeResponse({ data: 'OK' }));
   } catch (err) {
     console.error(err);
     next("게시글 찜 삭제 중 오류가 발생했습니다");
