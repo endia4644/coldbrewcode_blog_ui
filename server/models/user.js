@@ -53,6 +53,7 @@ module.exports = (sequelize, DataTypes) => {
       as: 'likedPost'
     });
     db.User.hasMany(db.Post);
+    db.User.hasMany(db.TempPost);
     db.User.hasMany(db.Comment);
     db.User.hasOne(db.Image);
   };

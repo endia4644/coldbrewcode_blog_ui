@@ -36,6 +36,7 @@ export default function Settings({ logout }) {
   function menuClick({ item, key }) {
     switch (key) {
       case "1":
+        navigate('/blog/temp/post')
         break;
       case "2":
         navigate('/blog/like/post')

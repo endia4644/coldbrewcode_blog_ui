@@ -81,9 +81,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
           },
         ],
       });
-      setTimeout(() => {
-        return res.send(makeResponse({ data: fullPost }));
-      }, 2000);
+      return res.send(makeResponse({ data: fullPost }));
     });
   } catch (err) {
     console.error(err);
@@ -288,13 +286,13 @@ router.get("/", async (req, res, next) => {
         ],
         [
           literal(
-            `(SELECT COUNT(1) FROM postlikeuser WHERE UserId = ${req?.user?.id ?? 0} AND PostId = Post.id)`
+            `(SELECT COUNT(1) FROM postlikeusers WHERE UserId = ${req?.user?.id ?? 0} AND PostId = Post.id)`
           ),
           "likeYsno",
         ],
         [
           literal(
-            `(SELECT COUNT(1) FROM postlikeuser WHERE PostId = Post.id)`
+            `(SELECT COUNT(1) FROM postlikeusers WHERE PostId = Post.id)`
           ),
           "likeCount",
         ],
@@ -329,7 +327,137 @@ router.get("/", async (req, res, next) => {
     return res.json(
       makeResponse({
         resultCode: -1,
-        resultMessage: "게시글 조회 중 오류가 발생했습니다",
+        resultMessage: "관심글 조회 중 오류가 발생했습니다",
+      })
+    );
+  }
+});
+
+router.get("/temp", isLoggedIn, async (req, res, next) => {
+  try {
+    const posts = await db.TempPost.findAll({
+      attributes: [
+        'id',
+        'postId',
+        'postContent',
+        'postName',
+        'postDescription',
+        'postThumbnail',
+        'permission',
+        'SeriesId',
+        'dltYsno',
+        'createdAt',
+        'updatedAt',
+      ],
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "email", "nickName"],
+        },
+        {
+          model: db.TempHashtag,
+          required: false,
+          attributes: ["id", "hashtagName"],
+          through: { attributes: [] },
+        },
+      ],
+      order: [
+        ["createdAt", "DESC"],
+      ],
+      offset: parseInt(req.query.offset) || 0,
+      limit: parseInt(req.query.limit, 10) || 8,
+    });
+    const postCnt = await db.TempPost.count();
+    return res.send(makeResponse({ data: posts, totalCount: postCnt }));
+  } catch (err) {
+    console.error(err);
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "관심글 조회 중 오류가 발생했습니다",
+      })
+    );
+  }
+});
+
+router.post("/temp", isLoggedIn, async (req, res, next) => {
+  try {
+    //* 트랜잭션 설정
+    await db.sequelize.transaction(async (t) => {
+      let series = null;
+      if (req.body.seriesName) {
+        series = await db.Series.findOne({
+          attributes: ["id"],
+          where: {
+            seriesName: {
+              [Op.eq]: req.body.seriesName,
+            },
+          },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        });
+      }
+      const newTempPost = await db.TempPost.create(
+        {
+          postId: req.body.postId ?? null,
+          postName: req.body.postName,
+          postContent: req.body.postContent,
+          postDescription: req.body.postDescription,
+          postThumbnail: req.body.postThumbnail,
+          permission: req.body.permission,
+          dltYsno: "N",
+          UserId: req.user.id,
+          SeriesId: series?.id
+        },
+        {
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        }
+      );
+      if (req.body.hashtags) {
+        /* 해시태그 테이블 INSERT  */
+        const hashtags = await Promise.all(
+          req.body.hashtags.map((tag) =>
+            db.TempHashtag.findOrCreate({
+              where: { hashtagName: tag },
+              transaction: t, // 이 쿼리를 트랜잭션 처리
+            })
+          )
+        );
+        /* 매핑 테이블 INSERT  */
+        await Promise.all(
+          hashtags.map((r) => db.TempPostHashtag.create({
+            TempPostId: newTempPost?.id,
+            TempHashtagId: r[0]?.dataValues?.id
+          }, {
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+          }))
+        );
+      }
+      /* 사용한 이미지의 저장여부를 변경해준다. */
+      if (req.body.imageIds.length > 0) {
+        await db.Image.update(
+          {
+            saveYsno: true,
+            TempPostId: newTempPost?.id ?? null,
+            UserId: req.user.id ?? null,
+          },
+          {
+            where: {
+              id: {
+                [Op.in]: req.body.imageIds,
+              },
+            },
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+          }
+        );
+      }
+      res.send(makeResponse({ data: 'OK' }));
+    });
+  } catch (err) {
+    console.error(err);
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "게시글 작성 중 오류가 발생했습니다.",
       })
     );
   }
@@ -356,7 +484,7 @@ router.get("/like", async (req, res, next) => {
         ],
         [
           literal(
-            `(SELECT COUNT(1) FROM postlikeuser WHERE PostId = Post.id)`
+            `(SELECT COUNT(1) FROM postlikeusers WHERE PostId = Post.id)`
           ),
           "likeCount",
         ],

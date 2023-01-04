@@ -11,6 +11,7 @@ export const Types = {
   FetchUpdatePost: "write/FetchUpdatePost",
   FetchAllSeries: "write/FetchAllSeries",
   FetchCreateSeries: "write/FetchCreateSeries",
+  FetchCreateTempPost: "write/FetchCreateTempPost",
 };
 
 export const actions = {
@@ -63,6 +64,28 @@ export const actions = {
     seriesName,
     imageIds,
   }),
+  fetchCreateTempPost: ({
+    postId,
+    postName,
+    hashtags,
+    postDescription,
+    postContent,
+    postThumbnail,
+    permission,
+    seriesName,
+    imageIds,
+  }) => ({
+    type: Types.FetchCreateTempPost,
+    postId,
+    postName,
+    hashtags,
+    postDescription,
+    postContent,
+    postThumbnail,
+    permission,
+    seriesName,
+    imageIds,
+  }),
   fetchAllSeries: () => ({
     type: Types.FetchAllSeries,
   }),
@@ -71,12 +94,17 @@ export const actions = {
     seriesName,
   }),
 };
-const INITINAL_STATE = {
+export const INITINAL_STATE = {
   postName: "",
   postContent: "",
   hashtag: [],
+  postDescription: "",
+  postThumbnail: "",
+  permission: "public",
+  seriesName: "",
   seriesList: [],
   imageList: [],
+  thumbnailId: "",
 };
 
 const reducer = createReducer(INITINAL_STATE, {

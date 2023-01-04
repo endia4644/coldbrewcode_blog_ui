@@ -23,7 +23,7 @@ const handleImgError = (e) => {
   e.target.src = defaultImg;
 };
 
-export default function Post({ post, isUpdate, onRemove = null }) {
+export default function SeriesItem({ post, isUpdate, onRemove = null }) {
   const navigate = useNavigate();
   return (
     <div style={{ width: '100%', backgroundColor: "white" }} className="series">

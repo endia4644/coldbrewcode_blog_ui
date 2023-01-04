@@ -4,11 +4,11 @@ module.exports = (sequelize, DataTypes) => {
     {
       postContent: {
         type: DataTypes.TEXT, // 매우 긴 글
-        allowNull: false,
+        allowNull: true,
       },
       postName: {
         type: DataTypes.STRING(200),
-        allowNull: false,
+        allowNull: true,
       },
       postDescription: {
         type: DataTypes.STRING(1000),
@@ -20,11 +20,15 @@ module.exports = (sequelize, DataTypes) => {
       },
       permission: {
         type: DataTypes.STRING(10),
-        allowNull: false,
+        allowNull: true,
       },
       dltYsno: {
         type: DataTypes.STRING(1),
         allowNull: false, //필수
+      },
+      SeriesId: {
+        type: DataTypes.INTEGER,
+        allowNull: true
       },
     },
     {
@@ -33,7 +37,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
   TempPost.associate = (db) => {
+    db.TempPost.belongsTo(db.User);
     db.TempPost.belongsTo(db.Post);
+    db.TempPost.belongsToMany(db.TempHashtag, { through: db.TempPostHashtag });
+    db.TempPost.hasMany(db.Image);
   };
   return TempPost;
 };

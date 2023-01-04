@@ -104,13 +104,13 @@ router.get('/:id', async (req, res, next) => {
           ],
           [
             literal(
-              `(SELECT COUNT(1) FROM postlikeuser WHERE UserId = ${req?.user?.id ?? 0} AND PostId = Posts.id)`
+              `(SELECT COUNT(1) FROM postlikeusers WHERE UserId = ${req?.user?.id ?? 0} AND PostId = Posts.id)`
             ),
             "likeYsno",
           ],
           [
             literal(
-              `(SELECT COUNT(1) FROM postlikeuser WHERE PostId = Posts.id)`
+              `(SELECT COUNT(1) FROM postlikeusers WHERE PostId = Posts.id)`
             ),
             "likeCount",
           ],

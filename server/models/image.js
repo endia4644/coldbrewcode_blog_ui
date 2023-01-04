@@ -24,6 +24,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
     });
+    db.Image.belongsTo(db.TempPost, {
+      foreignKey: {
+        allowNull: true,
+      },
+    });
     db.Image.belongsTo(db.User, {
       foreignKey: {
         allowNull: true,

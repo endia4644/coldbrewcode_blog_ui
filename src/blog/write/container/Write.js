@@ -1,16 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Content, Footer } from "antd/lib/layout/layout";
 import "react-quill/dist/quill.snow.css";
 import Editor from "../components/Editor";
-import { Button, Col, Divider, Input, Row, Space } from "antd";
+import { Button, Col, Divider, Input, message, Row, Space } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom"; // 설치한 패키지
 import "../scss/write.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { actions } from "../state";
+import { actions, INITINAL_STATE, Types } from "../state";
 import WriteSetting from "./WriteSetting";
 import { AnimatePresence } from "framer-motion";
 import useNeedLogin from "../../../common/hook/useNeedLogin";
+import useFetchInfo from "../../../common/hook/useFetchInfo";
+import { FetchStatus } from "../../../common/constant";
+import { actions as common } from "../../../common/state";
 
 export default function Write() {
   useNeedLogin();
@@ -24,10 +27,32 @@ export default function Write() {
   const [hashtag, setHashtag] = useState([]);
   const [htmlContent, setHtmlContent] = useState(null);
   const [postName, setPostName] = useState(null);
-  const [imageArray] = useState([]);
   const post = useSelector(state => state.write.post);
+  const thumbnail = useSelector(state => state.write.postThumbnail);
+  const thumbnailId = useSelector(state => state.write.postThumbnailId);
+  const imageList = useSelector(state => state.write.imageList);
+  const permission = useSelector(state => state.write.permission);
+  const description = useSelector(state => state.write.postDescription);
+  const seriesName = useSelector(state => state.write.seriesName);
+
+  const { fetchStatus: tfetchStatus, isFetching: tisFetching } = useFetchInfo(Types.FetchCreateTempPost);
 
   const [level, setLevel] = useState(0);
+
+  const key = "updatable";
+
+  const deleteStatus = useCallback(
+    (actionType, fetchKey) => {
+      if (!fetchKey) fetchKey = actionType;
+      const params = {
+        actionType,
+        fetchKey,
+        status: FetchStatus.Delete,
+      };
+      dispatch(common.setFetchStatus(params));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     if (!postId) {
@@ -56,7 +81,7 @@ export default function Write() {
   };
 
   const detailSetting = () => {
-    imageArray.length = 0;
+    const images = [];
     insertHashTag();
 
     setLevel(1);
@@ -65,11 +90,14 @@ export default function Write() {
     dispatch(actions.setValue("hashtag", Array.from(tagRef.current)));
     htmlContent?.match(/[^='/]*\.(gif|jpg|jpeg|bmp|svg|png)/g)?.map((item) => {
       if (imageMap.current.get(item)) {
-        return imageArray.push(imageMap.current.get(item));
+        return images.push(imageMap.current.get(item));
       } else {
         return false;
       }
     });
+    if (images?.length > 0) {
+      dispatch(actions.setValue('imageList', [...images]))
+    }
   };
 
   const insertHashTag = () => {
@@ -80,6 +108,85 @@ export default function Write() {
     setCurrentTag("");
   };
 
+  const openTempMessage = useCallback(
+    (status) => {
+      if (status === FetchStatus.Success) {
+        message.success({
+          content: "임시저장이 완료되었습니다",
+          key,
+          duration: 2,
+        });
+        deleteStatus(Types.FetchCreateTempPost);
+        setTimeout(() => {
+          goBlog();
+        }, 500);
+      } else if (status === FetchStatus.Success) {
+        message.error({
+          content: "임시저장 중 오류가 발생했습니다",
+          key,
+          duration: 2,
+        });
+      } else if (status === FetchStatus.Request) {
+        message.loading({
+          content: "처리중",
+          key,
+        });
+      }
+    },
+    [goBlog]
+  );
+
+  /* 임시저장 */
+  function tempSubmit({ description, permission, seriesName }) {
+    let imageIds = [];
+    let hashtags = [];
+    if (imageList?.length > 0) {
+      imageIds = [...imageList];
+    }
+    if (thumbnailId) {
+      imageIds.push(thumbnailId);
+    }
+    if (hashtag) {
+      hashtag.map((item) => {
+        return hashtags.push(item.key);
+      });
+    }
+    dispatch(
+      actions.fetchCreateTempPost({
+        postId: postId,
+        postName: postName,
+        hashtags: hashtags,
+        postDescription: description,
+        postContent: htmlContent,
+        postThumbnail: `${thumbnail ?? null}`,
+        permission: permission,
+        seriesName: seriesName,
+        imageIds: imageIds,
+      })
+    );
+  }
+
+  /* 임시 저장 메시지 */
+  useEffect(() => {
+    if (!postId) {
+      if (tfetchStatus === FetchStatus.Request) {
+        openTempMessage(tfetchStatus);
+      }
+      if (tfetchStatus !== FetchStatus.Request) {
+        openTempMessage(tfetchStatus);
+      }
+    }
+  }, [tfetchStatus, openTempMessage]);
+
+  /* 언마운트 시 INITINAL_STATE 초기화 */
+  useEffect(() => {
+    return () => {
+      for (const [key, value] of Object.entries(INITINAL_STATE)) {
+        dispatch(actions.setValue(key, value));
+      }
+    }
+  }, [])
+
   return (
     <>
       <AnimatePresence>
@@ -89,7 +196,6 @@ export default function Write() {
             hashtag={hashtag}
             postContent={htmlContent}
             postName={postName}
-            postImages={imageArray}
             postThumbnail={post?.postThumbnail}
             postThumbnailId={post?.postThumbnailId}
             postDescription={post?.postDescription}
@@ -178,6 +284,7 @@ export default function Write() {
               <Button
                 style={{ fontWeight: 700 }}
                 className="button-border-hide button-type-round"
+                onClick={() => tempSubmit({ description, permission, seriesName })}
               >
                 임시저장
               </Button>

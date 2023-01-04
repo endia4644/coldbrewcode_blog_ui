@@ -83,6 +83,24 @@ function* fetchCreateSeries(action) {
   }
 }
 
+function* fetchCreateTempPost(action) {
+  yield call(callApi, {
+    method: "post",
+    url: "/post/temp",
+    data: {
+      postId: action.postId,
+      postName: action.postName,
+      hashtags: action.hashtags,
+      postDescription: action.postDescription,
+      postContent: action.postContent,
+      postThumbnail: action.postThumbnail,
+      permission: action.permission,
+      seriesName: action.seriesName,
+      imageIds: action.imageIds,
+    },
+  });
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function* () {
   yield all([
@@ -105,6 +123,10 @@ export default function* () {
     takeEvery(
       Types.FetchCreateSeries,
       makeFetchSaga({ fetchSaga: fetchCreateSeries, canCache: false })
+    ),
+    takeEvery(
+      Types.FetchCreateTempPost,
+      makeFetchSaga({ fetchSaga: fetchCreateTempPost, canCache: false })
     ),
   ]);
 }

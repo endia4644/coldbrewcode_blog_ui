@@ -36,7 +36,6 @@ export default function WriteSetting({
   hashtag,
   postContent,
   postName,
-  postImages,
   postThumbnail,
   postThumbnailId,
   postDescription,
@@ -55,18 +54,22 @@ export default function WriteSetting({
   const [seriesInput, setSeriesInput] = useState(null);
   const [inputFocus, setInputFocus] = useState(false);
   const seriesList = useSelector((state) => state.write.seriesList);
-  const [value, setValue] = useState(null);
   const [seriesSelectYsno, setSeriesSelectYsno] = useState(false);
   const [prev, setPrev] = useState("");
   const spanRefs = useRef({});
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [defaultFileList, setDefaultFileList] = useState([]);
-  const [permission, setPermission] = useState("public");
-  const [description, setDescription] = useState("");
+  const permission = useSelector(state => state.write.permission);
+  const description = useSelector(state => state.write.postDescription);
+  const seriesName = useSelector(state => state.write.seriesName);
+  const imageList = useSelector(state => state.write.imageList);
+  const thumbnail = useSelector(state => state.write.postThumbnail);
+  const thumbnailId = useSelector(state => state.write.thumbnailId);
 
   const { fetchStatus: cfetchStatus, isFetching: cisFetching } = useFetchInfo(Types.FetchCreatePost);
   const { fetchStatus: ufetchStatus, isFetching: uisFetching } = useFetchInfo(Types.FetchUpdatePost);
+  const { fetchStatus: tfetchStatus, isFetching: tisFetching } = useFetchInfo(Types.FetchCreateTempPost);
   const key = "updatable";
 
   const deleteStatus = useCallback(
@@ -109,6 +112,54 @@ export default function WriteSetting({
     [goBlog]
   );
 
+  const openTempMessage = useCallback(
+    (status) => {
+      if (status === FetchStatus.Success) {
+        message.success({
+          content: "임시저장이 완료되었습니다",
+          key,
+          duration: 2,
+        });
+        deleteStatus(Types.FetchCreateTempPost);
+        setTimeout(() => {
+          goBlog();
+        }, 500);
+      } else if (status === FetchStatus.Success) {
+        message.error({
+          content: "임시저장 중 오류가 발생했습니다",
+          key,
+          duration: 2,
+        });
+      } else if (status === FetchStatus.Request) {
+        message.loading({
+          content: "처리중",
+          key,
+        });
+      }
+    },
+    [goBlog]
+  );
+
+  /* 세부설정하기 2회 진입부터 체크 */
+  useEffect(() => {
+    if (thumbnail && thumbnailId) {
+      setDefaultFileList([{
+        name: thumbnail,
+        thumbUrl: `${API_HOST}/${thumbnail}`,
+      }]);
+      setPreviewImage({
+        fileName: thumbnail,
+        id: thumbnailId,
+      });
+    }
+    if (seriesName) {
+      setSeriesSelectYsno(true);
+      if (seriesList?.length) {
+        setPrev(seriesName);
+      }
+    }
+  }, [])
+
   useEffect(() => {
     if (!postId) {
       if (cfetchStatus === FetchStatus.Request) {
@@ -137,6 +188,7 @@ export default function WriteSetting({
     setPreviewOpen(true);
   };
 
+  /* 언마운트 시 호출 */
   useEffect(() => {
     return () => {
       deleteStatus(Types.FetchCreatePost);
@@ -184,6 +236,14 @@ export default function WriteSetting({
   const handleOnChange = ({ file, fileList, event }) => {
     setDefaultFileList(fileList);
     setPreviewImage(fileList?.[0]?.response);
+    dispatch(actions.setValue('postThumbnail', fileList?.[0]?.response?.fileName))
+    if (fileList?.[0]?.response?.id) {
+      dispatch(actions.setValue('thumbnailId', fileList?.[0]?.response?.id));
+    }
+  };
+
+  const handleOnRemove = () => {
+    dispatch(actions.setValue('thumbnailId', ""));
   };
 
   const uploadButton = (
@@ -203,11 +263,11 @@ export default function WriteSetting({
   );
 
   const onSeriesChange = (target) => {
-    setValue(target.target.value);
+    dispatch(actions.setValue('seriesName', target.target.value));
   };
 
   const onSeriesCancel = () => {
-    setValue(null);
+    dispatch(actions.setValue('seriesName', null));
   };
 
   const addSeries = () => {
@@ -222,7 +282,7 @@ export default function WriteSetting({
           inline: "center",
         });
       }
-      setValue(seriesInput);
+      dispatch(actions.setValue('seriesName', seriesInput));
     }
     setSeriesInput("");
     setPrev(seriesInput);
@@ -244,14 +304,49 @@ export default function WriteSetting({
     }
   }, [seriesList, prev]);
 
+  /* 임시저장 */
+  function tempSubmit({ description, permission, seriesName }) {
+    let hashtags = [];
+    if (hashtag) {
+      hashtag.map((item) => {
+        return hashtags.push(item.key);
+      });
+    }
+    dispatch(
+      actions.fetchCreateTempPost({
+        postId: postId,
+        postName: postName,
+        hashtags: hashtags,
+        postDescription: description,
+        postContent: postContent,
+        postThumbnail: `${thumbnail ?? null}`,
+        permission: permission,
+        seriesName: seriesName,
+        imageIds: imageList,
+      })
+    );
+  }
+
+  /* 임시 저장 메시지 */
+  useEffect(() => {
+    if (!postId) {
+      if (tfetchStatus === FetchStatus.Request) {
+        openTempMessage(tfetchStatus);
+      }
+      if (tfetchStatus !== FetchStatus.Request) {
+        openTempMessage(tfetchStatus);
+      }
+    }
+  }, [tfetchStatus, openTempMessage]);
+
   /* 수정 시 초기 세팅 */
   useEffect(() => {
-    if (postPermission) setPermission(postPermission)
-    if (postDescription) setDescription(postDescription);
+    if (postPermission) dispatch(actions.setValue('permission', postPermission));
+    if (postDescription) dispatch(actions.setValue('postDescription', postDescription));
     if (series?.seriesName) {
       setSeriesSelectYsno(true);
       if (seriesList?.length) {
-        setValue(series?.seriesName);
+        dispatch(actions.setValue('seriesName', series?.seriesName));
         setPrev(series?.seriesName);
       }
     }
@@ -264,8 +359,10 @@ export default function WriteSetting({
         fileName: postThumbnail,
         id: postThumbnailId,
       });
+      dispatch(actions.setValue('thumbnailId', postThumbnailId));
+      dispatch(actions.setValue('postThumbnail', postThumbnail))
     }
-  }, [postThumbnail, postDescription, series, seriesList, postPermission, postThumbnailId])
+  }, [dispatch, postThumbnail, postDescription, series, seriesList, postPermission, postThumbnailId])
 
   return (
     <>
@@ -305,6 +402,7 @@ export default function WriteSetting({
                     className="image-upload-grid"
                     onPreview={handlePreview}
                     beforeUpload={beforeUpload}
+                    onRemove={handleOnRemove}
                   >
                     {defaultFileList.length >= 1 ? null : uploadButton}
                   </Upload>
@@ -326,11 +424,11 @@ export default function WriteSetting({
                     포스트 설명
                   </Typography.Title>
                   <TextArea
-                    defaultValue={postDescription ?? ''}
+                    defaultValue={postDescription ?? description ?? ''}
                     showCount
                     maxLength={100}
                     onChange={(e) => {
-                      setDescription(e.target.value);
+                      dispatch(actions.setValue('postDescription', e.target.value))
                     }}
                   />
                 </Col>
@@ -341,7 +439,7 @@ export default function WriteSetting({
                     <Radio.Group
                       defaultValue={postPermission ?? 'public'}
                       onChange={(e) => {
-                        setPermission(e.target.value);
+                        dispatch(actions.setValue('permission', e.target.value));
                       }}
                       value={permission}
                       className="permission"
@@ -396,7 +494,7 @@ export default function WriteSetting({
                           <Input
                             className="seires-input-selected"
                             disabled
-                            value={value}
+                            value={seriesName}
                             addonAfter={
                               <Button
                                 className="seires-button-selected"
@@ -405,7 +503,7 @@ export default function WriteSetting({
                                   setIsSeriesADD(!isSeriesADD);
                                   setSeriesSelectYsno(!seriesSelectYsno);
                                   setSeriesInput("");
-                                  setValue(null);
+                                  dispatch(actions.setValue('seriesName', null));
                                 }}
                               />
                             }
@@ -444,7 +542,7 @@ export default function WriteSetting({
                           취소
                         </Button>
                         <Button
-                          disabled={!value}
+                          disabled={!seriesName}
                           className="button-type-round button-color-reverse"
                           onClick={() => {
                             setSeriesSelectYsno(true);
@@ -506,7 +604,7 @@ export default function WriteSetting({
                         onChange={(target) => {
                           onSeriesChange(target);
                         }}
-                        value={value}
+                        value={seriesName}
                         style={{
                           width: "100%",
                           maxHeight: 265,
@@ -554,7 +652,7 @@ export default function WriteSetting({
                           취소
                         </Button>
                         <Button
-                          disabled={!value}
+                          disabled={!seriesName}
                           className="button-type-round button-color-reverse"
                           onClick={() => {
                             setSeriesSelectYsno(true);
@@ -590,6 +688,7 @@ export default function WriteSetting({
                       style={{ fontWeight: 700 }}
                       className="button-border-hide button-type-round"
                       disabled={cisFetching}
+                      onClick={() => tempSubmit({ description, permission, seriesName })}
                     >
                       임시저장
                     </Button>
@@ -599,11 +698,11 @@ export default function WriteSetting({
                       onClick={() => {
                         let imageIds = [];
                         let hashtags = [];
-                        if (postImages) {
-                          imageIds = [...postImages];
+                        if (imageList?.length > 0) {
+                          imageIds = [...imageList];
                         }
                         if (previewImage) {
-                          imageIds.push(previewImage.id);
+                          imageIds.push(thumbnailId);
                         }
                         if (hashtag) {
                           hashtag.map((item) => {
@@ -622,7 +721,7 @@ export default function WriteSetting({
                               permission: permission,
                               seriesOriId: series?.id,
                               seriesOriName: series?.seriesName,
-                              seriesName: value,
+                              seriesName: seriesName,
                               imageIds: imageIds,
                             })
                           );
@@ -635,7 +734,7 @@ export default function WriteSetting({
                               postContent: postContent,
                               postThumbnail: `${previewImage?.fileName ?? null}`,
                               permission: permission,
-                              seriesName: value,
+                              seriesName: seriesName,
                               imageIds: imageIds,
                             })
                           );
