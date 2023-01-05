@@ -9,6 +9,7 @@ export const Types = {
   SetValue: "temp/SetValue",
   FetchAllPost: "temp/FetchAllPost",
   FetchWritePost: "temp/FetchWritePost",
+  FetchDeleteTempPost: "temp/FetchDeleteTempPost",
 };
 
 export const actions = {
@@ -21,6 +22,12 @@ export const actions = {
   fetchWritePost: ({ id }) => ({
     type: Types.FetchWritePost,
     id,
+    [FETCH_KEY]: id
+  }),
+  fetchDeleteTempPost: ({ id, post }) => ({
+    type: Types.FetchDeleteTempPost,
+    id,
+    post,
     [FETCH_KEY]: id
   }),
 };

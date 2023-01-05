@@ -32,6 +32,25 @@ function* fetchWritePost(action) {
   }
 }
 
+function* fetchDeleteTempPost(action) {
+  const { isSuccess, data } = yield call(callApi, {
+    url: `/post/temp/${action?.id}`,
+    method: "delete"
+  });
+  if (isSuccess && data) {
+    if (action.post) {
+      if (action.post.length > 1) {
+        const newPost = action.post.filter((item) => item.id !== action?.id);
+        yield put(actions.setValue("post", [...newPost]));
+      } else {
+        yield put(actions.setValue("post", []));
+      }
+    } else {
+      yield put(actions.setValue("post", []));
+    }
+  }
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function* () {
   yield all([
@@ -42,6 +61,10 @@ export default function* () {
     takeEvery(
       Types.FetchWritePost,
       makeFetchSaga({ fetchSaga: fetchWritePost, canCache: false })
+    ),
+    takeEvery(
+      Types.FetchDeleteTempPost,
+      makeFetchSaga({ fetchSaga: fetchDeleteTempPost, canCache: false })
     ),
   ]);
 }

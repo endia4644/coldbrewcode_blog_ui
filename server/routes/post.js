@@ -395,6 +395,11 @@ router.get("/", async (req, res, next) => {
 router.get("/temp", isLoggedIn, async (req, res, next) => {
   try {
     const posts = await db.TempPost.findAll({
+      where: {
+        PostId: {
+          [Op.is]: null
+        }
+      },
       attributes: [
         'id',
         'postId',
@@ -426,7 +431,13 @@ router.get("/temp", isLoggedIn, async (req, res, next) => {
       offset: parseInt(req.query.offset) || 0,
       limit: parseInt(req.query.limit, 10) || 8,
     });
-    const postCnt = await db.TempPost.count();
+    const postCnt = await db.TempPost.count({
+      where: {
+        PostId: {
+          [Op.is]: null
+        }
+      },
+    });
     return res.send(makeResponse({ data: posts, totalCount: postCnt }));
   } catch (err) {
     console.error(err);
@@ -630,6 +641,48 @@ router.get("/temp/:id", isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.delete("/temp/:id", async (req, res, next) => {
+  try {
+    await db.sequelize.transaction(async (t) => {
+      await db.TempPost.destroy(
+        {
+          where: {
+            id: {
+              [Op.eq]: req.params.id
+            }
+          },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        }
+      );
+      await db.TempPostHashtag.destroy({
+        where: {
+          TempPostId: {
+            [Op.eq]: req.params.id
+          }
+        },
+        transaction: t, // 이 쿼리를 트랜잭션 처리
+      })
+      await db.TempSeriesPost.destroy({
+        where: {
+          TempPostId: {
+            [Op.eq]: req.params.id
+          }
+        },
+        transaction: t, // 이 쿼리를 트랜잭션 처리
+      })
+    });
+    return res.send(makeResponse({ data: "OK" }));
+  } catch (err) {
+    console.error(err);
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "게시글 삭제 중 오류가 발생했습니다.",
+      })
+    );
+  }
+});
+
 router.get("/like", async (req, res, next) => {
   try {
     const posts = await db.Post.findAll({
@@ -671,6 +724,7 @@ router.get("/like", async (req, res, next) => {
           model: db.User,
           attributes: [],
           as: 'likedUser',
+          required: true,
           through: {
             attributes: [],
             where: {

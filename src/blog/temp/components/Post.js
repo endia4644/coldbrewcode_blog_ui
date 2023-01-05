@@ -1,9 +1,10 @@
 import {
+  DeleteOutlined,
   FieldTimeOutlined,
   LockOutlined,
 } from "@ant-design/icons";
-import { Button, Col, List, Space, Typography } from "antd";
-import React, { useEffect, useRef } from "react";
+import { Button, Col, List, Modal, Space, Typography } from "antd";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
@@ -29,6 +30,7 @@ export default function Post() {
   const navigate = useNavigate();
   const targetRef = useRef(null);
   const post = useSelector((state) => state.temp.post);
+  const [delTempId, setDelTempId] = useState("");
 
   const { fetchStatus, totalCount } = useFetchInfo(Types.FetchAllPost);
 
@@ -38,6 +40,22 @@ export default function Post() {
     dispatch(writeActions.setValue("tempId", id));
     navigate('/blog/write');
   }
+
+  const [open, setOpen] = useState(false);
+
+  function showModal(id) {
+    setDelTempId(id);
+    setOpen(true);
+  };
+  const handleOk = () => {
+    dispatch(actions.fetchDeleteTempPost({ id: delTempId, post }))
+    setOpen(false);
+  };
+  const handleCancel = () => {
+    setDelTempId("");
+    setOpen(false);
+  };
+
 
   useEffect(() => {
     let observer;
@@ -92,6 +110,11 @@ export default function Post() {
                     key="list-vertical-message"
                   />
                 ),
+                <IconText
+                  icon={DeleteOutlined}
+                  text={<Button onClick={() => showModal(item.id)} className="button-type-round button-color-white">삭제</Button>}
+                  key="list-vertical-star-o"
+                />,
               ]}
             >
               <div className="thumbnail-wrappper">
@@ -140,6 +163,18 @@ export default function Post() {
         style={{ width: "100%", height: 10 }}
         ref={targetRef}
       />
+      <Modal
+        className="modal-size-middle"
+        title={<><Typography.Title level={3}>임시 글 삭제</Typography.Title></>}
+        open={open}
+        onOk={handleOk}
+        closable={false}
+        onCancel={handleCancel}
+        okText="확인"
+        cancelText="취소"
+      >
+        <Typography.Text>임시 저장한 글을 삭제하시겠습니까?<br />삭제한 글은 복구할 수 없습니다.</Typography.Text>
+      </Modal>
     </>
   );
 }
