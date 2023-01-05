@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { createContext, useCallback, useEffect, useRef, useState } from "react";
 import { Content, Footer } from "antd/lib/layout/layout";
 import "react-quill/dist/quill.snow.css";
 import Editor from "../components/Editor";
-import { Button, Col, Divider, Input, message, Row, Space } from "antd";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import { Button, Col, Divider, Input, message, Modal, Row, Space, Typography } from "antd";
+import { ArrowLeftOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom"; // 설치한 패키지
 import "../scss/write.scss";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,17 +29,35 @@ export default function Write() {
   const [postName, setPostName] = useState(null);
   const post = useSelector(state => state.write.post);
   const thumbnail = useSelector(state => state.write.postThumbnail);
-  const thumbnailId = useSelector(state => state.write.postThumbnailId);
+  const thumbnailId = useSelector(state => state.write.thumbnailId);
   const imageList = useSelector(state => state.write.imageList);
   const permission = useSelector(state => state.write.permission);
   const description = useSelector(state => state.write.postDescription);
   const seriesName = useSelector(state => state.write.seriesName);
+  const postType = useSelector(state => state.write.postType);
+  const tempId = useSelector(state => state.write.tempId);
 
-  const { fetchStatus: tfetchStatus, isFetching: tisFetching } = useFetchInfo(Types.FetchCreateTempPost);
+
+  const { fetchStatus: tfetchStatus } = useFetchInfo(Types.FetchCreateTempPost);
 
   const [level, setLevel] = useState(0);
 
   const key = "updatable";
+
+  const [open, setOpen] = useState(false);
+
+  const showModal = () => {
+    setOpen(true);
+  };
+  const handleOk = () => {
+    dispatch(actions.fetchTempPost({ postId: post?.id, id: post?.TempPostId }));
+    dispatch(actions.setValue("postType", "temp"));
+    dispatch(actions.setValue("tempId", post?.TempPostId));
+    setOpen(false);
+  };
+  const handleCancel = () => {
+    setOpen(false);
+  };
 
   const deleteStatus = useCallback(
     (actionType, fetchKey) => {
@@ -68,8 +86,31 @@ export default function Write() {
     if (!post) {
       return;
     }
+    if (!post?.TempPostId) {
+      return;
+    }
+    showModal();
+  }, [post, dispatch]);
+
+  useEffect(() => {
+    if (!post) {
+      return;
+    }
     setPostName(post?.postName);
     setHashtag(post?.Hashtags ?? []);
+
+    post?.Hashtags?.map(item => tagRef.current.add(item.key));
+
+    /* 임시저장을 위한 필수값 세팅 */
+    dispatch(actions.setValue('postName', post?.postName));
+    dispatch(actions.setValue('postContent', post?.postContent));
+    dispatch(actions.setValue('hashtag', post?.Hashtags));
+    dispatch(actions.setValue('postDescription', post?.postDescription));
+    dispatch(actions.setValue('postThumbnail', post?.postThumbnail));
+    dispatch(actions.setValue('thumbnailId', post?.postThumbnailId));
+    dispatch(actions.setValue('permission', post?.permission));
+    dispatch(actions.setValue('seriesName', post?.Series?.[0]?.seriesName));
+    dispatch(actions.setValue('seriesList', post?.Series));
   }, [post]);
 
   const getHtmlContent = (htmlContent) => {
@@ -168,7 +209,7 @@ export default function Write() {
 
   /* 임시 저장 메시지 */
   useEffect(() => {
-    if (!postId) {
+    if (!postId || !tempId) {
       if (tfetchStatus === FetchStatus.Request) {
         openTempMessage(tfetchStatus);
       }
@@ -260,7 +301,8 @@ export default function Write() {
         </Row>
         <Divider />
         <Editor
-          postId={postId}
+          postType={postType}
+          postId={postType !== 'temp' ? postId : tempId}
           placeholder={"기록하고 싶은 이야기를 적어 보세요"}
           htmlContent={htmlContent}
           getHtmlContent={getHtmlContent}
@@ -298,6 +340,18 @@ export default function Write() {
           </Col>
         </Row>
       </Footer>
+      <Modal
+        className="modal-size-middle"
+        title={<><Typography.Title level={3}>임시 포스트 불러오기</Typography.Title></>}
+        open={open}
+        onOk={handleOk}
+        closable={false}
+        onCancel={handleCancel}
+        okText="확인"
+        cancelText="취소"
+      >
+        <Typography.Text>임시저장된 포스트를 불러오시겠습니까?</Typography.Text>
+      </Modal>
     </>
   );
 }
