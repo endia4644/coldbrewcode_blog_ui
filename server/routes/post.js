@@ -232,22 +232,52 @@ router.patch("/", async (req, res, next) => {
           }
         );
       }
-      /* 게시글 메인데이터를 업데이트 */
-      await db.Post.update(
-        {
-          postContent: req.body.postContent,
-          postDescription: req.body.postDescription,
-          postThumbnail: req.body.postThumbnail,
-          permission: req.body.permission
-        },
-        {
+      /* 임시저장 된 게시글을 완성한 경우 */
+      if (req.body.tempId) {
+        /* 게시글 메인데이터를 업데이트 */
+        await db.Post.update(
+          {
+            postContent: req.body.postContent,
+            postDescription: req.body.postDescription,
+            postThumbnail: req.body.postThumbnail,
+            permission: req.body.permission,
+            TempPostId: null,
+          },
+          {
+            where: {
+              id: {
+                [Op.eq]: req.body.postId
+              }
+            },
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+          })
+        await db.TempPost.destroy({
           where: {
             id: {
-              [Op.eq]: req.body.postId
+              [Op.eq]: req.body.tempId
             }
           },
           transaction: t, // 이 쿼리를 트랜잭션 처리
         })
+        /* 일반적인 포스트 수정의 경우 */
+      } else {
+        /* 게시글 메인데이터를 업데이트 */
+        await db.Post.update(
+          {
+            postContent: req.body.postContent,
+            postDescription: req.body.postDescription,
+            postThumbnail: req.body.postThumbnail,
+            permission: req.body.permission
+          },
+          {
+            where: {
+              id: {
+                [Op.eq]: req.body.postId
+              }
+            },
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+          })
+      }
       res.send(makeResponse({ data: 'OK' }));
     });
   } catch (err) {
