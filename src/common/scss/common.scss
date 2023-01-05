@@ -197,6 +197,7 @@ a.ant-typography:active {
   color: $fontColor;
 }
 
+/* 버튼 타입 정의 */
 .button {
   &-border {
     &-hide {
@@ -217,6 +218,24 @@ a.ant-typography:active {
       padding: 4px 16px;
       font-size: 14px;
       border-radius: 1rem;
+    }
+
+    &-anchor {
+      border: 0;
+      height: 100%;
+      padding: 0;
+      font-size: 3rem;
+      box-shadow: 0 0 0 0;
+
+      &:hover,
+      &:active,
+      &:focus {
+        color: $mainColor;
+        font-weight: 700;
+        border: 0;
+        background-color: white;
+        box-shadow: 0 0 0 0;
+      }
     }
   }
 

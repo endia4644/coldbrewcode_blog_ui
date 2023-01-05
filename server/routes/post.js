@@ -59,6 +59,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
           {
             saveYsno: true,
             PostId: newPost?.id ?? null,
+            TempPostId: null,
             UserId: req.user.id ?? null,
           },
           {
@@ -71,6 +72,33 @@ router.post("/", isLoggedIn, async (req, res, next) => {
           }
         );
       }
+      /* 임시 저장을 마저 작성한 경우 기존 임시 포스트는 삭제한다. */
+      if (req?.body?.tempId) {
+        await db.TempPost.destroy({
+          where: {
+            id: {
+              [Op.eq]: req?.body?.tempId
+            }
+          },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        })
+        await db.TempPostHashtag.destroy({
+          where: {
+            TempPostId: {
+              [Op.eq]: req?.body?.tempId
+            }
+          },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        })
+        await db.TempSeriesPost.destroy({
+          where: {
+            TempPostId: {
+              [Op.eq]: req?.body?.tempId
+            }
+          },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        })
+      }
       const fullPost = await db.Post.findOne({
         where: { id: newPost.id },
         transaction: t, // 이 쿼리를 트랜잭션 처리
@@ -80,6 +108,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
             attributes: ["id", "email", "nickName"],
           },
         ],
+        transaction: t, // 이 쿼리를 트랜잭션 처리
       });
       return res.send(makeResponse({ data: fullPost }));
     });
@@ -344,7 +373,6 @@ router.get("/temp", isLoggedIn, async (req, res, next) => {
         'postDescription',
         'postThumbnail',
         'permission',
-        'SeriesId',
         'dltYsno',
         'createdAt',
         'updatedAt',
@@ -356,6 +384,7 @@ router.get("/temp", isLoggedIn, async (req, res, next) => {
         },
         {
           model: db.TempHashtag,
+          as: 'Hashtags',
           required: false,
           attributes: ["id", "hashtagName"],
           through: { attributes: [] },
@@ -396,9 +425,17 @@ router.post("/temp", isLoggedIn, async (req, res, next) => {
           transaction: t, // 이 쿼리를 트랜잭션 처리
         });
       }
+      /* 기존 포스트에 작성되어있던 임시 포스트 삭제 */
+      await db.TempPost.destroy({
+        where: {
+          PostId: {
+            [Op.eq]: req?.body?.postId
+          }
+        },
+        transaction: t, // 이 쿼리를 트랜잭션 처리
+      })
       const newTempPost = await db.TempPost.create(
         {
-          postId: req.body.postId ?? null,
           postName: req.body.postName,
           postContent: req.body.postContent,
           postDescription: req.body.postDescription,
@@ -406,12 +443,49 @@ router.post("/temp", isLoggedIn, async (req, res, next) => {
           permission: req.body.permission,
           dltYsno: "N",
           UserId: req.user.id,
-          SeriesId: series?.id
+          PostId: req?.body?.postId,
         },
         {
           transaction: t, // 이 쿼리를 트랜잭션 처리
         }
       );
+      /* 기존 포스트를 임시저장한 경우 매핑처리 */
+      if (req?.body?.postId) {
+        /* 기존 포스트에 작성되어있던 임시 포스트 삭제 */
+        await db.Post.update(
+          {
+            TempPostId: newTempPost?.id
+          },
+          {
+            where: {
+              id: {
+                [Op.eq]: req?.body?.postId
+              }
+            },
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+          })
+      }
+      if (series?.id) {
+        const tempIdx = await db.TempSeriesPost.findOne({
+          attributes: [
+            [fn('MAX', col('idx')), 'currentidx']
+          ],
+          where: {
+            SeriesId: series?.id
+          },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        })
+        await db.TempSeriesPost.create(
+          {
+            idx: tempIdx?.dataValues?.currentidx ? Number(tempIdx?.dataValues?.currentidx) + 1 : 1,
+            TempPostId: newTempPost?.id,
+            SeriesId: series?.id
+          },
+          {
+            transaction: t // 이 쿼리를 트랜잭션 처리
+          }
+        )
+      }
       if (req.body.hashtags) {
         /* 해시태그 테이블 INSERT  */
         const hashtags = await Promise.all(
@@ -460,6 +534,69 @@ router.post("/temp", isLoggedIn, async (req, res, next) => {
         resultMessage: "게시글 작성 중 오류가 발생했습니다.",
       })
     );
+  }
+});
+
+router.get("/temp/:id", isLoggedIn, async (req, res, next) => {
+  const postId = {};
+  /* 기존 포스트 임시저장 조회 경우 */
+  if (req?.query?.id) {
+    postId[Op.eq] = req?.query?.id;
+  } else {
+    postId[Op.is] = null;
+  }
+  try {
+    const post = await db.TempPost.findOne({
+      where: {
+        id: {
+          [Op.eq]: req.params.id,
+        },
+        PostId: postId
+      },
+      attributes: [
+        'id',
+        ['PostId', 'postId'],
+        'postContent',
+        'postName',
+        'postDescription',
+        'postThumbnail',
+        [
+          literal(
+            `(SELECT id FROM images WHERE TempPostId = ${req.params.id} AND fileName = TempPost.postThumbnail)`
+          ),
+          "postThumbnailId",
+        ],
+        'permission',
+        'dltYsno',
+      ],
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "email", "nickName"],
+        },
+        {
+          model: db.TempHashtag,
+          as: 'Hashtags',
+          required: false,
+          attributes: [['hashtagName', 'key'], 'hashtagName'],
+          through: {
+            attributes: []
+          }
+        },
+        {
+          model: db.Series,
+          required: false,
+          attributes: ['id', 'seriesName'],
+          through: {
+            attributes: []
+          }
+        }
+      ],
+    });
+    return res.send(makeResponse({ data: post }));
+  } catch (err) {
+    console.error(err);
+    next("게시글 조회 중 오류가 발생했습니다");
   }
 });
 
@@ -560,6 +697,12 @@ router.get("/detail/:id", async (req, res, next) => {
         ],
         'permission',
         'dltYsno',
+        [
+          literal(
+            `(SELECT id FROM tempposts WHERE PostId = Post.id)`
+          ),
+          "TempPostId",
+        ],
       ],
       include: [
         {
@@ -581,13 +724,13 @@ router.get("/detail/:id", async (req, res, next) => {
           through: {
             attributes: []
           }
-        }
+        },
       ],
     });
     return res.send(makeResponse({ data: post }));
   } catch (err) {
     console.error(err);
-    next("게시글 조회 중 오류가 발생했습니다");
+    next("임시저장된 포스트 조회 중 오류가 발생했습니다");
   }
 });
 
@@ -739,32 +882,61 @@ router.delete("/:id/like", isLoggedIn, async (req, res, next) => {
 
 router.get("/:id/content", async (req, res, next) => {
   try {
-    const post = await db.Post.findOne({
-      where: {
-        id: req.params.id,
-      },
-      attributes: ["id", "postContent", "postThumbnail"],
-    });
-    /* 컨텐츠 영역에서 사용한 이미지 정보 조회 */
-    const images = await db.Image.findAll({
-      where: {
-        PostId: {
-          [Op.eq]: post?.id
+    if (req?.query?.postType !== 'temp') {
+      const post = await db.Post.findOne({
+        where: {
+          id: req.params.id,
         },
-        saveYsno: {
-          [Op.eq]: 1
-        },
-        fileName: {
-          [Op.ne]: post?.postThumbnail
+        attributes: ["id", "postContent", "postThumbnail"],
+      });
+      /* 컨텐츠 영역에서 사용한 이미지 정보 조회 */
+      const images = await db.Image.findAll({
+        where: {
+          PostId: {
+            [Op.eq]: post?.id
+          },
+          saveYsno: {
+            [Op.eq]: 1
+          },
+          fileName: {
+            [Op.ne]: post?.postThumbnail
+          }
         }
-      }
-    })
-    return res.send(makeResponse({
-      data: {
-        postContent: post?.postContent,
-        images: images
-      }
-    }));
+      })
+      return res.send(makeResponse({
+        data: {
+          postContent: post?.postContent,
+          images: images
+        }
+      }));
+    } else {
+      const post = await db.TempPost.findOne({
+        where: {
+          id: req.params.id,
+        },
+        attributes: ["id", "postContent", "postThumbnail"],
+      });
+      /* 컨텐츠 영역에서 사용한 이미지 정보 조회 */
+      const images = await db.Image.findAll({
+        where: {
+          TempPostId: {
+            [Op.eq]: post?.id
+          },
+          saveYsno: {
+            [Op.eq]: 1
+          },
+          fileName: {
+            [Op.ne]: post?.postThumbnail
+          }
+        }
+      })
+      return res.send(makeResponse({
+        data: {
+          postContent: post?.postContent,
+          images: images
+        }
+      }));
+    }
   } catch (err) {
     console.error(err);
     return res.json(

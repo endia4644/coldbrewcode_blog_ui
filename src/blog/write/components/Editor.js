@@ -43,6 +43,7 @@ class Image extends BaseImage {
 Quill.register(Image, true);
 
 export default function Editor({
+  postType,
   postId,
   placeholder,
   htmlContent,
@@ -59,7 +60,7 @@ export default function Editor({
     const fetchData = async () => {
       const { data } = await callApi({
         method: "get",
-        url: `/post/${postId}/content`,
+        url: `/post/${postId}/content?postType=${postType}`,
       });
       getHtmlContent(data?.postContent ?? "");
       if (data?.images?.length > 0) {
@@ -69,7 +70,7 @@ export default function Editor({
       }
     };
     fetchData();
-  }, []);
+  }, [postId]);
 
   // 이미지 처리를 하는 핸들러
   const imageHandler = useCallback(() => {

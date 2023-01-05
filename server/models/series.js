@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   });
   Series.associate = (db) => {
     db.Series.belongsToMany(db.Post, { through: db.SeriesPost });
+    db.Series.belongsToMany(db.TempPost, { through: db.TempSeriesPost, });
   }
   return Series;
 }

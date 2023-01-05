@@ -66,6 +66,7 @@ export default function WriteSetting({
   const imageList = useSelector(state => state.write.imageList);
   const thumbnail = useSelector(state => state.write.postThumbnail);
   const thumbnailId = useSelector(state => state.write.thumbnailId);
+  const tempId = useSelector(state => state.write.tempId);
 
   const { fetchStatus: cfetchStatus, isFetching: cisFetching } = useFetchInfo(Types.FetchCreatePost);
   const { fetchStatus: ufetchStatus, isFetching: uisFetching } = useFetchInfo(Types.FetchUpdatePost);
@@ -160,6 +161,7 @@ export default function WriteSetting({
     }
   }, [])
 
+  /* 포스트 생성 메시지 핸들러 */
   useEffect(() => {
     if (!postId) {
       if (cfetchStatus === FetchStatus.Request) {
@@ -171,6 +173,7 @@ export default function WriteSetting({
     }
   }, [cfetchStatus, openMessage]);
 
+  /* 포스트 수정 메시지 핸들러 */
   useEffect(() => {
     if (postId) {
       if (ufetchStatus === FetchStatus.Request) {
@@ -182,8 +185,10 @@ export default function WriteSetting({
     }
   }, [ufetchStatus, openMessage]);
 
+  /*  */
   const handleCancel = () => setPreviewOpen(false);
 
+  /* 미리보기 노출 여부 핸들링 */
   const handlePreview = async () => {
     setPreviewOpen(true);
   };
@@ -212,6 +217,7 @@ export default function WriteSetting({
     return isJpgOrPng && isLt2M;
   };
 
+  /* 이미지 선택시 업로드 핸들링 */
   const uploadImage = async (options) => {
     const { onSuccess, onError, file } = options;
     const url = `${API_HOST}/image`;
@@ -233,6 +239,7 @@ export default function WriteSetting({
     }
   };
 
+  /* 이미지 업로드 완료 후 로직 핸들러 */
   const handleOnChange = ({ file, fileList, event }) => {
     setDefaultFileList(fileList);
     setPreviewImage(fileList?.[0]?.response);
@@ -242,6 +249,7 @@ export default function WriteSetting({
     }
   };
 
+  /* 이미지 삭제 핸들러 */
   const handleOnRemove = () => {
     dispatch(actions.setValue('thumbnailId', ""));
   };
@@ -262,14 +270,17 @@ export default function WriteSetting({
     </div>
   );
 
+  /* 시리즈가 변경된 경우 핸들링 */
   const onSeriesChange = (target) => {
     dispatch(actions.setValue('seriesName', target.target.value));
   };
 
+  /* 시리즈 선택이 취소된 경우 핸들링 */
   const onSeriesCancel = () => {
     dispatch(actions.setValue('seriesName', null));
   };
 
+  /* 시리즈 입력 시 추가 로직 */
   const addSeries = () => {
     if (seriesInput) {
       const selected = spanRefs?.current[seriesInput];
@@ -288,10 +299,13 @@ export default function WriteSetting({
     setPrev(seriesInput);
   };
 
+  /* 최초 한번 시리즈를 조회한다. */
   useEffect(() => {
     dispatch(actions.fetchAllSeries());
   }, [dispatch]);
 
+
+  /* 시리즈 생성 시 스크롤을 해당 시리즈 위치로 이동시킨다. ( 생성 / 조회 시 실행 ) */
   useEffect(() => {
     if (Object.keys(spanRefs).length !== 0 && prev) {
       if (spanRefs.current[prev]) {
@@ -306,7 +320,14 @@ export default function WriteSetting({
 
   /* 임시저장 */
   function tempSubmit({ description, permission, seriesName }) {
+    let imageIds = [];
     let hashtags = [];
+    if (imageList?.length > 0) {
+      imageIds = [...imageList];
+    }
+    if (thumbnailId) {
+      imageIds.push(thumbnailId);
+    }
     if (hashtag) {
       hashtag.map((item) => {
         return hashtags.push(item.key);
@@ -322,7 +343,7 @@ export default function WriteSetting({
         postThumbnail: `${thumbnail ?? null}`,
         permission: permission,
         seriesName: seriesName,
-        imageIds: imageList,
+        imageIds: imageIds,
       })
     );
   }
@@ -723,6 +744,7 @@ export default function WriteSetting({
                               seriesOriName: series?.seriesName,
                               seriesName: seriesName,
                               imageIds: imageIds,
+                              tempId: tempId,
                             })
                           );
                         } else {
@@ -736,6 +758,7 @@ export default function WriteSetting({
                               permission: permission,
                               seriesName: seriesName,
                               imageIds: imageIds,
+                              tempId: tempId,
                             })
                           );
                         }

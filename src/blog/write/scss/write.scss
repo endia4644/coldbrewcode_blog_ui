@@ -32,6 +32,7 @@
 .ql-snow {
   .ql-picker {
     &.ql-size {
+
       .ql-picker-label,
       .ql-picker-item {
         &::before {
@@ -208,8 +209,7 @@
     border-top: 6px solid rgba(0, 0, 0, 0.06);
   }
 
-  element.style {
-  }
+  element.style {}
 
   .ql-editor p,
   .ql-editor ol,
@@ -224,15 +224,14 @@
   .ql-editor h6 {
     margin: 0;
     padding: 0;
-    counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8
-      list-9;
+    counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
   }
 
   .ql-snow * {
     box-sizing: border-box;
   }
 
-  .ql-editor > * {
+  .ql-editor>* {
     cursor: text;
   }
 
@@ -287,6 +286,7 @@
 .main {
   &-content {
     .post {
+
       &-title,
       &-tag {
         border: 0;
@@ -418,7 +418,7 @@
     border: 1px dashed $subColor !important;
   }
 
-  .ant-upload.ant-upload-select-picture-card > .ant-upload {
+  .ant-upload.ant-upload-select-picture-card>.ant-upload {
     flex-direction: column;
   }
 
@@ -441,13 +441,16 @@
       border-radius: 3px !important;
       height: 48px;
     }
+
     span {
       &.ant-input-group-addon {
         border: 0;
         padding: 0;
+
         .seires-button-selected {
           border-radius: 3px !important;
           height: 48px;
+
           &:hover,
           &:focus,
           &:active {
@@ -469,7 +472,7 @@
         box-shadow: 0px 0px 3px -1px gray;
 
         .ant-radio-button-wrapper {
-          .ant-radio-button ~ span {
+          .ant-radio-button~span {
             width: 100%;
             font-size: 15px;
           }
@@ -499,7 +502,7 @@
         }
       }
 
-      .ant-radio-button ~ span {
+      .ant-radio-button~span {
         justify-content: space-around;
         width: 100%;
         font-size: 20px;
@@ -524,7 +527,7 @@
         background-color: $subColor;
         border-radius: 3px;
 
-        & ~ span {
+        &~span {
           color: $fontColor;
         }
       }
@@ -547,16 +550,75 @@
 }
 
 .sub-content .ant-col .ant-radio-group .ant-radio-button-wrapper {
-  > span {
+  >span {
     display: flex;
     align-items: center;
   }
 }
 
 .sub-content .ant-col .ant-radio-group.series-group .ant-radio-button-wrapper {
-  > span {
+  >span {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+  }
+}
+
+.ant-modal {
+  &.modal {
+    &-size {
+      &-middle {
+        width: 400px !important;
+      }
+    }
+  }
+
+  .ant-modal-content {
+    padding: 10px;
+    border-radius: 5px;
+
+    .ant-modal-header {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .ant-modal-body {
+      span {
+        font-size: 1rem;
+      }
+    }
+
+    .ant-modal-footer {
+      border-top: 0;
+
+      button {
+
+        &:active,
+        &:focus,
+        &.hover {
+          border: 1px solid;
+        }
+
+        &.ant-btn-default {
+          border-radius: 5px;
+          border-color: white;
+          font-weight: 700;
+        }
+
+        &.ant-btn-primary {
+          border-color: $fontColor;
+          font-weight: 700;
+          border-radius: 5px;
+          background-color: $fontColor;
+          color: $mainColor;
+
+          &:active {
+            border-color: $subColor;
+            background-color: $subColor;
+            color: $fontColor;
+          }
+        }
+      }
+    }
   }
 }

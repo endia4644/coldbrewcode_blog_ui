@@ -1,5 +1,6 @@
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { actions, Types } from "../state";
+import { actions as writeActions } from "../../write/state";
 import { callApi } from "../../../common/util/api";
 import { makeFetchSaga } from "../../../common/util/fetch";
 
@@ -22,12 +23,25 @@ function* fetchAllPost(action, page) {
   }
 }
 
+function* fetchWritePost(action) {
+  const { isSuccess, data } = yield call(callApi, {
+    url: `/post/temp/${action?.id}`,
+  });
+  if (isSuccess && data) {
+    yield put(writeActions.setValue("post", data));
+  }
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function* () {
   yield all([
     takeEvery(
       Types.FetchAllPost,
       makeFetchSaga({ fetchSaga: fetchAllPost, canCache: false })
+    ),
+    takeEvery(
+      Types.FetchWritePost,
+      makeFetchSaga({ fetchSaga: fetchWritePost, canCache: false })
     ),
   ]);
 }

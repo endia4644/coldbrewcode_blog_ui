@@ -23,6 +23,7 @@ db.PostLikeUser = require("./postlikeuser")(sequelize, Sequelize);
 db.TempPost = require("./temppost")(sequelize, Sequelize);
 db.TempHashtag = require("./temphashtag")(sequelize, Sequelize);
 db.TempPostHashtag = require("./tempposthashtag")(sequelize, Sequelize);
+db.TempSeriesPost = require("./tempseriespost")(sequelize, Sequelize);
 
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {

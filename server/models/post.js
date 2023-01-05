@@ -62,6 +62,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(1),
         allowNull: false, //필수
       },
+      TempPostId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      }
     },
     {
       charset: "utf8mb4",
@@ -79,7 +83,6 @@ module.exports = (sequelize, DataTypes) => {
     db.Post.belongsToMany(db.Hashtag, { through: db.PostHashtag });
     db.Post.hasMany(db.Image);
     db.Post.belongsToMany(db.Series, { through: db.SeriesPost });
-    db.Post.belongsTo(db.TempPost);
   };
   return Post;
 };

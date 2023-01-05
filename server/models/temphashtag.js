@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     collate: 'utf8_general_ci'
   });
   TempHashtag.associate = (db) => {
-    db.TempHashtag.belongsToMany(db.TempPost, { through: db.TempPostHashtag })
+    db.TempHashtag.belongsToMany(db.TempPost, { through: db.TempPostHashtag, })
   }
   return TempHashtag;
 }

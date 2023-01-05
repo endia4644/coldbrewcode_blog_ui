@@ -25,6 +25,7 @@ function* fetchCreatePost(action) {
       permission: action.permission,
       seriesName: action.seriesName,
       imageIds: action.imageIds,
+      tempId: action.tempId,
     },
   });
 }
@@ -45,6 +46,7 @@ function* fetchUpdatePost(action) {
       seriesOriName: action.seriesOriName,
       seriesName: action.seriesName,
       imageIds: action.imageIds,
+      tempId: action.tempId,
     },
   });
 }
@@ -101,6 +103,15 @@ function* fetchCreateTempPost(action) {
   });
 }
 
+function* fetchTempPost(action) {
+  const { isSuccess, data } = yield call(callApi, {
+    url: `/post/temp/${action?.id}?id=${action.postId}`,
+  });
+  if (isSuccess && data) {
+    yield put(actions.setValue("post", data));
+  }
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function* () {
   yield all([
@@ -127,6 +138,10 @@ export default function* () {
     takeEvery(
       Types.FetchCreateTempPost,
       makeFetchSaga({ fetchSaga: fetchCreateTempPost, canCache: false })
+    ),
+    takeEvery(
+      Types.FetchTempPost,
+      makeFetchSaga({ fetchSaga: fetchTempPost, canCache: false })
     ),
   ]);
 }

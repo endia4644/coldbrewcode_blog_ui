@@ -5,9 +5,10 @@ import {
 import { Button, Col, List, Space, Typography } from "antd";
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";
+import { actions as writeActions } from "../../write/state";
 import { elapsedTime } from "../../../common/util/util.js";
 import { API_HOST, FetchStatus } from "../../../common/constant";
 import defaultImg from "./../../../common/images/beans.svg";
@@ -30,6 +31,13 @@ export default function Post() {
   const post = useSelector((state) => state.temp.post);
 
   const { fetchStatus, totalCount } = useFetchInfo(Types.FetchAllPost);
+
+  function handleOnClick({ id }) {
+    dispatch(actions.fetchWritePost({ id }))
+    dispatch(writeActions.setValue("postType", "temp"));
+    dispatch(writeActions.setValue("tempId", id));
+    navigate('/blog/write');
+  }
 
   useEffect(() => {
     let observer;
@@ -89,7 +97,7 @@ export default function Post() {
               <div className="thumbnail-wrappper">
                 <div className="thumbnail">
                   <img
-                    onClick={() => navigate(`/blog/post/${item?.id}`)}
+                    onClick={() => handleOnClick({ id: item?.id })}
                     style={{ cursor: 'pointer' }}
                     alt="logo"
                     src={`${API_HOST}/${item?.postThumbnail}`}
@@ -97,9 +105,7 @@ export default function Post() {
                   />
                 </div>
               </div>
-              <Typography.Title>
-                <Link to={`/blog/post/${item.id}`}>{item.postName ?? 'Temp Name'}</Link>
-              </Typography.Title>
+              <Button className="button-type-anchor" onClick={() => handleOnClick({ id: item?.id })}>{item.postName ?? 'Temp Name'}</Button>
               <List.Item.Meta />
               <Typography.Paragraph
                 style={{ minHeight: 66 }}
