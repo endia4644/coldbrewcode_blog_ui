@@ -1,0 +1,71 @@
+import { Button, Col, Divider, Input, message, Row, Tooltip, Typography } from "antd"
+import React, { useRef } from "react"
+import { useDispatch, useSelector } from "react-redux";
+import { actions } from "../state";
+
+export default function BottomName() {
+  const dispatch = useDispatch();
+  const user = useSelector(state => state.auth.user);
+  const nickNameUpdate = useSelector(state => state.setting.nickNameUpdate);
+  const nickName = useSelector(state => state.setting.nickName);
+  const nickNameRef = useRef(null);
+
+  const onHandleUpdate = () => {
+    const regEx = /^[0-9a-zA-Zㄱ-힣]{1,10}$/g
+    if (!nickName) {
+      message.error("닉네임을 입력해주세요!");
+      dispatch(actions.setValue("nickName", ""));
+      nickNameRef.current.focus();
+      return;
+    }
+
+    if (!regEx.test(nickName)) {
+      message.error("10자 이내의 한/영/숫자만 입력해주세요!");
+      dispatch(actions.setValue("nickName", ""));
+      nickNameRef.current.focus();
+      return;
+    }
+
+    /* 닉네임 변경 사가함수 호출 */
+    dispatch(actions.fetchUpdateNickName({ nickName }));
+  }
+
+  return (
+    <>
+      <Divider className="bottom_name" />
+      <Row justify="center" style={{ width: '100%' }} className="box-flex-start bottom_name">
+        <Col style={{ marginRight: 30, width: 160 }}>
+          {nickNameUpdate && <>
+            <Tooltip title="10자 이내의 한/영/숫자로 입력해주세요.">
+              <Input
+                ref={nickNameRef}
+                style={{
+                  width: 160,
+                }}
+                defaultValue={user?.nickName} placeholder="닉네임을 입력해주세요"
+                onChange={(e) => dispatch(actions.setValue("nickName", e.target.value))}
+                maxLength={10}
+                value={nickName}
+              />
+            </Tooltip>
+          </>}
+          {!nickNameUpdate &&
+            <>
+              <Typography.Title level={4} className="top_name" style={{ minWidth: 140, color: '#d8b48b' }}>
+                {user?.nickName ?? 'noNamed'}
+              </Typography.Title>
+            </>
+          }
+        </Col>
+        <Col>
+          {nickNameUpdate &&
+            <Button className="button-type-round button-color-normal" onClick={onHandleUpdate}>완료</Button>
+          }
+          {!nickNameUpdate &&
+            <Button className="button-type-round button-color-normal" onClick={() => dispatch(actions.setValue("nickNameUpdate", !nickNameUpdate))}>수정</Button>
+          }
+        </Col>
+      </Row>
+    </>
+  )
+}

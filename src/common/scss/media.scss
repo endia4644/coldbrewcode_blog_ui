@@ -215,6 +215,16 @@
       margin-top: 7.5rem !important;
     }
 
+    .setting-wrap {
+      width: 100% !important;
+      padding-left: 1rem;
+      padding-right: 1rem;
+
+      .top-name {
+        display: none !important;
+      }
+    }
+
     .post-name {
       font-size: 2.25rem !important;
     }
@@ -328,5 +338,9 @@
   .ant-back-top {
     right: 120px !important;
     bottom: 70px !important;
+  }
+
+  .bottom_name {
+    display: none !important;
   }
 }

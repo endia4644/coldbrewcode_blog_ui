@@ -198,7 +198,7 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
           data: {
             id: user.id,
             email: user.email,
-            nickname: user.nickname,
+            nickName: user.nickName,
             introduce: user.introduce,
             userType: user.userType,
             profileImg: user.profileImg,
@@ -238,7 +238,7 @@ router.get("/user", async (req, res, next) => {
       attributes: [
         "id",
         "email",
-        "nickname",
+        "nickName",
         "userType",
         "profileImg",
         "commentNoticeYsno",

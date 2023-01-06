@@ -16,6 +16,8 @@ import likeReducer from "../blog/like/state";
 import likeSaga from "../blog/like/state/saga";
 import tempReducer from "../blog/temp/state";
 import tempSaga from "../blog/temp/state/saga";
+import settingReducer from "../blog/setting/state";
+import settingSaga from "../blog/setting/state/saga";
 
 const reducer = combineReducers({
   common: commonReducer,
@@ -26,6 +28,7 @@ const reducer = combineReducers({
   series: seriesReducer,
   like: likeReducer,
   temp: tempReducer,
+  setting: settingReducer,
 });
 const sagaMiddleware = createSagaMiddleware();
 const composeEnhancers =
@@ -36,7 +39,7 @@ const store = createStore(
 );
 
 function* rootSaga() {
-  yield all([mainSaga(), writeSaga(), authSaga(), postSaga(), seriesSaga(), likeSaga(), tempSaga()]);
+  yield all([mainSaga(), writeSaga(), authSaga(), postSaga(), seriesSaga(), likeSaga(), tempSaga(), settingSaga()]);
 }
 sagaMiddleware.run(rootSaga);
 

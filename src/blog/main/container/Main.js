@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import Settings from "../components/Settings";
 import SideBar from "../components/SideBar";
 import TopBar from "../components/TopBar";
-import UserInfo from "./UserInfo";
+import UserInfo from "../components/UserInfo";
 import Post from "../components/Post";
 import { useDispatch, useSelector } from "react-redux";
 import { actions } from "../state";

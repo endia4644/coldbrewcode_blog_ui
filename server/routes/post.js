@@ -60,7 +60,6 @@ router.post("/", isLoggedIn, async (req, res, next) => {
             saveYsno: true,
             PostId: newPost?.id ?? null,
             TempPostId: null,
-            UserId: req.user.id ?? null,
           },
           {
             where: {
@@ -203,7 +202,6 @@ router.patch("/", async (req, res, next) => {
         {
           saveYsno: false,
           PostId: null,
-          UserId: null
         },
         {
           where: {
@@ -220,7 +218,6 @@ router.patch("/", async (req, res, next) => {
           {
             saveYsno: true,
             PostId: req.body.postId ?? null,
-            UserId: req.user.id ?? null
           },
           {
             where: {
@@ -553,7 +550,6 @@ router.post("/temp", isLoggedIn, async (req, res, next) => {
           {
             saveYsno: true,
             TempPostId: newTempPost?.id ?? null,
-            UserId: req.user.id ?? null,
           },
           {
             where: {

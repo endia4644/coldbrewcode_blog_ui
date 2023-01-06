@@ -33,7 +33,7 @@ export default function Settings({ logout }) {
       label: "로그아웃",
     },
   ];
-  function menuClick({ item, key }) {
+  function menuClick({ key }) {
     switch (key) {
       case "1":
         navigate('/blog/temp/post')
@@ -42,6 +42,7 @@ export default function Settings({ logout }) {
         navigate('/blog/like/post')
         break;
       case "3":
+        navigate('/blog/user/setting')
         break;
       case "4":
         logout();

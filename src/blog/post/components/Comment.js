@@ -33,7 +33,7 @@ export default function Comments({ data, postId, parentId }) {
         author={
           <Row>
             <Col>
-              <span>{data?.User?.nickname}</span>
+              <span>{data?.User?.nickName}</span>
             </Col>
             {user?.id === data?.User?.id && (
               <Col>
@@ -128,7 +128,7 @@ export default function Comments({ data, postId, parentId }) {
           author={
             <Row>
               <Col>
-                <span>{data?.User?.nickname}</span>
+                <span>{data?.User?.nickName}</span>
               </Col>
             </Row>
           }

@@ -21,6 +21,7 @@ import NotFound from "./common/container/NotFound";
 import Series from "./blog/series/container/Series";
 import Like from "./blog/like/container/Like";
 import Temp from "./blog/temp/container/Temp";
+import Setting from "./blog/setting/container/Setting";
 
 export default function App() {
   function setScreenSize() {
@@ -98,6 +99,7 @@ export default function App() {
             <Route path="/blog/series/:id" element={<Series />} />
             <Route path="/blog/like/post" element={<Like />} />
             <Route path="/blog/temp/post" element={<Temp />} />
+            <Route path="/blog/user/setting" element={<Setting />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>

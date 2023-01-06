@@ -10,7 +10,7 @@ import Post from "../components/Post";
 import useNeedLogin from "../../../common/hook/useNeedLogin";
 import { FetchStatus } from "../../../common/constant";
 
-export default function Like() {
+export default function Temp() {
   useNeedLogin();
   const dispatch = useDispatch();
 

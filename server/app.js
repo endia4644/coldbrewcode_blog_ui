@@ -16,6 +16,7 @@ const commentRouter = require("./routes/comment");
 const seriesRouter = require("./routes/series");
 const hashtagRouter = require("./routes/hashtag");
 const imageRouter = require("./routes/image");
+const userRouter = require("./routes/user");
 const { makeResponse } = require("./util");
 
 const app = express();
@@ -69,6 +70,7 @@ app.use("/comment", commentRouter);
 app.use("/series", seriesRouter);
 app.use("/hashtag", hashtagRouter);
 app.use("/image", imageRouter);
+app.use("/user", userRouter);
 
 app.use(function (error, req, res, next) {
   // 에러 헨들링
