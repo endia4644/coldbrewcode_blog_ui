@@ -112,6 +112,13 @@ function* fetchTempPost(action) {
   }
 }
 
+function* fetchDeleteTempPost(action) {
+  yield call(callApi, {
+    url: `/post/temp/${action?.id}`,
+    method: "delete"
+  });
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function* () {
   yield all([
@@ -142,6 +149,10 @@ export default function* () {
     takeEvery(
       Types.FetchTempPost,
       makeFetchSaga({ fetchSaga: fetchTempPost, canCache: false })
+    ),
+    takeEvery(
+      Types.FetchDeleteTempPost,
+      makeFetchSaga({ fetchSaga: fetchDeleteTempPost, canCache: false })
     ),
   ]);
 }

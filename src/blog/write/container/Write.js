@@ -1,9 +1,9 @@
-import React, { createContext, useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Content, Footer } from "antd/lib/layout/layout";
 import "react-quill/dist/quill.snow.css";
 import Editor from "../components/Editor";
 import { Button, Col, Divider, Input, message, Modal, Row, Space, Typography } from "antd";
-import { ArrowLeftOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom"; // 설치한 패키지
 import "../scss/write.scss";
 import { useDispatch, useSelector } from "react-redux";
@@ -55,7 +55,13 @@ export default function Write() {
     dispatch(actions.setValue("tempId", post?.TempPostId));
     setOpen(false);
   };
+
   const handleCancel = () => {
+    setOpen(false);
+  };
+
+  const handleRmovee = () => {
+    dispatch(actions.fetchDeleteTempPost({ id: post?.TempPostId }))
     setOpen(false);
   };
 
@@ -342,13 +348,35 @@ export default function Write() {
       </Footer>
       <Modal
         className="modal-size-middle"
-        title={<><Typography.Title level={3}>임시 포스트 불러오기</Typography.Title></>}
+        key="modal"
+        title={<Typography.Title level={3}>임시 포스트 불러오기</Typography.Title>}
         open={open}
         onOk={handleOk}
         closable={false}
         onCancel={handleCancel}
         okText="확인"
         cancelText="취소"
+        footer={
+          <>
+            <div className="left-box" key="left-box">
+              <Button key="back" className="button-type-round button-color-red" onClick={handleRmovee}>
+                삭제
+              </Button>
+            </div>
+            <div className="right-box" key="right-box">
+              <Button key="submit" className="button-type-round button-color-white" onClick={handleOk}>
+                취소
+              </Button>
+              <Button
+                key="remove"
+                className="button-type-round button-color-normal"
+                onClick={handleOk}
+              >
+                확인
+              </Button>
+            </div>
+          </>
+        }
       >
         <Typography.Text>임시저장된 포스트를 불러오시겠습니까?</Typography.Text>
       </Modal>

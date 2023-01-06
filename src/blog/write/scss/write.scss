@@ -590,6 +590,8 @@
 
     .ant-modal-footer {
       border-top: 0;
+      display: flex;
+      justify-content: space-between;
 
       button {
 

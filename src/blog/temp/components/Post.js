@@ -47,18 +47,20 @@ export default function Post() {
     setDelTempId(id);
     setOpen(true);
   };
+
   const handleOk = () => {
     dispatch(actions.fetchDeleteTempPost({ id: delTempId, post }))
     setOpen(false);
   };
+
   const handleCancel = () => {
     setDelTempId("");
     setOpen(false);
   };
 
-
   useEffect(() => {
     let observer;
+    console.log(targetRef.current)
     if (targetRef.current) {
       observer = new IntersectionObserver((entries, observer) => {
         entries.forEach((entry) => {
@@ -163,18 +165,20 @@ export default function Post() {
         style={{ width: "100%", height: 10 }}
         ref={targetRef}
       />
-      <Modal
-        className="modal-size-middle"
-        title={<><Typography.Title level={3}>임시 글 삭제</Typography.Title></>}
-        open={open}
-        onOk={handleOk}
-        closable={false}
-        onCancel={handleCancel}
-        okText="확인"
-        cancelText="취소"
-      >
-        <Typography.Text>임시 저장한 글을 삭제하시겠습니까?<br />삭제한 글은 복구할 수 없습니다.</Typography.Text>
-      </Modal>
+      {post?.length > 0 && <>
+        <Modal
+          className="modal-size-middle"
+          title={<><Typography.Title level={3}>임시 글 삭제</Typography.Title></>}
+          open={open}
+          onOk={handleOk}
+          closable={false}
+          onCancel={handleCancel}
+          okText="확인"
+          cancelText="취소"
+        >
+          <Typography.Text>임시 저장한 글을 삭제하시겠습니까?<br />삭제한 글은 복구할 수 없습니다.</Typography.Text>
+        </Modal>
+      </>}
     </>
   );
 }

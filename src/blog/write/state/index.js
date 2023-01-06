@@ -1,6 +1,7 @@
 import {
   createReducer,
   createSetValueAction,
+  FETCH_KEY,
   setValueReducer,
 } from "../../../common/redux-helper";
 
@@ -13,6 +14,7 @@ export const Types = {
   FetchCreateSeries: "write/FetchCreateSeries",
   FetchCreateTempPost: "write/FetchCreateTempPost",
   FetchTempPost: "write/FetchTempPost",
+  FetchDeleteTempPost: "write/FetchDeleteTempPost"
 };
 
 export const actions = {
@@ -102,7 +104,12 @@ export const actions = {
     type: Types.FetchTempPost,
     id,
     postId,
-  })
+  }),
+  fetchDeleteTempPost: ({ id }) => ({
+    type: Types.FetchDeleteTempPost,
+    id,
+    [FETCH_KEY]: id
+  }),
 };
 export const INITINAL_STATE = {
   post: null,
