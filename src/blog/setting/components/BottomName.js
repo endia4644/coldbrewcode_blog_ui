@@ -85,10 +85,10 @@ export default function BottomName() {
         </Col>
         <Col>
           {nickNameUpdate &&
-            <Button className="button-type-round button-color-normal" onClick={onHandleUpdate}>완료</Button>
+            <Button className="button-type-round button-color-normal" style={{ width: 86.63 }} onClick={onHandleUpdate}>완료</Button>
           }
           {!nickNameUpdate &&
-            <Button className="button-type-round button-color-normal" onClick={() => dispatch(actions.setValue("nickNameUpdate", !nickNameUpdate))}>수정</Button>
+            <Button className="button-type-round button-color-normal" style={{ width: 86.63 }} onClick={() => dispatch(actions.setValue("nickNameUpdate", !nickNameUpdate))}>수정</Button>
           }
         </Col>
       </Row>

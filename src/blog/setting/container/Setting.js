@@ -40,7 +40,7 @@ export default function Setting() {
           <Col style={{ marginRight: 30 }}>
             <Typography.Title level={4} style={{ minWidth: 160 }}>이메일 주소</Typography.Title>
           </Col>
-          <Col style={{ minWidth: 100 }}>
+          <Col>
             <Typography.Text>이메일</Typography.Text>
           </Col>
         </Row>
@@ -49,7 +49,7 @@ export default function Setting() {
           <Col style={{ marginRight: 30 }}>
             <Typography.Title level={4} style={{ minWidth: 160 }}>이메일 수신설정</Typography.Title>
           </Col>
-          <Col style={{ minWidth: 100 }}>
+          <Col>
             <Typography.Text>이메일</Typography.Text>
           </Col>
         </Row>
@@ -59,7 +59,7 @@ export default function Setting() {
           <Col style={{ marginRight: 30 }}>
             <Typography.Title level={4} style={{ minWidth: 160 }}>회원 탈퇴</Typography.Title>
           </Col>
-          <Col style={{ minWidth: 100 }}>
+          <Col>
             <Button className="button-type-round button-color-red">회원 탈퇴</Button>
           </Col>
         </Row>
