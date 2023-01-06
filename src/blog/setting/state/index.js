@@ -8,7 +8,10 @@ export const Types = {
   SetValue: "setting/SetValue",
   FetchDeleteProfileImg: "setting/FetchDeleteProfileImg",
   FetchCreateProfileImg: "setting/FetchCreateProfileImg",
-  FetchUpdateNickName: "setting/FetchUpdateNickName"
+  FetchUpdateNickName: "setting/FetchUpdateNickName",
+  FetchUpdateCommentNoticeYsno: "setting/FetchUpdateCommentNoticeYsno",
+  FetchUpdateNewPostNoticeYsno: "setting/FetchUpdateNewPostNoticeYsno",
+  FetchSignOutUser: "setting/FetchSignOutUser",
 };
 
 export const actions = {
@@ -24,6 +27,17 @@ export const actions = {
   fetchUpdateNickName: ({ nickName }) => ({
     type: Types.FetchUpdateNickName,
     nickName
+  }),
+  fetchUpdateCommentNoticeYsno: ({ commentNoticeYsno }) => ({
+    type: Types.FetchUpdateCommentNoticeYsno,
+    commentNoticeYsno
+  }),
+  fetchUpdateNewPostNoticeYsno: ({ newPostNoticeYsno }) => ({
+    type: Types.FetchUpdateNewPostNoticeYsno,
+    newPostNoticeYsno
+  }),
+  fetchSignOutUser: () => ({
+    type: Types.FetchSignOutUser,
   }),
 };
 const INITINAL_STATE = {

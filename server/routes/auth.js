@@ -127,55 +127,6 @@ router.post("/email", isNotLoggedIn, async (req, res, next) => {
   }
 });
 
-router.patch("/", isLoggedIn, async (req, res, next) => {
-  const param = {};
-  if (req.query.commentNoticeYsno) {
-    param["commentNoticeYsno"] = req.query.commentNoticeYsno;
-  }
-  if (req.query.newPostNoticeYsno) {
-    param["newPostNoticeYsno"] = req.query.newPostNoticeYsno;
-  }
-  try {
-    await db.User.update(param, {
-      where: {
-        id: req.user.id,
-        dltYsno: "N",
-      },
-    });
-    return res.send("수정되었습니다.");
-  } catch (err) {
-    return res.json(
-      makeResponse({
-        resultCode: -1,
-        resultMessage: "오류가 발생했습니다.",
-      })
-    );
-  }
-});
-
-router.delete("/", isLoggedIn, async (req, res, next) => {
-  try {
-    await db.User.update(
-      {
-        dltYsno: "Y",
-      },
-      {
-        where: {
-          id: req.user.id,
-        },
-      }
-    );
-    return res.send("삭제되었습니다.");
-  } catch (err) {
-    return res.json(
-      makeResponse({
-        resultCode: -1,
-        resultMessage: "처리 중 오류가 발생했습니다.",
-      })
-    );
-  }
-});
-
 router.post("/login", isNotLoggedIn, (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
@@ -231,6 +182,45 @@ router.get("/logout", isLoggedIn, (req, res) => {
   }
 });
 
+router.patch("/signout", isLoggedIn, async (req, res) => {
+  if (req.isAuthenticated()) {
+    try {
+      await db.User.update(
+        {
+          dltYsno: 'Y'
+        },
+        {
+          where: {
+            id: req?.user?.id
+          }
+        }
+      )
+    } catch (err) {
+      return res.json(
+        makeResponse({
+          resultCode: -1,
+          resultMessage: "회원탈퇴 중 오류가 발생했습니다.",
+        })
+      );
+    }
+    req.logout((done) => {
+      if (done) {
+        return res.status(500).send(
+          makeResponse({
+            resultCode: -1,
+            resultMessage: "회원탈퇴 중 오류가 발생했습니다.",
+          })
+        );
+      } else {
+        req.session.destroy(null); // 선택사항
+        return res.send(
+          makeResponse({ resultMessage: "회원탈퇴 되었습니다." })
+        );
+      }
+    });
+  }
+});
+
 router.get("/user", async (req, res, next) => {
   try {
     const user = await db.User.findOne({
@@ -254,29 +244,6 @@ router.get("/user", async (req, res, next) => {
       })
     );
   }
-});
-
-router.post("/profile", isLoggedIn, async (req, res) => {
-  try {
-    await db.User.update(
-      {
-        profileImg: req.body.filename,
-      },
-      {
-        where: {
-          id: req.user.id,
-        },
-      }
-    );
-  } catch (err) {
-    return res.json(
-      makeResponse({
-        resultCode: -1,
-        resultMessage: "오류가 발생했습니다.",
-      })
-    );
-  }
-  res.json(req.body.filename);
 });
 
 function randomString() {

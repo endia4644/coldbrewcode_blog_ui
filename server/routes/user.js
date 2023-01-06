@@ -41,5 +41,75 @@ router.patch('/nickname', isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.patch('/commentNoticeYsno', isLoggedIn, async (req, res, next) => {
+  try {
+    //* 트랜잭션 설정
+    await db.sequelize.transaction(async (t) => {
+      await db.User.update(
+        {
+          commentNoticeYsno: req?.body?.commentNoticeYsno
+        },
+        {
+          where: {
+            id: {
+              [Op.eq]: req?.user?.id
+            }
+          },
+          transaction: t // 이 쿼리를 트랜잭션 처리
+        }
+      );
+
+      const user = await db.User.findOne({
+        attributes: { exclude: ['password'] },
+        transaction: t // 이 쿼리를 트랜잭션 처리
+      })
+
+      res.send(makeResponse({ data: user }));
+    })
+  } catch (err) {
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "댓글알림 사용여부 변경 중 오류가 발생했습니다.",
+      })
+    );
+  }
+});
+
+router.patch('/newPostNoticeYsno', isLoggedIn, async (req, res, next) => {
+  try {
+    //* 트랜잭션 설정
+    await db.sequelize.transaction(async (t) => {
+      await db.User.update(
+        {
+          newPostNoticeYsno: req?.body?.newPostNoticeYsno
+        },
+        {
+          where: {
+            id: {
+              [Op.eq]: req?.user?.id
+            }
+          },
+          transaction: t // 이 쿼리를 트랜잭션 처리
+        }
+      );
+
+      const user = await db.User.findOne({
+        attributes: { exclude: ['password'] },
+        transaction: t // 이 쿼리를 트랜잭션 처리
+      })
+
+      res.send(makeResponse({ data: user }));
+    })
+  } catch (err) {
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "새글 소식 알림 사용여부 변경 중 오류가 발생했습니다.",
+      })
+    );
+  }
+});
+
 
 module.exports = router;

@@ -40,6 +40,38 @@ function* fetchUpdateNickName({ nickName }) {
   }
 }
 
+function* fetchUpdateCommentNoticeYsno({ commentNoticeYsno }) {
+  const { isSuccess, data } = yield call(callApi, {
+    url: "/user/commentNoticeYsno",
+    method: 'patch',
+    data: { commentNoticeYsno }
+  });
+  if (isSuccess && data) {
+    yield put(authActions.setValue("user", data));
+  }
+}
+
+function* fetchUpdateNewPostNoticeYsno({ newPostNoticeYsno }) {
+  const { isSuccess, data } = yield call(callApi, {
+    url: "/user/newPostNoticeYsno",
+    method: 'patch',
+    data: { newPostNoticeYsno }
+  });
+  if (isSuccess && data) {
+    yield put(authActions.setValue("user", data));
+  }
+}
+
+function* fetchSignOutUser() {
+  const { isSuccess, data } = yield call(callApi, {
+    url: "/auth/signout",
+    method: 'patch',
+  });
+  if (isSuccess && data) {
+    yield put(authActions.setValue("user", null));
+  }
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function* () {
   yield all([
@@ -54,6 +86,18 @@ export default function* () {
     takeEvery(
       Types.FetchUpdateNickName,
       makeFetchSaga({ fetchSaga: fetchUpdateNickName, canCache: false })
+    ),
+    takeEvery(
+      Types.FetchUpdateCommentNoticeYsno,
+      makeFetchSaga({ fetchSaga: fetchUpdateCommentNoticeYsno, canCache: false })
+    ),
+    takeEvery(
+      Types.FetchUpdateNewPostNoticeYsno,
+      makeFetchSaga({ fetchSaga: fetchUpdateNewPostNoticeYsno, canCache: false })
+    ),
+    takeEvery(
+      Types.FetchSignOutUser,
+      makeFetchSaga({ fetchSaga: fetchSignOutUser, canCache: false })
     ),
   ]);
 }

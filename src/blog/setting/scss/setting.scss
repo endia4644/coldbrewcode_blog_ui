@@ -30,9 +30,18 @@
         margin-top: 7rem;
         margin-left: auto;
         margin-right: auto;
+        padding-top: 1rem;
         padding-bottom: 5rem;
         padding-left: 1rem;
         padding-right: 1rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        .ant-switch-checked {
+          background-color: $subColor;
+        }
+
+        .ant-btn-primary {}
       }
     }
   }
@@ -79,5 +88,30 @@ input[type="text"] {
 .top-name {
   input[type="text"] {
     border-radius: 5px 0px 0px 5px / 5px 0px 0px 5px !important;
+  }
+}
+
+.ant-modal-footer {
+  justify-content: flex-end !important;
+
+  button {
+    border: 1px;
+  }
+
+  .ant-btn-primary {
+    background: #fa1131 !important;
+    color: white !important;
+    font-weight: 700 !important;
+
+    &:hover,
+    &:focus {
+      border-color: #634426 !important;
+      background-color: #634426 !important;
+      color: #d8b48b !important;
+    }
+  }
+
+  .ant-btn-default {
+    box-shadow: 0px 0px 0px 0px;
   }
 }

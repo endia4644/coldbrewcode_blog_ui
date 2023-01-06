@@ -19,7 +19,7 @@ export default function BottomName() {
     if (!nickName) {
       dispatch(actions.setValue("nickName", user?.nickName));
     }
-  }, [])
+  }, [user])
 
   useEffect(() => {
     if (fetchStatus === FetchStatus.Success) {
