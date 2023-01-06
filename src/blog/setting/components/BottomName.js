@@ -1,7 +1,10 @@
 import { Button, Col, Divider, Input, message, Row, Tooltip, Typography } from "antd"
-import React, { useRef } from "react"
+import React, { useEffect, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux";
-import { actions } from "../state";
+import { actions, Types } from "../state";
+import { actions as commonActions } from "../../../common/state";
+import useFetchInfo from "../../../common/hook/useFetchInfo";
+import { FetchStatus } from "../../../common/constant";
 
 export default function BottomName() {
   const dispatch = useDispatch();
@@ -9,6 +12,29 @@ export default function BottomName() {
   const nickNameUpdate = useSelector(state => state.setting.nickNameUpdate);
   const nickName = useSelector(state => state.setting.nickName);
   const nickNameRef = useRef(null);
+  const { fetchStatus } = useFetchInfo(Types.FetchUpdateNickName);
+
+  useEffect(() => {
+    /* 닉네임값 초기세팅 -> 수정 시 기본값 세팅 */
+    if (!nickName) {
+      dispatch(actions.setValue("nickName", user?.nickName));
+    }
+  }, [])
+
+  useEffect(() => {
+    if (fetchStatus === FetchStatus.Success) {
+      dispatch(actions.setValue("nickNameUpdate", false));
+      const params = {
+        actionType: Types.FetchUpdateNickName,
+        status: FetchStatus.Delete,
+      };
+      dispatch(commonActions.setFetchStatus(params))
+    }
+    if (fetchStatus === FetchStatus.Fail) {
+      dispatch(actions.setValue("nickNameUpdate", false));
+      dispatch(actions.setValue("nickName", user?.nickName));
+    }
+  }, [fetchStatus])
 
   const onHandleUpdate = () => {
     const regEx = /^[0-9a-zA-Zㄱ-힣]{1,10}$/g

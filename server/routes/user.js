@@ -10,7 +10,7 @@ router.patch('/nickname', isLoggedIn, async (req, res, next) => {
   try {
     //* 트랜잭션 설정
     await db.sequelize.transaction(async (t) => {
-      db.User.update(
+      await db.User.update(
         {
           nickName: req?.body?.nickName
         },
@@ -32,7 +32,6 @@ router.patch('/nickname', isLoggedIn, async (req, res, next) => {
       res.send(makeResponse({ data: user }));
     })
   } catch (err) {
-    console.log('여기');
     return res.json(
       makeResponse({
         resultCode: -1,

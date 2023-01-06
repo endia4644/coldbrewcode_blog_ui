@@ -37,7 +37,6 @@ export default function Write() {
   const postType = useSelector(state => state.write.postType);
   const tempId = useSelector(state => state.write.tempId);
 
-
   const { fetchStatus: tfetchStatus } = useFetchInfo(Types.FetchCreateTempPost);
 
   const [level, setLevel] = useState(0);

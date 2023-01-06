@@ -1,7 +1,10 @@
 import { Button, Col, Input, message, Tooltip, Typography } from "antd"
-import React, { useRef } from "react"
+import React, { useEffect, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux";
-import { actions } from "../state";
+import { FetchStatus } from "../../../common/constant";
+import useFetchInfo from "../../../common/hook/useFetchInfo";
+import { actions, Types } from "../state";
+import { actions as commonActions } from "../../../common/state";
 
 export default function TopName() {
   const dispatch = useDispatch();
@@ -9,6 +12,29 @@ export default function TopName() {
   const nickNameUpdate = useSelector(state => state.setting.nickNameUpdate);
   const nickName = useSelector(state => state.setting.nickName)
   const nickNameRef = useRef(null);
+  const { fetchStatus } = useFetchInfo(Types.fetchUpdateNickName);
+
+  useEffect(() => {
+    /* 닉네임값 초기세팅 -> 수정 시 기본값 세팅 */
+    if (!nickName) {
+      dispatch(actions.setValue("nickName", user?.nickName));
+    }
+  }, [])
+
+  useEffect(() => {
+    if (fetchStatus === FetchStatus.Success) {
+      dispatch(actions.setValue("nickNameUpdate", false));
+      const params = {
+        actionType: Types.FetchUpdateNickName,
+        status: FetchStatus.Delete,
+      };
+      dispatch(commonActions.setFetchStatus(params))
+    }
+    if (fetchStatus === FetchStatus.Fail) {
+      dispatch(actions.setValue("nickNameUpdate", false));
+      dispatch(actions.setValue("nickName", user?.nickName));
+    }
+  }, [fetchStatus])
 
   const onHandleUpdate = () => {
     const regEx = /^[0-9a-zA-Zㄱ-힣]{1,10}$/g
@@ -39,10 +65,11 @@ export default function TopName() {
             <Input
               ref={nickNameRef}
               style={{
-                width: 'calc(100% - 100px)',
+                width: 160,
               }}
               defaultValue={user?.nickName} placeholder="닉네임을 입력해주세요"
               onChange={(e) => dispatch(actions.setValue("nickName", e.target.value))}
+              maxLength={10}
               value={nickName}
             />
           </Tooltip>
