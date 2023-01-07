@@ -1,6 +1,6 @@
-import { UserOutlined } from "@ant-design/icons";
+import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Dropdown, Menu, Space } from "antd";
-import React from "react";
+import React, { useRef } from "react";
 import { useSelector } from "react-redux";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { API_HOST, AuthStatus } from "../../../common/constant";
@@ -15,6 +15,13 @@ export default function Settings({ logout }) {
   const navigate = useNavigate();
   const status = useSelector((state) => state.auth.status);
   const user = useSelector((state) => state.auth.user);
+  const homeRef = useRef();
+
+  const onClickHome = () => {
+    // @ts-ignore
+    homeRef.current.blur();
+    navigate('/blog');
+  }
   const menuItems = [
     {
       key: "1",
@@ -65,6 +72,13 @@ export default function Settings({ logout }) {
               <Link to={"/blog/write"}>글 작성하기</Link>
             </Button>
           )}
+          <Button
+            ref={homeRef}
+            shape="round"
+            size="large"
+            style={{ padding: '6.4px 10px', border: '1px solid #d9d9d9' }}
+            icon={<HomeOutlined />} onClick={onClickHome}
+          />
           <Dropdown
             overlayClassName="setting-dropbox"
             overlay={<Menu items={menuItems} onClick={menuClick} />}

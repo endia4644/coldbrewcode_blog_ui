@@ -68,6 +68,11 @@ a:hover {
   font-weight: bold;
 }
 
+.ant-menu-item a:hover {
+  color: $mainColor;
+  font-weight: bold;
+}
+
 .ant-menu-item-selected {
   a {
     &:hover {
@@ -416,6 +421,7 @@ a.ant-typography:active {
 .ant-list-item-action-split,
 .ant-tabs-tab-btn,
 .listPost,
+.ant-dropdown-menu-item,
 .ant-empty {
   user-select: none;
 }
