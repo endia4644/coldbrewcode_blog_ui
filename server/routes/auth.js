@@ -185,16 +185,44 @@ router.get("/logout", isLoggedIn, (req, res) => {
 router.patch("/signout", isLoggedIn, async (req, res) => {
   if (req.isAuthenticated()) {
     try {
-      await db.User.update(
-        {
-          dltYsno: 'Y'
-        },
-        {
+      // 트랜잭션 설정
+      await db.sequelize.transaction(async (t) => {
+        const user = await db.User.findOne({
+          attributes: ['email'],
           where: {
             id: req?.user?.id
+          },
+          transaction: t // 트랜잭션 적용
+        })
+        // 프로필 이미지를 삭제가능하게 변경한다.
+        await db.Image.update(
+          {
+            UserId: null,
+            saveYsno: 'N'
+          },
+          {
+            where: {
+              UserId: req?.user?.id
+            },
+            transaction: t // 트랜잭션 적용
           }
-        }
-      )
+        )
+        // 유저 정보를 삭제처리한다.
+        await db.User.update(
+          {
+            email: req?.user?.id,
+            password: user?.email,
+            profileImg: null,
+            dltYsno: 'Y'
+          },
+          {
+            where: {
+              id: req?.user?.id
+            },
+            transaction: t // 트랜잭션 적용
+          }
+        )
+      })
     } catch (err) {
       return res.json(
         makeResponse({
@@ -214,7 +242,7 @@ router.patch("/signout", isLoggedIn, async (req, res) => {
       } else {
         req.session.destroy(null); // 선택사항
         return res.send(
-          makeResponse({ resultMessage: "회원탈퇴 되었습니다." })
+          makeResponse({ data: "OK", resultMessage: "회원탈퇴 되었습니다." })
         );
       }
     });

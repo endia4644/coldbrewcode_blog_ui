@@ -12,7 +12,7 @@ module.exports = () => {
       },
       async (email, password, done) => {
         try {
-          const exUser = await db.User.findOne({ where: { email: email } });
+          const exUser = await db.User.findOne({ where: { email: email, dltYsno: 'N' } });
           if (!exUser) {
             return done(null, false, {
               message: "아이디나 비밀번호를 다시 확인해주세요.",

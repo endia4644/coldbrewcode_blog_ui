@@ -2,9 +2,11 @@ import { Button, Col, Modal, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { FetchStatus } from "../../../common/constant";
+import { AuthStatus, FetchStatus } from "../../../common/constant";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";
+import { actions as authActions } from "../../auth/state";
+import { actions as commonActions } from "../../../common/state";
 
 export default function SignOut() {
   const dispatch = useDispatch();
@@ -28,6 +30,17 @@ export default function SignOut() {
   useEffect(() => {
     if (fetchStatus === FetchStatus.Success) {
       navigate('/blog');
+    }
+  }, [fetchStatus])
+
+  useEffect(() => {
+    return () => {
+      /* 언마운트 시 탈퇴회원은 세션 제거 */
+      if (fetchStatus === FetchStatus.Success) {
+        dispatch(authActions.setValue("user", null));
+        dispatch(authActions.setValue("status", AuthStatus.NotLogin));
+        dispatch(commonActions.setFetchStatus({ actionType: Types.FetchSignOutUser, status: FetchStatus.Delete }))
+      }
     }
   }, [fetchStatus])
 

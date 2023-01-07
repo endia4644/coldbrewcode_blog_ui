@@ -1,9 +1,9 @@
 import { UserOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Menu, Space } from "antd";
+import { Avatar, Button, Dropdown, Menu, Space } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
-import { AuthStatus } from "../../../common/constant";
+import { API_HOST, AuthStatus } from "../../../common/constant";
 
 /**
  *
@@ -71,11 +71,9 @@ export default function Settings({ logout }) {
             trigger={["click"]}
             placement="bottomRight"
           >
-            <Button
-              type="ghost"
-              shape="circle"
-              size="large"
-              icon={<UserOutlined />}
+            <Avatar
+              size={{ xs: 40, sm: 40, md: 40, lg: 40, xl: 40, xxl: 40 }}
+              icon={user?.profileImg ? <img src={`${API_HOST}/${user?.profileImg}`} alt="preview-img" /> : <UserOutlined />}
             />
           </Dropdown>
         </Space>

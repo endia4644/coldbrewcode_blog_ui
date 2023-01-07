@@ -11,7 +11,7 @@ module.exports = () => {
   /* 모든 요청에 실행됨  */
   passport.deserializeUser(async (id, done) => {
     try {
-      const user = await db.User.findOne({ where: { id } });
+      const user = await db.User.findOne({ where: { id, dltYsno: 'N' } });
       return done(null, user); //req.user, req.isAuthenticated() === true
     } catch (err) {
       console.error(err);

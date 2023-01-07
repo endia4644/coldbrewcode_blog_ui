@@ -3,6 +3,7 @@ import { actions, Types } from "../state";
 import { actions as authActions } from "../../auth/state";
 import { callApi } from "../../../common/util/api";
 import { makeFetchSaga } from "../../../common/util/fetch";
+import { AuthStatus } from "../../../common/constant";
 
 function* fetchCreateProfileImg({ formData, fileBlob }) {
   const reader = new FileReader();
@@ -63,13 +64,10 @@ function* fetchUpdateNewPostNoticeYsno({ newPostNoticeYsno }) {
 }
 
 function* fetchSignOutUser() {
-  const { isSuccess, data } = yield call(callApi, {
+  yield call(callApi, {
     url: "/auth/signout",
     method: 'patch',
   });
-  if (isSuccess && data) {
-    yield put(authActions.setValue("user", null));
-  }
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
