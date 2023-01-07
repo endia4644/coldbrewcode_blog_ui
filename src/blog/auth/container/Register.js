@@ -63,11 +63,11 @@ export default function Register() {
   };
 
   const validateNickName = (input, value) => {
-    const regex = /^[a-zA-Z가-힣]{2,10}$/g;
+    const regEx = /^[0-9a-zA-Zㄱ-힣]{1,10}$/g
     if (!value) {
       return Promise.reject(new Error(`${input.field}을 입력해주세요!`));
-    } else if (!regex.test(value)) {
-      return Promise.reject(new Error("한영 2~10자 이내로 입력해주세요!"));
+    } else if (!regEx.test(value)) {
+      return Promise.reject(new Error("한/영/숫자 1~10자 이내로 입력해주세요!"));
     } else {
       return Promise.resolve();
     }
