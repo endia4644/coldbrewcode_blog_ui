@@ -1,5 +1,5 @@
-import { Button, Col, Divider, Row, Space, Typography } from "antd";
-import React, { useEffect, useLayoutEffect } from "react";
+import { Button, Col, Divider, Modal, Row, Space, Typography } from "antd";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { actions, Types } from "../state";
@@ -20,6 +20,7 @@ import PostMoveButton from "../components/PostMoveButton";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { AuthStatus, FetchStatus } from "../../../common/constant";
 import CommentForm from "../components/CommentForm";
+import ButtonGroup from "antd/lib/button/button-group";
 
 export default function Post() {
   const { id } = useParams();
@@ -30,10 +31,26 @@ export default function Post() {
   const comment = useSelector((state) => state.post.comment_0);
   const commentCount = useSelector((state) => state.post.commentCount);
   const { fetchStatus } = useFetchInfo(Types.FetchGetPost, id);
+  const { fetchStatus: dFetchStatus } = useFetchInfo(Types.FetchRemovePost, id);
   const postType = query.get("postType") ?? 'post';
 
   const status = useSelector((state) => state.auth.status);
   const user = useSelector((state) => state.auth.user);
+
+  const [open, setOpen] = useState(false);
+
+  const showModal = () => {
+    setOpen(true);
+  };
+
+  const handleOk = () => {
+    dispatch(actions.fetchRemovePost({ postId: id }))
+    setOpen(false);
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
 
   function logout() {
     dispatch(authActions.fetchLogout());
@@ -47,11 +64,24 @@ export default function Post() {
     dispatch(actions.fetchGetComment(0, id));
   }, [dispatch, id]);
 
+  useEffect(() => {
+    /* 삭제가 성공한 경우 blog 화면으로 이동 */
+    if (dFetchStatus === FetchStatus.Success) {
+      dispatch(mainActions.setValue("series", []));
+      dispatch(commonActions.setFetchStatus({
+        actionType: mainTypes.FetchAllSeries,
+        status: FetchStatus.Delete,
+      }))
+      navigate('/blog');
+    }
+  }, [dFetchStatus])
+
   useLayoutEffect(() => {
     if (fetchStatus !== FetchStatus.Request && !post) {
       navigate("/blog");
     }
   }, [fetchStatus, navigate, post]);
+
 
   useEffect(() => {
     return () => {
@@ -84,15 +114,23 @@ export default function Post() {
                 {post?.postName}
               </Typography.Title>
               {status === AuthStatus.Login && user?.userType === "admin" && (
-                <Button
-                  className="button-type-round button-color-white"
-                  style={{ marginRight: 5 }}
-                  onClick={() => {
-                    navigate(`/blog/write/${id}`)
-                  }}
-                >
-                  수정
-                </Button>
+                <ButtonGroup>
+                  <Button
+                    className="button-type-round button-color-white"
+                    style={{ marginRight: 5 }}
+                    onClick={() => {
+                      navigate(`/blog/write/${id}`)
+                    }}
+                  >
+                    수정
+                  </Button>
+                  <Button
+                    className="button-type-round button-color-white"
+                    onClick={showModal}
+                  >
+                    삭제
+                  </Button>
+                </ButtonGroup>
               )}
             </Row>
             <Row style={{ marginTop: "2rem" }}>
@@ -168,6 +206,20 @@ export default function Post() {
                 ))}
             </Row>
           </Content>
+          {user?.userType === 'admin' && <>
+            <Modal
+              className="modal-size-middle"
+              title={<><Typography.Title level={3}>게시글 삭제</Typography.Title></>}
+              open={open}
+              onOk={handleOk}
+              closable={false}
+              onCancel={handleCancel}
+              okText="확인"
+              cancelText="취소"
+            >
+              <Typography.Text>게시글을 삭제하시겠습니까?<br />삭제한 글은 복구할 수 없습니다.</Typography.Text>
+            </Modal>
+          </>}
         </>
       )}
     </>

@@ -5,6 +5,7 @@ const path = require("path");
 const db = require("../models");
 const { Op } = require("sequelize");
 const { makeResponse } = require("../util");
+const { isLoggedIn } = require("./middleware");
 
 const router = express.Router();
 
@@ -21,7 +22,7 @@ const upload = multer({
   limits: { fileSize: 20 * 1024 * 1024 },
 });
 
-router.post("/", upload.single("image"), async (req, res, next) => {
+router.post("/", isLoggedIn, upload.single("image"), async (req, res, next) => {
   console.log(req.body);
   try {
     const result = await db.Image.create({
@@ -39,7 +40,7 @@ router.post("/", upload.single("image"), async (req, res, next) => {
   }
 });
 
-router.post("/profile", upload.single("image"), async (req, res, next) => {
+router.post("/profile", isLoggedIn, upload.single("image"), async (req, res, next) => {
   try {
     //* 트랜잭션 설정
     await db.sequelize.transaction(async (t) => {
@@ -110,7 +111,7 @@ router.post("/profile", upload.single("image"), async (req, res, next) => {
   }
 });
 
-router.delete("/profile", async (req, res, next) => {
+router.delete("/profile", isLoggedIn, async (req, res, next) => {
   try {
     //* 트랜잭션 설정
     await db.sequelize.transaction(async (t) => {

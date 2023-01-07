@@ -122,7 +122,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.patch("/", async (req, res, next) => {
+router.patch("/", isLoggedIn, async (req, res, next) => {
   try {
     //* 트랜잭션 설정
     await db.sequelize.transaction(async (t) => {
@@ -330,7 +330,10 @@ router.get("/", async (req, res, next) => {
       where: {
         postName: postName,
         id: postId,
-        permission: permission
+        permission: permission,
+        dltYsno: {
+          [Op.eq]: 'N'
+        }
       },
       attributes: [
         'id',
@@ -645,7 +648,7 @@ router.get("/temp/:id", isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.delete("/temp/:id", async (req, res, next) => {
+router.delete("/temp/:id", isLoggedIn, async (req, res, next) => {
   try {
     await db.sequelize.transaction(async (t) => {
       await db.TempPost.destroy(
@@ -825,115 +828,142 @@ router.get("/detail/:id", async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
-    const postType = req?.query?.postType ?? 'post';
-    const post = await db.Post.findOne({
-      where: {
-        id: req.params.id,
-      },
-      include: [
-        {
-          model: db.User,
-          attributes: ["id", "email", "nickName", "profileImg"],
-        },
-        {
-          model: db.Hashtag,
-          required: false,
-        },
-        {
-          model: db.User,
-          attributes: [],
-          as: 'likedUser',
-          through: {
-            attributes: [],
-          }
-        },
-      ],
-      order: [
-        ["createdAt", "DESC"],
-      ],
-    });
-    if (post) {
-      const likes = await post.getLikedUser();
-      const likeCurrentUser = req?.user?.id
-        ? await post.hasLikedUser(req.user)
-        : false;
-      const commentCount = await db.Comment.count({
+    await db.sequelize.transaction(async (t) => {
+      const postType = req?.query?.postType ?? 'post';
+      const post = await db.Post.findOne({
         where: {
-          PostId: {
-            [Op.eq]: req.params.id
+          id: {
+            [Op.eq]: req.params.id,
           },
           dltYsno: {
             [Op.eq]: 'N'
           }
-        }
-      })
-      const series = await db.SeriesPost.findOne({
-        attributes: ['SeriesId', 'idx'],
-        where: {
-          PostId: {
-            [Op.eq]: req.params.id
+        },
+        transaction: t, // 이 쿼리를 트랜잭션 처리
+        include: [
+          {
+            model: db.User,
+            attributes: ["id", "email", "nickName", "profileImg"],
+          },
+          {
+            model: db.Hashtag,
+            required: false,
+          },
+          {
+            model: db.User,
+            attributes: [],
+            as: 'likedUser',
+            through: {
+              attributes: [],
+            }
+          },
+          {
+            model: db.Series,
+            required: false,
+            attributes: ["id"],
+            through: { attributes: [] },
+          },
+        ],
+        order: [
+          ["createdAt", "DESC"],
+        ],
+      });
+      if (post) {
+        const likes = await post.getLikedUser();
+        const likeCurrentUser = req?.user?.id
+          ? await post.hasLikedUser(req.user)
+          : false;
+        const commentCount = await db.Comment.count({
+          where: {
+            PostId: {
+              [Op.eq]: req.params.id
+            },
+            dltYsno: {
+              [Op.eq]: 'N'
+            }
+          },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        })
+        const series = await db.SeriesPost.findOne({
+          attributes: ['SeriesId', 'idx'],
+          where: {
+            PostId: {
+              [Op.eq]: req.params.id
+            }
           }
+        })
+        let next = null;
+        let prev = null;
+        let nextOp = {};
+        let prevOp = {};
+        /* 시리즈 인 경우 처리 케이스 */
+        if (postType === 'series') {
+          const nextPost = await db.SeriesPost.findOne({
+            attributes: ['PostId'],
+            where: {
+              SeriesId: {
+                [Op.eq]: series.SeriesId
+              },
+              idx: {
+                [Op.gt]: series.idx
+              }
+            },
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+            order: [["idx", "ASC"]]
+          });
+          nextOp[Op.eq] = nextPost?.PostId;
+          const prevPost = await db.SeriesPost.findOne({
+            attributes: ['PostId'],
+            where: {
+              SeriesId: {
+                [Op.eq]: series.SeriesId
+              },
+              idx: {
+                [Op.lt]: series.idx
+              }
+            },
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+            order: [["idx", "DESC"]]
+          });
+          prevOp[Op.eq] = prevPost?.PostId;
+        } else {
+          nextOp[Op.gt] = req.params.id;
+          prevOp[Op.lt] = req.params.id;
         }
-      })
-      let next = null;
-      let prev = null;
-      let nextOp = {};
-      let prevOp = {};
-      /* 시리즈 인 경우 처리 케이스 */
-      if (postType === 'series') {
-        const nextPost = await db.SeriesPost.findOne({
-          attributes: ['PostId'],
-          where: {
-            SeriesId: {
-              [Op.eq]: series.SeriesId
+        next = await db.Post.findOne(
+          {
+            attributes: ["id", "postName"],
+            where: {
+              id: nextOp,
+              dltYsno: {
+                [Op.eq]: 'N'
+              }
             },
-            idx: {
-              [Op.gt]: series.idx
-            }
-          },
-          order: [["idx", "ASC"]]
-        });
-        nextOp[Op.eq] = nextPost?.PostId;
-        const prevPost = await db.SeriesPost.findOne({
-          attributes: ['PostId'],
-          where: {
-            SeriesId: {
-              [Op.eq]: series.SeriesId
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+            order: [["id", "ASC"]]
+          }
+        )
+        prev = await db.Post.findOne(
+          {
+            attributes: ["id", "postName"],
+            where: {
+              id: prevOp,
+              dltYsno: {
+                [Op.eq]: 'N'
+              }
             },
-            idx: {
-              [Op.lt]: series.idx
-            }
-          },
-          order: [["idx", "DESC"]]
-        });
-        prevOp[Op.eq] = prevPost?.PostId;
-      } else {
-        nextOp[Op.gt] = req.params.id;
-        prevOp[Op.lt] = req.params.id;
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+            order: [["id", "DESC"]]
+          }
+        )
+        post.set("next", next);
+        post.set("prev", prev);
+        post.set("likeCount", likes.length);
+        post.set("likeYsno", likeCurrentUser);
+        post.set("commentCount", commentCount);
       }
-      next = await db.Post.findOne(
-        {
-          attributes: ["id", "postName"],
-          where: {
-            id: nextOp,
-          },
-        }
-      )
-      prev = await db.Post.findOne(
-        {
-          attributes: ["id", "postName"],
-          where: {
-            id: prevOp,
-          },
-        }
-      )
-      post.set("next", next);
-      post.set("prev", prev);
-      post.set("likeCount", likes.length);
-      post.set("likeYsno", likeCurrentUser);
-      post.set("commentCount", commentCount);
-    }
-    return res.send(makeResponse({ data: post }));
+      return res.send(makeResponse({ data: post }));
+    })
   } catch (err) {
     console.error(err);
     next("게시글 조회 중 오류가 발생했습니다");
@@ -1036,30 +1066,62 @@ router.get("/:id/content", async (req, res, next) => {
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", isLoggedIn, async (req, res, next) => {
   try {
     await db.sequelize.transaction(async (t) => {
       await db.Post.update(
         { dltYsno: "Y", seriesId: null },
         {
           where: {
-            id: req.params.id,
+            id: {
+              [Op.eq]: req.params.id,
+            }
           },
           transaction: t, // 이 쿼리를 트랜잭션 처리
         }
       );
-      const deletePost = await db.Post.findOne({
+      const deletePost = await db.SeriesPost.findOne({
         where: {
-          id: req.params.id,
+          PostId: {
+            [Op.eq]: req.params.id,
+          }
         },
         transaction: t, // 이 쿼리를 트랜잭션 처리
-        attributes: ["SeriesId"],
+        attributes: ["SeriesId", "idx"],
       });
-      if (deletePost.SeriesId != null) {
-        const seriesCount = await db.Post.count({
+      if (deletePost?.SeriesId) {
+        await db.SeriesPost.destroy({
           where: {
-            SeriesId: deletePost.SeriesId,
-            dltYsno: "N",
+            SeriesId: {
+              [Op.eq]: deletePost.SeriesId
+            },
+            PostId: {
+              [Op.eq]: req.params.id,
+            }
+          },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        })
+        await db.SeriesPost.update(
+          {
+            idx: literal('idx -1')
+          },
+          {
+            where: {
+              Seriesid: {
+                [Op.eq]: deletePost.SeriesId
+              },
+              idx: {
+                [Op.gt]: deletePost?.idx
+              }
+            },
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+          }
+        )
+        const seriesCount = await db.SeriesPost.count({
+          where: {
+            SeriesId: {
+              [Op.eq]: deletePost.SeriesId,
+            },
           },
           transaction: t, // 이 쿼리를 트랜잭션 처리
         });

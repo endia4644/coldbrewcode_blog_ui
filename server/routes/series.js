@@ -7,7 +7,7 @@ const { makeResponse } = require('../util');
 
 const router = express.Router();
 
-router.post('/', async (req, res, next) => {
+router.post('/', isLoggedIn, async (req, res, next) => {
   try {
     //* 트랜잭션 설정
     await db.sequelize.transaction(async (t) => {
@@ -146,7 +146,7 @@ router.get('/:id', async (req, res, next) => {
 /**
  * 시리즈 정렬 순서 변경 API
  */
-router.patch("/:id/order", async (req, res, next) => {
+router.patch("/:id/order", isLoggedIn, async (req, res, next) => {
   try {
     //* 트랜잭션 설정
     await db.sequelize.transaction(async (t) => {
@@ -170,7 +170,7 @@ router.patch("/:id/order", async (req, res, next) => {
           }
         );
       }
-      const Serieses = await db.Series.findOne({
+      let Serieses = await db.Series.findOne({
         where: {
           id: req.params.id
         },
@@ -186,6 +186,10 @@ router.patch("/:id/order", async (req, res, next) => {
         }],
         order: [[literal('`Posts->SeriesPost`.`idx`'), 'ASC']],
       });
+      if (!Serieses) {
+        Serieses = {};
+        Serieses.Posts = [];
+      }
       const totalCount = await db.Series.count({
         where: {
           id: req.params.id
@@ -214,7 +218,7 @@ router.patch("/:id/order", async (req, res, next) => {
 });
 
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', isLoggedIn, async (req, res, next) => {
   try {
     await db.sequelize.transaction(async (t) => {
       await db.SeriesPost.destroy(

@@ -105,6 +105,13 @@ function* fetchRemoveComment(action) {
   }
 }
 
+function* fetchRemovePost({ postId }) {
+  yield call(callApi, {
+    method: "delete",
+    url: `/post/${postId}`,
+  });
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function* () {
   yield all([
@@ -135,6 +142,10 @@ export default function* () {
     takeLeading(
       Types.FetchRemoveComment,
       makeFetchSaga({ fetchSaga: fetchRemoveComment, canCache: false })
+    ),
+    takeLeading(
+      Types.FetchRemovePost,
+      makeFetchSaga({ fetchSaga: fetchRemovePost, canCache: false })
     ),
   ]);
 }

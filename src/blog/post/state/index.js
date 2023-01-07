@@ -15,6 +15,7 @@ export const Types = {
   FetchAddComment: "post/FetchAddComment",
   FetchUpdateComment: "post/FetchUpdateComment",
   FetchRemoveComment: "post/FetchRemoveComment",
+  FetchRemovePost: "post/FetchRemovePost",
 };
 
 export const actions = {
@@ -80,6 +81,11 @@ export const actions = {
     commentCount,
     postId,
     [FETCH_KEY]: id,
+  }),
+  fetchRemovePost: ({ postId }) => ({
+    type: Types.FetchRemovePost,
+    postId,
+    [FETCH_KEY]: postId,
   }),
 };
 

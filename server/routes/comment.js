@@ -83,7 +83,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.patch("/:id", async (req, res, next) => {
+router.patch("/:id", isLoggedIn, async (req, res, next) => {
   try {
     await db.sequelize.transaction(async (t) => {
       await db.Comment.update(
