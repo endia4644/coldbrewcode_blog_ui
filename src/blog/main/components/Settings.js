@@ -86,6 +86,7 @@ export default function Settings({ logout }) {
             placement="bottomRight"
           >
             <Avatar
+              style={{ marginBottom: 4, boxShadow: '0px 0px 0px 0px' }}
               size={{ xs: 40, sm: 40, md: 40, lg: 40, xl: 40, xxl: 40 }}
               icon={user?.profileImg ? <img src={`${API_HOST}/${user?.profileImg}`} alt="preview-img" /> : <UserOutlined />}
             />
