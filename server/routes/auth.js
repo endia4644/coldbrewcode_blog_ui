@@ -20,10 +20,25 @@ router.post("/signup", isNotLoggedIn, async (req, res, next) => {
       });
       if (exUser) {
         // 이미 회원가입 되어있으면
-        return res.status(403).send(
+        return res.json(
           makeResponse({
             resultCode: -1,
             resultMessage: "이미 가입된 회원입니다.",
+          })
+        );
+      }
+      const exNickName = await db.User.findOne({
+        where: {
+          nickName: req.body.nickName,
+        },
+        transaction: t, // 이 쿼리를 트랜잭션 처리
+      });
+      if (exNickName) {
+        // 이미 회원가입 되어있으면
+        return res.json(
+          makeResponse({
+            resultCode: -1,
+            resultMessage: "중복된 별명입니다.",
           })
         );
       }

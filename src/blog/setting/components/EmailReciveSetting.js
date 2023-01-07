@@ -17,22 +17,26 @@ export default function EmailReciveSetting() {
 
   return (
     <Col style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
-      <Row style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Col style={{ marginRight: 15 }}>
-          <Typography.Title level={5}>댓글알림</Typography.Title>
-        </Col>
-        <Col>
-          <Switch checked={user?.commentNoticeYsno === 'Y' ? true : false} onChange={onChangeComment} />
-        </Col>
-      </Row>
-      <Row style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Col style={{ marginRight: 15 }}>
-          <Typography.Title level={5}>새글 소식 알림</Typography.Title>
-        </Col>
-        <Col>
-          <Switch checked={user?.newPostNoticeYsno === 'Y' ? true : false} onChange={onChangeNewPost} />
-        </Col>
-      </Row>
+      {user?.userType === 'admin' &&
+        <Row style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Col style={{ marginRight: 15 }}>
+            <Typography.Title level={5}>댓글알림</Typography.Title>
+          </Col>
+          <Col>
+            <Switch checked={user?.commentNoticeYsno === 'Y' ? true : false} onChange={onChangeComment} />
+          </Col>
+        </Row>
+      }
+      {user?.userType === 'user' &&
+        <Row style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Col style={{ marginRight: 15 }}>
+            <Typography.Title level={5}>새글 소식 알림</Typography.Title>
+          </Col>
+          <Col>
+            <Switch checked={user?.newPostNoticeYsno === 'Y' ? true : false} onChange={onChangeNewPost} />
+          </Col>
+        </Row>
+      }
     </Col >
   )
 }
