@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form, Input, Button, Typography, Row, Card } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
@@ -8,6 +8,11 @@ import AuthLayout from "../component/AuthLayout";
 import "../scss/auth.scss";
 import { useNavigate } from "react-router-dom";
 import useQuery from "../hook/useQuery";
+import { Types as authTypes } from "../../auth/state";
+import { actions as mainActions, Types as mainTypes } from "../../main/state";
+import { actions as commonActions } from "../../../common/state";
+import useFetchInfo from "../../../common/hook/useFetchInfo";
+import { FetchStatus } from "../../../common/constant";
 
 export default function Login() {
   let query = useQuery();
@@ -16,6 +21,21 @@ export default function Login() {
   function onFinish({ email, password }) {
     dispatch(actions.fetchLogin(email, password));
   }
+
+  const { fetchStatus: inFetchStatus } = useFetchInfo(authTypes.FetchLogin);
+
+  useEffect(() => {
+    /* 로그인 성공 시 메인의 게시글을 초기화 해준다.
+      - 미초기화 시 권한에 따른 게시글이 보이지 않고 기존 게시글이 노출
+    */
+    if (inFetchStatus === FetchStatus.Success) {
+      dispatch(mainActions.setValue('post', []));
+      dispatch(commonActions.setFetchStatus({
+        actionType: mainTypes.FetchAllPost,
+        status: FetchStatus.Delete
+      }))
+    }
+  }, [inFetchStatus])
 
   const navigate = useNavigate();
   return (

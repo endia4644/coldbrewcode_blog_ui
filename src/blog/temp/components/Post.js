@@ -14,6 +14,7 @@ import { elapsedTime } from "../../../common/util/util.js";
 import { API_HOST, FetchStatus } from "../../../common/constant";
 import defaultImg from "./../../../common/images/beans.svg";
 
+
 const IconText = ({ icon, text }) => (
   <Space>
     {React.createElement(icon)}
@@ -31,6 +32,29 @@ export default function Post() {
   const targetRef = useRef(null);
   const post = useSelector((state) => state.temp.post);
   const [delTempId, setDelTempId] = useState("");
+
+  /* 리스트의 엑션바 랜더링 함수 */
+  function action({ item }) {
+    const array = [];
+    array.push(<IconText
+      icon={FieldTimeOutlined}
+      text={elapsedTime(item.createdAt)}
+      key="list-vertical-star-o"
+    />)
+    if (item.permission === "private") {
+      array.push(<IconText
+        icon={LockOutlined}
+        text="비공개"
+        key="list-vertical-message"
+      />)
+    }
+    array.push(<IconText
+      icon={DeleteOutlined}
+      text={<Button onClick={() => showModal(item.id)} className="button-type-round button-color-white">삭제</Button>}
+      key="list-vertical-star-o"
+    />)
+    return array;
+  }
 
   const { fetchStatus, totalCount } = useFetchInfo(Types.FetchAllPost);
 
@@ -60,7 +84,6 @@ export default function Post() {
 
   useEffect(() => {
     let observer;
-    console.log(targetRef.current)
     if (targetRef.current) {
       observer = new IntersectionObserver((entries, observer) => {
         entries.forEach((entry) => {
@@ -99,25 +122,7 @@ export default function Post() {
               className="main-list-item"
               style={{ paddingTop: 30 }}
               key={`post_${item.id}`}
-              actions={[
-                <IconText
-                  icon={FieldTimeOutlined}
-                  text={elapsedTime(item.createdAt)}
-                  key="list-vertical-star-o"
-                />,
-                item.permission === "private" && (
-                  <IconText
-                    icon={LockOutlined}
-                    text="비공개"
-                    key="list-vertical-message"
-                  />
-                ),
-                <IconText
-                  icon={DeleteOutlined}
-                  text={<Button onClick={() => showModal(item.id)} className="button-type-round button-color-white">삭제</Button>}
-                  key="list-vertical-star-o"
-                />,
-              ]}
+              actions={action({ item })}
             >
               <div className="thumbnail-wrappper">
                 <div className="thumbnail">

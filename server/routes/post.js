@@ -295,6 +295,7 @@ router.get("/", async (req, res, next) => {
     const search = req.query.search;
     const postName = {};
     const postIdList = [];
+    const permission = {};
     /* 태그 조회인 경우 */
     if (hashtag) {
       hashtag = await db.Hashtag.findAll({
@@ -319,10 +320,17 @@ router.get("/", async (req, res, next) => {
     } else {
       postName[Op.not] = null;
     }
+    /* 비공개 포스트 필터링 */
+    if (req?.user?.userType === 'admin') {
+      permission[Op.not] = null;
+    } else {
+      permission[Op.eq] = 'public';
+    }
     const posts = await db.Post.findAll({
       where: {
         postName: postName,
         id: postId,
+        permission: permission
       },
       attributes: [
         'id',

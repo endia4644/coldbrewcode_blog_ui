@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { actions, Types } from "../state";
 import { actions as authActions } from "../../auth/state";
+import { actions as mainActions, Types as mainTypes } from "../../main/state";
+import { actions as commonActions } from "../../../common/state";
 import { Content, Header } from "antd/lib/layout/layout";
 import Settings from "../../main/components/Settings";
 import useQuery from "../../auth/hook/useQuery";
@@ -42,14 +44,25 @@ export default function Post() {
   }, [dispatch, id]);
 
   useEffect(() => {
-    dispatch(actions.fetchGetComment(0, id, commentCount));
-  }, [dispatch, id, commentCount]);
+    dispatch(actions.fetchGetComment(0, id));
+  }, [dispatch, id]);
 
   useLayoutEffect(() => {
     if (fetchStatus !== FetchStatus.Request && !post) {
       navigate("/blog");
     }
   }, [fetchStatus, navigate, post]);
+
+  useEffect(() => {
+    return () => {
+      /* 언마운트 시 Main 리스트를 최신화 */
+      dispatch(mainActions.setValue("post", []));
+      dispatch(commonActions.setFetchStatus({
+        actionType: mainTypes.FetchAllPost,
+        status: FetchStatus.Delete,
+      }))
+    }
+  }, [])
 
   return (
     <>

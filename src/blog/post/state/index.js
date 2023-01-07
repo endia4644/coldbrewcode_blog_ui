@@ -39,11 +39,10 @@ export const actions = {
     id: id,
     [FETCH_KEY]: id,
   }),
-  fetchGetComment: (id, postId, commentCount, fetchKey) => ({
+  fetchGetComment: (id, postId, fetchKey) => ({
     type: Types.FetchGetComment,
     id,
     postId,
-    commentCount,
     [FETCH_KEY]: fetchKey,
   }),
   fetchAddComment: ({
