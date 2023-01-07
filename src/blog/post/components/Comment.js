@@ -95,7 +95,7 @@ export default function Comments({ data, postId, parentId }) {
         {data.commentDepth < 2 && expend && (
           <>
             <CommentForm
-              postId
+              postId={postId}
               parentId={data.id}
               commentDepth={Number(data.commentDepth) + 1}
               comment={comment}

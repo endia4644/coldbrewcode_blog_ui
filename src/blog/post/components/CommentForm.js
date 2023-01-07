@@ -22,14 +22,14 @@ export default function CommentForm({
     if (item.commentContent) {
       if (updateYsno) {
         dispatch(
-          actions.fetchUpdateComment(
-            commentId,
+          actions.fetchUpdateComment({
+            id: commentId,
             parentId,
-            item.commentContent,
+            commentContent: item.commentContent,
             commentDepth,
             commentCount,
             postId,
-          )
+          })
         );
         setIsUpdate(false);
       } else {
