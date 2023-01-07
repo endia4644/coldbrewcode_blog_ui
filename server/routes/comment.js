@@ -60,7 +60,7 @@ router.get("/", async (req, res, next) => {
       include: [
         {
           model: db.User,
-          attributes: ["id", "email", "nickName"],
+          attributes: ["id", "email", "nickName", "profileImg"],
         },
       ],
     });
@@ -159,7 +159,7 @@ async function getComment({ parentId, postId, t }) {
       include: [
         {
           model: db.User,
-          attributes: ["id", "email", "nickName"],
+          attributes: ["id", "email", "nickName", "profileImg"],
         },
         {
           /* 대댓글을 조회한다. */
@@ -207,7 +207,7 @@ async function getComment({ parentId, postId, t }) {
       include: [
         {
           model: db.User,
-          attributes: ["id", "email", "nickName"],
+          attributes: ["id", "email", "nickName", "profileImg"],
         },
         {
           /* 대댓글을 조회한다. */
@@ -235,7 +235,7 @@ async function getComment({ parentId, postId, t }) {
           include: [
             {
               model: db.User,
-              attributes: ["id", "email", "nickName"],
+              attributes: ["id", "email", "nickName", "profileImg"],
             },
           ],
           order: [["id", "DESC"]],

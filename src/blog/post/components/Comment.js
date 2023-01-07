@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { actions } from "../state";
 import CommentForm from "./CommentForm";
 import { elapsedTime } from "../../../common/util/util.js";
+import { API_HOST } from "../../../common/constant";
+import { UserOutlined } from "@ant-design/icons";
 
 export default function Comments({ data, postId, parentId }) {
   const dispatch = useDispatch();
@@ -65,7 +67,11 @@ export default function Comments({ data, postId, parentId }) {
           </Row>
         }
         avatar={
-          <Avatar src="https://joeschmoe.io/api/v1/random" alt="Han Solo" />
+          <Avatar
+            style={{ marginBottom: 4, boxShadow: '0px 0px 0px 0px' }}
+            size={{ xs: 40, sm: 40, md: 40, lg: 40, xl: 40, xxl: 40 }}
+            icon={data?.User?.profileImg ? <img src={`${API_HOST}/${data?.User?.profileImg}`} alt="preview-img" /> : <UserOutlined />}
+          />
         }
         content={
           isUpdate ?
@@ -133,7 +139,11 @@ export default function Comments({ data, postId, parentId }) {
             </Row>
           }
           avatar={
-            <Avatar src="https://joeschmoe.io/api/v1/random" alt="Han Solo" />
+            <Avatar
+              style={{ marginBottom: 4, boxShadow: '0px 0px 0px 0px' }}
+              size={{ xs: 40, sm: 40, md: 40, lg: 40, xl: 40, xxl: 40 }}
+              icon={data?.User?.profileImg ? <img src={`${API_HOST}/${data?.User?.profileImg}`} alt="preview-img" /> : <UserOutlined />}
+            />
           }
           content={<p>삭제 된 글입니다.</p>}
           datetime={<span>{elapsedTime(data?.updatedAt)}</span>}

@@ -204,3 +204,15 @@
     }
   }
 }
+
+.ant-comment-avatar {
+  cursor: default !important;
+
+  .ant-avatar {
+    img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+  }
+}

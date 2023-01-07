@@ -104,7 +104,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
         include: [
           {
             model: db.User,
-            attributes: ["id", "email", "nickName"],
+            attributes: ["id", "email", "nickName", "profileImg"],
           },
         ],
         transaction: t, // 이 쿼리를 트랜잭션 처리
@@ -356,7 +356,7 @@ router.get("/", async (req, res, next) => {
       include: [
         {
           model: db.User,
-          attributes: ["id", "email", "nickName"],
+          attributes: ["id", "email", "nickName", "profileImg"],
         },
         {
           model: db.Hashtag,
@@ -412,7 +412,7 @@ router.get("/temp", isLoggedIn, async (req, res, next) => {
       include: [
         {
           model: db.User,
-          attributes: ["id", "email", "nickName"],
+          attributes: ["id", "email", "nickName", "profileImg"],
         },
         {
           model: db.TempHashtag,
@@ -708,7 +708,7 @@ router.get("/like", async (req, res, next) => {
       include: [
         {
           model: db.User,
-          attributes: ["id", "email", "nickName"],
+          attributes: ["id", "email", "nickName", "profileImg"],
         },
         {
           model: db.Hashtag,
@@ -787,7 +787,7 @@ router.get("/detail/:id", async (req, res, next) => {
       include: [
         {
           model: db.User,
-          attributes: ["id", "email", "nickName"],
+          attributes: ["id", "email", "nickName", "profileImg"],
         },
         {
           model: db.Hashtag,
@@ -825,7 +825,7 @@ router.get("/:id", async (req, res, next) => {
       include: [
         {
           model: db.User,
-          attributes: ["id", "email", "nickName"],
+          attributes: ["id", "email", "nickName", "profileImg"],
         },
         {
           model: db.Hashtag,
