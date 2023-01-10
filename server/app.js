@@ -7,6 +7,7 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 const hpp = require("hpp");
 const helmet = require("helmet");
+const schedule = require('node-schedule');
 
 const db = require("./models");
 const passportConfig = require("./passport");
@@ -18,6 +19,11 @@ const hashtagRouter = require("./routes/hashtag");
 const imageRouter = require("./routes/image");
 const userRouter = require("./routes/user");
 const { makeResponse } = require("./util");
+
+/* 스케쥴러 호출 함수 */
+const newPostSend = require("./schedule/newPostSend");
+const commentNotice = require("./schedule/commentNoticeSend");
+const notUsedImageDelete = require("./schedule/notUsedImageDelete");
 
 const app = express();
 const prod = process.env.NODE_ENV === "production";
@@ -85,4 +91,12 @@ app.use(function (error, req, res, next) {
 
 app.listen(3085, () => {
   console.log(`백엔드 서버 ${3085}번 포트에서 작동중.`);
+  if (process.env.NODE_ENV !== 'production') {
+    schedule.scheduleJob('*/1 * * * *', function () {
+      console.log('call Schedule')
+      // newPostSend();
+      // commentNotice();
+      notUsedImageDelete();
+    });
+  }
 });

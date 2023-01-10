@@ -1,54 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-    <title>ColdBrewCode</title>
-  </head>
 
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <div id="init-loading">
-      <lottie-player 
-        src="https://assets1.lottiefiles.com/packages/lf20_gqn2n5rs.json"
-        background="transparent"
-        speed="2"
-        style="width: 30rem; height: 30rem;"
-        loop
-        autoplay
-      />
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="/favicon.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Web site created using create-react-app" />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+  <title>ColdBrewCode</title>
+</head>
 
-  <style>
-    html,
-    body {
-      height: 100%;
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+  <div id="init-loading">
+    <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_gqn2n5rs.json" background="transparent" speed="2"
+      style="width: 30rem; height: 30rem;" loop autoplay />
+</body>
+
+<style>
+  html,
+  body {
+    height: 100%;
+  }
+
+  #init-loading {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+</style>
+
+<script>
+  setTimeout(() => {
+    var loadingEl = document.getElementById("init-loading");
+    if (loadingEl) {
+      loadingEl.style.display = "flex";
     }
-    #init-loading {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-  </style>
+  }, 500);
+</script>
 
-  <script>
-    setTimeout(() => {
-      var loadingEl = document.getElementById("init-loading");
-      if (loadingEl) {
-        loadingEl.style.display = "flex";
-      }
-    }, 500);
-  </script>
 </html>
