@@ -3,6 +3,8 @@ const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "/../config/config.js")[env];
 const db = {};
 
+console.log(config)
+
 const sequelize = new Sequelize(
   config.database,
   config.username,
@@ -24,7 +26,7 @@ db.TempPost = require("./temppost")(sequelize, Sequelize);
 db.TempHashtag = require("./temphashtag")(sequelize, Sequelize);
 db.TempPostHashtag = require("./tempposthashtag")(sequelize, Sequelize);
 db.TempSeriesPost = require("./tempseriespost")(sequelize, Sequelize);
-
+ 
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
     db[modelName].associate(db);

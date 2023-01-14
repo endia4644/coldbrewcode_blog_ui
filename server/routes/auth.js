@@ -127,7 +127,7 @@ router.post("/email", isNotLoggedIn, async (req, res, next) => {
       address: req.body.email,
     });
 
-    const href = `http://localhost:3000/blog/register/${id}`;
+    const href = `${process.env.FO_URL}/blog/register/${id}`;
 
     const template = `
           <div>

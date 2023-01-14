@@ -39,7 +39,7 @@ module.exports = async () => {
         ]
       })
       newComment.map(item => {
-        const href = `http://localhost:3000/blog/post/${item?.Post?.id}`;
+        const href = `${process.env.FO_URL}/${item?.Post?.id}`;
         console.log(item?.User?.profileImg);
         const template = `
         <div
@@ -61,7 +61,7 @@ module.exports = async () => {
               ${item?.User?.profileImg &&
           `
                 <img style="height:64px;width:64px;display:block;border-radius:32px"
-                  src="http://localhost:3085/${item.profileImg}"
+                  src="${process.env.BO_URL}/${item.profileImg}"
                   class="CToWUd" data-bit="iit">
                 `
           }

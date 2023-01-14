@@ -28,7 +28,7 @@ module.exports = async () => {
         }
       })
       newPosts.map(item => {
-        const href = `http://localhost:3000/blog/post/${item.id}`;
+        const href = `${process.env.FO_URL}/blog/post/${item.id}`;
         const template = `
         <div
           style="font-family: 'Noto Sans KR', cursive; content: 'NotoSans' !important; width: 400px; margin-left: auto; margin-right: auto;">
