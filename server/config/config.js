@@ -1,10 +1,8 @@
 const dotenv = require("dotenv");
 
 if (process.env.NODE_ENV === "production") {
-  console.log('dotenv - product')
   dotenv.config({ path: __dirname + "/../.env.production" });
 } else {
-  console.log('dotenv - develop')
   dotenv.config({ path: __dirname + "/../.env.development" });
 }
 

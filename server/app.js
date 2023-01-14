@@ -63,19 +63,16 @@ db.sequelize.sync();
 passportConfig();
 
 if (prod) {
-  console.log('production setting')
   app.use(hpp());
   app.use(helmet());
   app.use(morgan("combined"));
-  console.log(process.env.FO_URL + ":" + process.env.FO_PORT)
   app.use(
     cors({
-      origin: process.env.FO_URL + ":" + process.env.FO_PORT,
+      origin: process.env.FO_URL,
       credentials: true,
     })
   );
 } else {
-  console.log('develop setting')
   app.use(morgan("dev"));
   app.use(
     cors({
@@ -88,19 +85,6 @@ if (prod) {
 app.use("/", express.static("uploads"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookie());
-app.use(
-  session({
-    resave: false,
-    saveUninitialized: false,
-    secret: "cookiesecret",
-    cookie: {
-      httpOnly: true,
-      secure: false,
-      domain: prod && `.${process.env.FO_URL}`,
-    },
-  })
-);
 app.use(passport.initialize());
 app.use(passport.session());
 
