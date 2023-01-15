@@ -79,7 +79,7 @@ export default function SideBar({ id, likeCount, likeYsno }) {
       <Affix className="main-sidebar">
         <Row
           className="main-side"
-          style={{ position: "absolute", left: "-35.5rem" }}
+          style={{ position: "absolute", left: "-35.5rem", top: '18rem' }}
         >
           <Col>
             <div
@@ -96,9 +96,8 @@ export default function SideBar({ id, likeCount, likeYsno }) {
                   }}
                 >
                   <Button
-                    className={`like-btn ${
-                      activeLike ? "like-btn-active" : ""
-                    }`}
+                    className={`like-btn ${activeLike ? "like-btn-active" : ""
+                      }`}
                     style={{
                       width: "4rem",
                       height: "4rem",

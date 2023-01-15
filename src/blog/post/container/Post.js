@@ -105,6 +105,15 @@ export default function Post() {
               </Col>
             </Row>
           </Header>
+          <Row justify="center">
+            <Col>
+              <SideBar
+                id={id}
+                likeCount={post?.likeCount}
+                likeYsno={post?.likeYsno}
+              />
+            </Col>
+          </Row>
           <Content className="post-wrap main-content">
             <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography.Title
@@ -163,15 +172,6 @@ export default function Post() {
                   dangerouslySetInnerHTML={{ __html: post?.postContent }}
                 ></div>
               )}
-            </Row>
-            <Row justify="center">
-              <Col>
-                <SideBar
-                  id={id}
-                  likeCount={post?.likeCount}
-                  likeYsno={post?.likeYsno}
-                />
-              </Col>
             </Row>
             <Divider />
             {(post?.prev || post?.next) &&
