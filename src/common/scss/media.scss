@@ -21,6 +21,10 @@
   .main-footer {
     width: 100%;
   }
+
+  .post-content {
+    img {}
+  }
 }
 
 /* 1919px */
@@ -358,6 +362,12 @@
         height: 100%;
         object-fit: cover;
       }
+    }
+  }
+
+  .post-content {
+    img {
+      max-width: 100%;
     }
   }
 }
