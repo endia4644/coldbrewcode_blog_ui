@@ -13,6 +13,7 @@ import { actions as mainActions, Types as mainTypes } from "../../main/state";
 import { actions as commonActions } from "../../../common/state";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { FetchStatus } from "../../../common/constant";
+import banner from "./../../../common/images/loginBanner.png";
 
 export default function Login() {
   let query = useQuery();
@@ -47,13 +48,12 @@ export default function Login() {
         cover={
           <img
             alt="example"
-            src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+            src={banner}
           />
         }
         // eslint-disable-next-line no-sparse-arrays
         actions={[
-          <Typography.Text>아이디 찾기</Typography.Text>,
-          <Typography.Text>비밀번호 찾기</Typography.Text>,
+          // <Typography.Text>비밀번호 찾기</Typography.Text>,
           <Typography.Text onClick={() => navigate("/blog/signup")}>
             회원가입
           </Typography.Text>,

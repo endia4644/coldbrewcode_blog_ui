@@ -17,6 +17,7 @@ import { actions as common } from "../../../common/state";
 import useBlockLoginUser from "../hook/useBlockLoginUser";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { FetchStatus } from "../../../common/constant";
+import banner from "./../../../common/images/loginBanner.png";
 
 export default function Signup() {
   useBlockLoginUser();
@@ -82,12 +83,11 @@ export default function Signup() {
         cover={
           <img
             alt="example"
-            src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+            src={banner}
           />
         }
         actions={[
-          <Typography.Text>아이디 찾기</Typography.Text>,
-          <Typography.Text>비밀번호 찾기</Typography.Text>,
+          // <Typography.Text>비밀번호 찾기</Typography.Text>,
           <Typography.Text onClick={() => navigate("/blog/login")}>
             로그인
           </Typography.Text>,
