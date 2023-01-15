@@ -82,6 +82,7 @@ export default function Signup() {
         }}
         cover={
           <img
+            onClick={() => navigate('/blog')}
             alt="example"
             src={banner}
           />

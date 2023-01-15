@@ -116,6 +116,13 @@ export default function Settings({ logout }) {
       {status === AuthStatus.NotLogin && (
         <Space>
           <Button
+            ref={homeRef}
+            shape="round"
+            size="large"
+            style={{ padding: '6.4px 10px', border: '1px solid #d9d9d9' }}
+            icon={<HomeOutlined />} onClick={onClickHome}
+          />
+          <Button
             className="write-button"
             type="ghost"
             shape="round"

@@ -47,6 +47,7 @@ export default function Login() {
         }}
         cover={
           <img
+            onClick={() => navigate('/blog')}
             alt="example"
             src={banner}
           />
