@@ -54,7 +54,7 @@ export default function Login() {
         // eslint-disable-next-line no-sparse-arrays
         actions={[
           // <Typography.Text>비밀번호 찾기</Typography.Text>,
-          <Typography.Text onClick={() => navigate("/blog/signup")}>
+          <Typography.Text onClick={() => navigate("/blog/signup")} style={{ fontWeight: 'bold' }}>
             회원가입
           </Typography.Text>,
         ]}

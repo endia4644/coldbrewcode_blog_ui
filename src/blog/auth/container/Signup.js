@@ -88,7 +88,7 @@ export default function Signup() {
         }
         actions={[
           // <Typography.Text>비밀번호 찾기</Typography.Text>,
-          <Typography.Text onClick={() => navigate("/blog/login")}>
+          <Typography.Text onClick={() => navigate("/blog/login")} style={{ fontWeight: 'bold' }}>
             로그인
           </Typography.Text>,
         ]}
