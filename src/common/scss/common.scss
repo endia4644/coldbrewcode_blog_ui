@@ -4,6 +4,14 @@
 @import "./vars.scss";
 @import "./media.scss";
 
+@font-face {
+  /* 메이플스토리 폰트 적용 */
+  font-family: "maplestory";
+  src: url("../font/MaplestoryBold.ttf") format("truetype");
+  src: url("../font/MaplestoryLight.ttf") format("truetype");
+  font-weight: normal;
+}
+
 /* 구글 폰트 적용 */
 html {
   --antd-wave-shadow-color: black;

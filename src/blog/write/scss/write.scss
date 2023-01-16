@@ -9,6 +9,11 @@
   $xl: 1200px;
   $xxl: 1600px;
 */
+p {
+  font-family: "MapleStory", cursive;
+  content: "MapleStory" !important;
+}
+
 .ql-picker.ql-font {
   .ql-picker-item {
     font-size: 0;
@@ -43,6 +48,12 @@
   }
 }
 
+.ql-picker.ql-font .ql-picker-label[data-value="MapleStory"]::before,
+.ql-picker.ql-font .ql-picker-item[data-value="MapleStory"]::before {
+  font-family: "MapleStory", cursive;
+  content: "MapleStory" !important;
+}
+
 .ql-picker.ql-font .ql-picker-label[data-value="Roboto"]::before,
 .ql-picker.ql-font .ql-picker-item[data-value="Roboto"]::before {
   font-family: "Roboto", cursive;
@@ -73,35 +84,39 @@
 
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="1"]::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="1"]::before {
-  font-family: "Noto Sans KR", cursive;
+  font-family: "MapleStory", cursive;
   content: "H1" !important;
 }
 
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="2"]::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="2"]::before {
-  font-family: "Noto Sans KR", cursive;
+  font-family: "MapleStory", cursive;
   content: "H2" !important;
 }
 
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="3"]::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="3"]::before {
-  font-family: "Noto Sans KR", cursive;
+  font-family: "MapleStory", cursive;
   content: "H3" !important;
 }
 
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="4"]::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="4"]::before {
-  font-family: "Noto Sans KR", cursive;
+  font-family: "MapleStory", cursive;
   content: "H4" !important;
 }
 
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="5"]::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="5"]::before {
-  font-family: "Noto Sans KR", cursive;
+  font-family: "MapleStory", cursive;
   content: "H5" !important;
 }
 
 /* Set content font-families */
+.ql-font-MapleStory {
+  font-family: "MapleStory";
+}
+
 .ql-font-Roboto {
   font-family: "Roboto";
 }
@@ -621,6 +636,96 @@
           }
         }
       }
+    }
+  }
+}
+
+p {
+  u {
+    text-underline-offset: 5px;
+  }
+}
+
+.quill {
+  p {
+    margin-top: 5px !important;
+  }
+
+  pre {
+    &.ql-syntax {
+      margin-top: 15px;
+      margin-bottom: 15px;
+      padding: 10px;
+    }
+  }
+
+  code {
+    padding: 5px !important;
+  }
+
+  .ql-divider {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .ql-container {
+    h {
+      &1 {
+        font-size: 2.4rem;
+
+        u {
+          text-underline-offset: 22.4px;
+          text-decoration-color: $subColor;
+          text-decoration-thickness: 3px;
+        }
+      }
+
+      &2 {
+        font-size: 2.0rem;
+
+        u {
+          text-underline-offset: 20.4px;
+          text-decoration-color: $subColor;
+          text-decoration-thickness: 3px;
+        }
+      }
+
+      &3 {
+        font-size: 1.6rem;
+
+        u {
+          text-underline-offset: 17.4px;
+          text-decoration-color: $subColor;
+          text-decoration-thickness: 3px;
+        }
+      }
+
+      &4 {
+        font-size: 1.2rem;
+
+        u {
+          text-underline-offset: 14.4px;
+          text-decoration-color: $subColor;
+          text-decoration-thickness: 3px;
+        }
+      }
+
+      &5 {
+        font-size: 1rem;
+
+        u {
+          text-underline-offset: 14.4px;
+          text-decoration-color: $subColor;
+          text-decoration-thickness: 3px;
+        }
+      }
+
+    }
+
+    hr {
+      border-top: 0;
+      border-width: 1.7px;
     }
   }
 }

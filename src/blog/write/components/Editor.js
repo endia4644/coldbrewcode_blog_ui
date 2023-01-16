@@ -9,7 +9,9 @@ import hljs from "highlight.js";
 import "react-quill/dist/quill.snow.css";
 import "highlight.js/styles/github.css";
 
-const fontFamilyArr = ["NotoSans", "Roboto", "Sono", "NanumGothic"];
+var icons = ReactQuill.Quill.import('ui/icons');
+
+const fontFamilyArr = ["MapleStory", "NotoSans", "Roboto", "Sono", "NanumGothic"];
 let fonts = Quill.import("attributors/style/font");
 fonts.whitelist = fontFamilyArr;
 Quill.register(fonts, true);
@@ -20,7 +22,7 @@ size.whitelist = fontSizeArr;
 Quill.register(size, true);
 
 hljs.configure({
-  languages: ["javascript", "ruby", "python", "rust"],
+  languages: ["javascript", "ruby", "python", "rust", "java", "c"],
 });
 
 Quill.register("modules/imageResize", ImageResize);
@@ -28,6 +30,15 @@ Quill.register("modules/imageResize", ImageResize);
 const BaseImage = Quill.import("formats/image");
 
 const ATTRIBUTES = ["alt", "height", "width", "style"];
+
+let BlockEmbed = Quill.import('blots/block/embed');
+
+class DividerBlot extends BlockEmbed { }
+DividerBlot.blotName = 'divider';
+DividerBlot.tagName = 'hr';
+
+Quill.register('formats/divider', DividerBlot);
+icons['divider'] = `<span role="img" aria-label="minus" class="anticon anticon-minus"><svg viewBox="64 64 896 896" focusable="false" data-icon="minus" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M872 474H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h720c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"></path></svg></span>`;
 
 class Image extends BaseImage {
   static formats(domNode) {
@@ -41,6 +52,10 @@ class Image extends BaseImage {
 }
 
 Quill.register(Image, true);
+
+const code = Quill.import("formats/code");
+
+Quill.register(code, true);
 
 export default function Editor({
   postType,
@@ -71,6 +86,16 @@ export default function Editor({
     };
     fetchData();
   }, [postId]);
+
+  const customHrHandler = () => {
+    const editor = quillRef.current.getEditor();
+    // get the position of the cursor
+    var range = editor.getSelection();
+    if (range) {
+      // insert the <hr> where the cursor is
+      editor.insertEmbed(range.index, "divider", "null")
+    }
+  }
 
   // 이미지 처리를 하는 핸들러
   const imageHandler = useCallback(() => {
@@ -147,12 +172,14 @@ export default function Editor({
           [{ color: [] }, "bold", "italic", "underline", "strike"],
           [{ list: "ordered" }, { list: "bullet" }],
           [{ align: [] }],
+          ['blockquote', 'code-block', 'code'],
           ["image"],
-          ["code-block", "blockquote"],
+          ["divider"],
         ],
         handlers: {
           // 이미지 처리는 우리가 직접 imageHandler라는 함수로 처리할 것이다.
           image: imageHandler,
+          divider: customHrHandler,
         },
       },
       syntax: {
@@ -169,12 +196,14 @@ export default function Editor({
   const formats = [
     "size",
     "font",
-    "header",
     "bold",
+    "header",
     "italic",
     "underline",
+    "script",
     "strike",
     "blockquote",
+    "code",
     "image",
     "color",
     "align",
@@ -182,6 +211,7 @@ export default function Editor({
     "width",
     "style",
     "list",
+    "divider",
   ];
 
   return (
