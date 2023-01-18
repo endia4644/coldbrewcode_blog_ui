@@ -129,10 +129,11 @@ export default function Write() {
   const detailSetting = () => {
     const images = [];
     insertHashTag();
+    let content = contentAddIndex(htmlContent);
 
     setLevel(1);
     dispatch(actions.setValue("postName", postName));
-    dispatch(actions.setValue("postContent", htmlContent));
+    dispatch(actions.setValue("postContent", content));
     dispatch(actions.setValue("hashtag", Array.from(tagRef.current)));
     htmlContent?.match(/[^='/]*\.(gif|jpg|jpeg|bmp|svg|png)/g)?.map((item) => {
       if (imageMap.current.get(item)) {
@@ -182,8 +183,33 @@ export default function Write() {
     [goBlog]
   );
 
+  function contentAddIndex(htmlContent) {
+    const regEx = /(<h[1-5]>)(.*?)(<\/h[1-5]>)/gm;
+    const splitEx = /(<h[1-5]>)/g;
+    let id = 0;
+    let contents = htmlContent;
+    const htags = contents?.match(regEx);
+    htags?.map(tag => {
+      let newHeader = '';
+      let tagHeader = tag.trim().split(splitEx);
+      switch (tagHeader?.[1]) {
+        case "<h1>": newHeader = `<h1 class="level1" id="tag-${id}">`; break;
+        case "<h2>": newHeader = `<h2 class="level2" id="tag-${id}">`; break;
+        case "<h3>": newHeader = `<h3 class="level3" id="tag-${id}">`; break;
+        case "<h4>": newHeader = `<h4 class="level4" id="tag-${id}">`; break;
+        case "<h5>": newHeader = `<h5 class="level5" id="tag-${id}">`; break;
+      }
+      id++;
+      newHeader = newHeader.concat(tagHeader?.[2]);
+      contents = contents?.replace(tag, newHeader);
+    })
+
+    return contents;
+  }
+
   /* 임시저장 */
   function tempSubmit({ description, permission, seriesName }) {
+
     let imageIds = [];
     let hashtags = [];
     if (imageList?.length > 0) {
@@ -197,13 +223,14 @@ export default function Write() {
         return hashtags.push(item.key);
       });
     }
+    let content = contentAddIndex(htmlContent);
     dispatch(
       actions.fetchCreateTempPost({
         postId: postId,
         postName: postName,
         hashtags: hashtags,
         postDescription: description,
-        postContent: htmlContent,
+        postContent: content,
         postThumbnail: `${thumbnail ?? null}`,
         permission: permission,
         seriesName: seriesName,
@@ -240,7 +267,7 @@ export default function Write() {
           <WriteSetting
             setLevel={setLevel}
             hashtag={hashtag}
-            postContent={htmlContent}
+            postContent={contentAddIndex(htmlContent)}
             postName={postName}
             postThumbnail={post?.postThumbnail}
             postThumbnailId={post?.postThumbnailId}

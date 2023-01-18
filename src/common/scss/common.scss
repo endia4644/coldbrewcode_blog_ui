@@ -24,7 +24,9 @@ html {
 }
 
 body {
-  font-family: "Noto Sans KR";
+  #root {
+    font-family: "Noto Sans KR";
+  }
 }
 
 /* 아래의 모든 코드는 영역::코드로 사용 */
