@@ -21,6 +21,7 @@ import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { AuthStatus, FetchStatus } from "../../../common/constant";
 import CommentForm from "../components/CommentForm";
 import ButtonGroup from "antd/lib/button/button-group";
+import Navigation from "../components/Navigation";
 
 export default function Post() {
   const { id } = useParams();
@@ -111,6 +112,11 @@ export default function Post() {
                 id={id}
                 likeCount={post?.likeCount}
                 likeYsno={post?.likeYsno}
+              />
+            </Col>
+            <Col>
+              <Navigation
+                postContent={post?.postContent}
               />
             </Col>
           </Row>

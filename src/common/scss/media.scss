@@ -234,6 +234,9 @@
 /* md */
 
 @media (max-width: $md) {
+  .header-title {
+    font-size: 2rem !important;
+  }
 
   /* 
     게시글의 border-top 2번째 게시글 부터 적용
