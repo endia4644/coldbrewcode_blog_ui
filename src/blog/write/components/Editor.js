@@ -4,7 +4,6 @@ import ReactQuill, { Quill } from "react-quill";
 import { API_HOST } from "../../../common/constant";
 import { callApi } from "../../../common/util/api";
 import ImageResize from "quill-image-resize-module-react";
-import hljs from "highlight.js";
 
 import "react-quill/dist/quill.snow.css";
 import "highlight.js/styles/github.css";
@@ -21,8 +20,12 @@ var size = Quill.import("attributors/style/size");
 size.whitelist = fontSizeArr;
 Quill.register(size, true);
 
-hljs.configure({
-  languages: ["javascript", "ruby", "python", "rust", "java", "c"],
+const CodeBlock = Quill.import('formats/code-block');
+// See - https://github.com/quilljs/quill/blob/develop/modules/clipboard.js#L513
+CodeBlock.tagName = 'PRE';
+
+Quill.register({
+  'formats/code-block': CodeBlock
 });
 
 Quill.register("modules/imageResize", ImageResize);
@@ -181,9 +184,6 @@ export default function Editor({
           image: imageHandler,
           divider: customHrHandler,
         },
-      },
-      syntax: {
-        highlight: (text) => hljs.highlightAuto(text).value,
       },
       imageResize: {
         // https://www.npmjs.com/package/quill-image-resize-module-react 참고
