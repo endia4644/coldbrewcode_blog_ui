@@ -12,6 +12,15 @@
 .ql-editor {
   font-family: "MapleStory", cursive;
   content: "MapleStory" !important;
+
+  blockquote {
+    border-left: 4px solid $subColor !important;
+    color: $subColor;
+    margin: 0;
+    padding: 0 0 0 10px !important;
+    background-color: $grayColor;
+    opacity: 0.9;
+  }
 }
 
 .ql-picker.ql-font {
@@ -289,7 +298,7 @@
   }
 
   .ql-container {
-    font-size: 16px;
+    font-size: 1.125rem;
   }
 
   .ql-toolbar.ql-snow,

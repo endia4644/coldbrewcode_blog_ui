@@ -63,6 +63,21 @@
           -webkit-box-align: center;
           align-items: center;
         }
+
+        blockquote {
+          border-left: 4px solid $subColor;
+          color: $subColor;
+          margin: 0;
+          padding: 0 0 0 10px;
+          background-color: $grayColor;
+          opacity: 0.9;
+        }
+
+        p {
+          white-space: pre-wrap;
+          margin: 5px 0 0 0;
+          padding: 0;
+        }
       }
 
       &-button {
@@ -233,7 +248,7 @@ h {
     font-size: 2.4rem;
 
     u {
-      text-underline-offset: 24.4px;
+      text-underline-offset: 29.1px;
       text-decoration-color: $subColor;
       text-decoration-thickness: 3px;
     }
@@ -244,7 +259,7 @@ h {
     font-size: 2.0rem;
 
     u {
-      text-underline-offset: 22.4px;
+      text-underline-offset: 26.1px;
       text-decoration-color: $subColor;
       text-decoration-thickness: 3px;
     }
