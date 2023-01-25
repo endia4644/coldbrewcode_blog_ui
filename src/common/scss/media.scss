@@ -74,6 +74,13 @@
       display: none;
     }
   }
+
+  .post-wrap {
+    .ant-back-top {
+      right: 120px;
+      bottom: 40px;
+    }
+  }
 }
 
 /* xl */
@@ -255,7 +262,7 @@
     - 게시글이 하나씩 보이는 경우 
   */
   .ant-back-top {
-    right: 60px !important;
+    right: 60px;
   }
 
   .ant-layout {
@@ -394,8 +401,8 @@
     - 게시글이 하나씩 보이는 경우 
   */
   .ant-back-top {
-    right: 120px !important;
-    bottom: 70px !important;
+    right: 120px;
+    bottom: 70px;
   }
 
   .bottom_name {

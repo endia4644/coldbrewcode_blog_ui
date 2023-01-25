@@ -1,4 +1,4 @@
-import { Button, Col, Divider, Modal, Row, Space, Typography } from "antd";
+import { BackTop, Button, Col, Divider, Modal, Row, Space, Typography } from "antd";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -22,6 +22,7 @@ import { AuthStatus, FetchStatus } from "../../../common/constant";
 import CommentForm from "../components/CommentForm";
 import ButtonGroup from "antd/lib/button/button-group";
 import Navigation from "../components/Navigation";
+import { UpArrowIcon } from "../../../common/components/Icon";
 
 export default function Post() {
   const { id } = useParams();
@@ -211,6 +212,11 @@ export default function Post() {
                   <Comment key={`comment_${item.id}`} data={item} parentId={null} postId={id} />
                 ))}
             </Row>
+            <BackTop>
+              <div>
+                <UpArrowIcon />
+              </div>
+            </BackTop>
           </Content>
           {user?.userType === 'admin' && <>
             <Modal
