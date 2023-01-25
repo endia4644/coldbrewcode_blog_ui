@@ -254,35 +254,40 @@ hr {
   border-width: 1.7px;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5 {
+  margin-bottom: 0 !important;
+}
+
 h {
   &1 {
-    margin-bottom: 0 !important;
     font-size: 2.4rem;
 
     u {
-      text-underline-offset: 29.1px;
+      text-underline-offset: 25.5px;
       text-decoration-color: $subColor;
       text-decoration-thickness: 3px;
     }
   }
 
   &2 {
-    margin-bottom: 0 !important;
     font-size: 2.0rem;
 
     u {
-      text-underline-offset: 26.1px;
+      text-underline-offset: 21.4px;
       text-decoration-color: $subColor;
       text-decoration-thickness: 3px;
     }
   }
 
   &3 {
-    margin-bottom: 0 !important;
     font-size: 1.6rem;
 
     u {
-      text-underline-offset: 18.6px;
+      text-underline-offset: 19.2px;
       text-decoration-color: $subColor;
       text-decoration-thickness: 3px;
     }

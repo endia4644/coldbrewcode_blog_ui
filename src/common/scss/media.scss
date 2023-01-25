@@ -176,6 +176,12 @@
   .main-writer-detail {
     min-height: 735px;
   }
+
+  .post-content {
+    img {
+      max-width: 100%;
+    }
+  }
 }
 
 @media (min-width: $lg) {
@@ -225,6 +231,12 @@
     &.content-detail {
       display: flex;
       flex-direction: column;
+    }
+  }
+
+  .post-content {
+    img {
+      max-width: 65vh;
     }
   }
 }
