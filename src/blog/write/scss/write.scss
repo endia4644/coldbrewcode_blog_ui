@@ -281,6 +281,9 @@
     margin-block-end: 1em;
     margin-inline-start: 0px;
     margin-inline-end: 0px;
+    white-space: pre-wrap;
+    margin: 5px 0 0 0;
+    padding: 0;
   }
 
   .ql-editor {
@@ -293,8 +296,6 @@
     tab-size: 4;
     -moz-tab-size: 4;
     text-align: left;
-    white-space: pre-wrap;
-    word-wrap: break-word;
   }
 
   .ql-container {
