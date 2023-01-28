@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Content, Footer } from "antd/lib/layout/layout";
 import "react-quill/dist/quill.snow.css";
-import Editor from "../components/Editor";
+import Editor from "../components/CKEditor";
 import { Button, Col, Divider, Input, message, Modal, Row, Space, Typography } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom"; // 설치한 패키지
@@ -184,8 +184,8 @@ export default function Write() {
   );
 
   function contentAddIndex(htmlContent) {
-    const regEx = /(<h[1-5]>)(.*?)(<\/h[1-5]>)/gm;
-    const splitEx = /(<h[1-5]>)/g;
+    const regEx = /(<h[1-5](.*?)>)(.*?)(<\/h[1-5]>)/gm;
+    const splitEx = /(<h[1-5])/g;
     let id = 0;
     let contents = htmlContent;
     const htags = contents?.match(regEx);
@@ -193,15 +193,15 @@ export default function Write() {
       let newHeader = '';
       let tagHeader = tag.trim().split(splitEx);
       switch (tagHeader?.[1]) {
-        case "<h1>": newHeader = `<h1 class="level1" id="tag-${id}">`; break;
-        case "<h2>": newHeader = `<h2 class="level2" id="tag-${id}">`; break;
-        case "<h3>": newHeader = `<h3 class="level3" id="tag-${id}">`; break;
-        case "<h4>": newHeader = `<h4 class="level4" id="tag-${id}">`; break;
-        case "<h5>": newHeader = `<h5 class="level5" id="tag-${id}">`; break;
+        case "<h1": newHeader = `<h1 class="level1" id="tag-${id}"`; break;
+        case "<h2": newHeader = `<h2 class="level2" id="tag-${id}"`; break;
+        case "<h3": newHeader = `<h3 class="level3" id="tag-${id}"`; break;
+        case "<h4": newHeader = `<h4 class="level4" id="tag-${id}"`; break;
+        case "<h5": newHeader = `<h5 class="level5" id="tag-${id}"`; break;
       }
       id++;
-      newHeader = newHeader.concat(tagHeader?.[2]);
-      contents = contents?.replace(tag, newHeader);
+      tagHeader.splice(1, 1, newHeader);
+      contents = contents?.replace(tag, tagHeader.join(""));
     })
 
     return contents;

@@ -175,7 +175,7 @@ export default function Post() {
             <Row style={{ marginTop: "4rem", marginBottom: "3rem" }}>
               {post?.Hashtags && (
                 <div
-                  className="post-content"
+                  className="ck-content"
                   dangerouslySetInnerHTML={{ __html: post?.postContent }}
                 ></div>
               )}
