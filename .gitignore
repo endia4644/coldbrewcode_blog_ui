@@ -17,7 +17,8 @@
 .DS_Store
 
 # editor
-/ckeditor5-custom-build
+/ckeditor5-custom-build/node_modules
+/ckeditor5-custom-build/build
 
 # dotenv environment variable files
 .env.development
