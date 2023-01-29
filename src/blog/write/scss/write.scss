@@ -22,26 +22,10 @@
     box-sizing: border-box;
   }
 
-  p {
-    margin-top: 0;
-    margin-bottom: 1em;
-  }
-
   *,
   :after,
   :before {
     box-sizing: border-box;
-  }
-
-  p {
-    display: block;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
-    white-space: pre-wrap;
-    margin: 5px 0 5px 0;
-    padding: 0;
   }
 
   .ck-content {

@@ -211,20 +211,6 @@ Editor.defaultConfig = {
 			'Nanum Gothic',
 		]
 	},
-	style: {
-		definitions: [
-			{
-				name: 'Article category',
-				element: 'h3',
-				classes: ['category']
-			},
-			{
-				name: 'Info box',
-				element: 'p',
-				classes: ['info-box']
-			},
-		]
-	},
 };
 
 export default Editor;

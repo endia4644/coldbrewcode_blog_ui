@@ -69,9 +69,6 @@ export default function CEitor({
     };
   }
 
-
-  const [flag, setFlag] = useState(false);
-
   useEffect(() => {
     if (!postId) {
       return;
@@ -97,12 +94,25 @@ export default function CEitor({
         editor={Editor}
         config={{
           extraPlugins: [uploadPlugin],
-          placeholder: '기록하고 싶은 이야기를 적어보세요.'
+          placeholder: '기록하고 싶은 이야기를 적어보세요.',
+          style: {
+            definitions: [
+              {
+                name: 'Article category',
+                element: 'h3',
+                classes: ['category']
+              },
+              {
+                name: 'p-Info-box',
+                element: 'p',
+                classes: ['info-box']
+              },
+            ]
+          },
         }}
         data={htmlContent}
         onChange={(event, editor) => {
           const data = editor.getData();
-          console.log(data);
           getHtmlContent(data);
         }}
       />
