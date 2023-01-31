@@ -765,9 +765,9 @@ a.ant-typography:active {
     margin-top: 1em;
   }
 
-  h1,
-  h2,
-  h3 {
+  h1.h1-underline,
+  h2.h2-underline,
+  h3.h3-underline {
     display: inline-block;
     padding-bottom: 15px;
     position: relative;
@@ -801,7 +801,7 @@ a.ant-typography:active {
     padding: 0;
   }
 
-  p.p-info-box {
+  p.info-box {
     padding: 1.2em 2em;
     border: 1px solid #e91e63;
     border-left: 10px solid #e91e63;

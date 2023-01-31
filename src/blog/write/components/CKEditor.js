@@ -95,20 +95,6 @@ export default function CEitor({
         config={{
           extraPlugins: [uploadPlugin],
           placeholder: '기록하고 싶은 이야기를 적어보세요.',
-          style: {
-            definitions: [
-              {
-                name: 'Article category',
-                element: 'h3',
-                classes: ['category']
-              },
-              {
-                name: 'p-Info-box',
-                element: 'p',
-                classes: ['info-box']
-              },
-            ]
-          },
         }}
         data={htmlContent}
         onChange={(event, editor) => {

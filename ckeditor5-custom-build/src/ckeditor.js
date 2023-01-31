@@ -63,6 +63,7 @@ import TextTransformation from '@ckeditor/ckeditor5-typing/src/texttransformatio
 import TodoList from '@ckeditor/ckeditor5-list/src/todolist';
 import Underline from '@ckeditor/ckeditor5-basic-styles/src/underline.js';
 import WordCount from '@ckeditor/ckeditor5-word-count/src/wordcount.js';
+import KeyboardShortCut from './plugin/KeyboardShortCut.js';
 
 class Editor extends ClassicEditor { }
 
@@ -127,12 +128,14 @@ Editor.builtinPlugins = [
 	TextTransformation,
 	TodoList,
 	Underline,
-	WordCount
+	WordCount,
+	KeyboardShortCut
 ];
 
 // Editor configuration.
 Editor.defaultConfig = {
 	toolbar: {
+		shouldNotGroupWhenFull: true,
 		items: [
 			'heading',
 			'|',
@@ -209,6 +212,30 @@ Editor.defaultConfig = {
 			'NotoSans',
 			'Sono',
 			'Nanum Gothic',
+		]
+	},
+	style: {
+		definitions: [
+			{
+				name: 'Info-box',
+				element: 'p',
+				classes: ['info-box']
+			},
+			{
+				name: 'h1-underline',
+				element: 'h1',
+				classes: ['h1-underline']
+			},
+			{
+				name: 'h2-underline',
+				element: 'h2',
+				classes: ['h2-underline']
+			},
+			{
+				name: 'h3-underline',
+				element: 'h3',
+				classes: ['h3-underline']
+			},
 		]
 	},
 };
