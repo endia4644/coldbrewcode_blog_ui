@@ -51,7 +51,7 @@ export default function Navigation({ postContent }) {
       }
 
       /* 제목이 <br>이면 추가하지 않음 */
-      if (title != '<br>') {
+      if (title != '<br>' && title != '&nbsp;') {
         if (!prevLevel) {
           prevAnchor = { title, href, level, child: [], parent: null };
           array.push(prevAnchor);
