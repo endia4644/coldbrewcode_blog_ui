@@ -4,6 +4,8 @@ import { CKEditor } from '@ckeditor/ckeditor5-react'
 import { API_HOST } from "../../../common/constant";
 import axios from "axios";
 import { callApi } from "../../../common/util/api";
+import { useDispatch, useSelector } from "react-redux";
+import { actions } from "../state";
 
 export default function CEitor({
   postType,
@@ -97,8 +99,8 @@ export default function CEitor({
           placeholder: '기록하고 싶은 이야기를 적어보세요.',
         }}
         data={htmlContent}
-        onChange={(event, editor) => {
-          const data = editor.getData();
+        onBlur={(_, editor) => {
+          const data = editor?.getData();
           getHtmlContent(data);
         }}
       />
