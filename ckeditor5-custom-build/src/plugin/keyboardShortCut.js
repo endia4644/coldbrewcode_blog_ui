@@ -54,6 +54,11 @@ class KeyboardShortCut extends Plugin {
     editor.keystrokes.set('alt+f3', (evt, cancel) => {
       editor.execute('style', { styleName: 'h3-underline' });
     }, { priority: 'high' });
+
+    editor.keystrokes.set('tab', (evt, data) => {
+      editor.execute('input', { text: "    " });
+      evt.preventDefault();
+    }, { priority: 'high' });
   }
 }
 

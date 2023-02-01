@@ -88,7 +88,6 @@ export default function Navigation({ postContent }) {
         prevLevel = level;
       }
     });
-    console.log(array);
     setIndexList(array);
   }, [postContent]);
   return (
