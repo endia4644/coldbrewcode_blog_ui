@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Editor from 'ckeditor5-custom-build/build/ckeditor';
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import { API_HOST } from "../../../common/constant";
 import axios from "axios";
 import { callApi } from "../../../common/util/api";
-import { useDispatch, useSelector } from "react-redux";
-import { actions } from "../state";
 
 export default function CEitor({
   postType,
@@ -14,7 +12,6 @@ export default function CEitor({
   htmlContent,
   getHtmlContent,
   imageMap,
-  ...rest
 }) {
   /**
    * 
@@ -40,7 +37,6 @@ export default function CEitor({
               .then((response) => {
                 const id = response?.data?.id ?? null;
                 const fileName = response?.data?.fileName ?? null;
-                console.log(`${API_HOST}/${fileName}`);
                 if (id && fileName) {
                   imageMap.current.set(fileName, id);
                   resolve({
