@@ -41,7 +41,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production craco build",
+    "build": "craco build",
     "dev": "cross-env NODE_ENV=development craco start",
     "eject": "react-scripts eject"
   },
