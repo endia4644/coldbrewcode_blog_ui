@@ -186,22 +186,27 @@ export default function Write() {
   function contentAddIndex(htmlContent) {
     const regEx = /(<h[1-5](.*?)>)(.*?)(<\/h[1-5]>)/gm;
     const splitEx = /(<h[1-5])/g;
+    const classEx = /(?<=(class="))(.*?)(?=")/g;
+    const styleEx = /(?<=(style="))(.*?)(?=")/g;
+    const contentEx = /(?<=<h[1-5](.*?)>)(.*?)(?=<\/h[1-5]>)/g;
     let id = 0;
     let contents = htmlContent;
     const htags = contents?.match(regEx);
     htags?.map(tag => {
       let newHeader = '';
       let tagHeader = tag.trim().split(splitEx);
+      let className = tag?.match(classEx);
+      let style = tag?.match(styleEx);
+      let content = tag?.match(contentEx);
       switch (tagHeader?.[1]) {
-        case "<h1": newHeader = `<h1 class="level1" id="tag-${id}"`; break;
-        case "<h2": newHeader = `<h2 class="level2" id="tag-${id}"`; break;
-        case "<h3": newHeader = `<h3 class="level3" id="tag-${id}"`; break;
-        case "<h4": newHeader = `<h4 class="level4" id="tag-${id}"`; break;
-        case "<h5": newHeader = `<h5 class="level5" id="tag-${id}"`; break;
+        case "<h1": newHeader = `<h1 class="level1 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content}</h1>`; break;
+        case "<h2": newHeader = `<h2 class="level2 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content}</h2>`; break;
+        case "<h3": newHeader = `<h3 class="level3 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content}</h3>`; break;
+        case "<h4": newHeader = `<h4 class="level4 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content}</h4>`; break;
+        case "<h5": newHeader = `<h5 class="level5 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content}</h5>`; break;
       }
       id++;
-      tagHeader.splice(1, 1, newHeader);
-      contents = contents?.replace(tag, tagHeader.join(""));
+      contents = contents?.replace(tag, newHeader);
     })
 
     return contents;
@@ -267,7 +272,6 @@ export default function Write() {
           <WriteSetting
             setLevel={setLevel}
             hashtag={hashtag}
-            postContent={contentAddIndex(htmlContent)}
             postName={postName}
             postThumbnail={post?.postThumbnail}
             postThumbnailId={post?.postThumbnailId}

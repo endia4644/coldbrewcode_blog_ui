@@ -34,7 +34,6 @@ import { Types as mainType, actions as mainActions } from "../../main/state";
 export default function WriteSetting({
   setLevel,
   hashtag,
-  postContent,
   postName,
   postThumbnail,
   postThumbnailId,
@@ -67,6 +66,7 @@ export default function WriteSetting({
   const thumbnail = useSelector(state => state.write.postThumbnail);
   const thumbnailId = useSelector(state => state.write.thumbnailId);
   const tempId = useSelector(state => state.write.tempId);
+  const postContent = useSelector(state => state.write.postContent);
 
   const { fetchStatus: cfetchStatus, isFetching: cisFetching } = useFetchInfo(Types.FetchCreatePost);
   const { fetchStatus: ufetchStatus, isFetching: uisFetching } = useFetchInfo(Types.FetchUpdatePost);
