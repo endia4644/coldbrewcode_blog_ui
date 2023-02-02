@@ -1,14 +1,20 @@
 // @ts-nocheck
 const express = require('express');
 const db = require('../models');
-const { literal, fn, col, QueryTypes } = require("sequelize");
+const { literal, fn, col, Op, QueryTypes } = require("sequelize");
 const { makeResponse } = require('../util');
 
 const router = express.Router();
 
 router.get('/', async (req, res, next) => {
   try {
-    const totalCount = await db.Post.count();
+    const totalCount = await db.Post.count({
+      where: {
+        dltYsno: {
+          [Op.eq]: 'N'
+        }
+      }
+    });
     const hashtagAll = await db.sequelize.query(
       'SELECT 0 as "id", "전체보기" as "hashtagName", :totalCount as "postCount" FROM dual',
       {
@@ -22,6 +28,11 @@ router.get('/', async (req, res, next) => {
         model: db.Post,
         require: true,
         attributes: [],
+        where: {
+          dltYsno: {
+            [Op.eq]: 'N'
+          }
+        }
       },
       order: [
         ['createdAt', 'DESC'],

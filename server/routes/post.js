@@ -386,6 +386,9 @@ router.get("/", async (req, res, next) => {
       where: {
         postName: postName,
         id: postId,
+        dltYsno: {
+          [Op.eq]: 'N'
+        }
       },
     });
     return res.send(makeResponse({ data: posts, totalCount: postCnt }));
