@@ -869,6 +869,8 @@ a.ant-typography:active {
 
 /* // ck-editor CSS */
 .ant-anchor-wrapper {
+  min-width: 300px;
+
   .link-visible {
     >.ant-anchor-link {
       >a {
