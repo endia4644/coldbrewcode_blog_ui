@@ -1,6 +1,7 @@
 
 import { Affix, Anchor, Col, Row } from "antd";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import AnchorLink from "./AnchorLink";
 
 export default function Navigation({ postContent }) {
@@ -11,6 +12,13 @@ export default function Navigation({ postContent }) {
     setTargetOffset(window.innerHeight / 2);
   }, []);
 
+  /**
+   * 
+   * @param {*} prev 
+   * @param {*} curr 
+   * @returns 
+   * @description 재귀적으로 부모 엘리먼트를 탐색한다.
+   */
   function parentFind(prev, curr) {
     if (prev?.parent) {
       if (prev?.parent?.level < curr) {
@@ -22,6 +30,33 @@ export default function Navigation({ postContent }) {
       return -1;
     }
   };
+
+  /**
+   * 
+   * @param {*} element 
+   * @returns 
+   * @description 입력받은 element를 기점으로 부모가 없을때까지 재귀호출하며 class를 추가한다.
+   */
+  function parentAddClass(element) {
+    const parentLevel = Number(element?.dataset?.level) - 1;
+    element?.classList.add('link-visible');
+    const parent = element?.closest(`.level-${parentLevel}`);
+    const siblings = parent?.getElementsByClassName(`level-${element?.dataset?.level}`)
+
+    /* 형제 태그가 있는 경우 */
+    if (siblings) {
+      Array.prototype.forEach.call(siblings, (element) => {
+        element?.classList?.add('link-visible');
+      })
+    }
+
+    if (parent) {
+      parentAddClass(parent);
+    } else {
+      return true;
+    }
+
+  }
 
   useEffect(() => {
     const regExHTag = /(<h[1-5](.*?)>)(.*?)(<\/h[1-5]>)/gm;       // htag 매칭 정규식
@@ -91,26 +126,59 @@ export default function Navigation({ postContent }) {
     setIndexList(array);
   }, [postContent]);
   return (
-    <>
-      <Affix className="main-navigation">
-        <Row
-          className="main-side"
-          style={{ position: "absolute", right: "-55.5rem", top: '18rem' }}
-        >
-          <Col>
-            <div
-              className="post-content-navigation"
-              style={{ width: 275, borderRadius: 12 }}
+    <div style={{ display: "fixed", top: '0', width: '0px', height: '0px' }}>
+      <Row
+        className="main-side"
+      >
+        <Col>
+          <div
+            className="post-content-navigation"
+            style={{ width: 275, borderRadius: 12 }}
+          >
+            <Anchor
+              targetOffset={targetOffset}
+              style={{ maxHeight: '70vh', position: "absolute", right: "-55.5rem", top: '18rem' }}
+              onChange={(item) => {
+                const subLink = document.getElementsByClassName('sub-link');
+                if (subLink) {
+                  Array.prototype.forEach.call(subLink, (element) => {
+                    element?.classList?.remove('link-visible');
+                  })
+                }
+                const current = document.getElementById(item);
+                current?.classList.add('link-visible');
+                const nextLevel = Number(current?.dataset?.level) + 1;
+                const prevLevel = Number(current?.dataset?.level) - 1;
+                const parent = current?.closest(`.level-${prevLevel}`);
+                const siblings = parent?.getElementsByClassName(`level-${current?.dataset?.level}`)
+                const child = current?.getElementsByClassName(`level-${nextLevel}`);
+
+                /* 형제 태그가 있는 경우 */
+                if (siblings) {
+                  Array.prototype.forEach.call(siblings, (element) => {
+                    element?.classList?.add('link-visible');
+                  })
+                }
+
+                /* 부모 태그가 있는 경우 */
+                if (parent) {
+                  parentAddClass(parent);
+                }
+
+                if (child) {
+                  Array.prototype.forEach.call(child, (element) => {
+                    element.classList.add('link-visible');
+                  })
+                }
+              }}
             >
-              <Anchor targetOffset={targetOffset} style={{ maxHeight: '70vh' }}>
-                {indexList?.map((item) => {
-                  return <AnchorLink title={item.title} href={item.href} key={item.title} child={item.child} />
-                })}
-              </Anchor>
-            </div>
-          </Col>
-        </Row>
-      </Affix>
-    </>
+              {indexList?.map((item) => {
+                return <AnchorLink data={item} key={item.href} />
+              })}
+            </Anchor>
+          </div>
+        </Col>
+      </Row>
+    </div>
   );
 }
