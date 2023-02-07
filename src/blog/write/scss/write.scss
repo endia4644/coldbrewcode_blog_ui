@@ -107,6 +107,12 @@
   }
 }
 
+.ant-layout {
+  .ck-rounded-corners .ck.ck-editor__top .ck-sticky-panel .ck-toolbar {
+    border: 0;
+  }
+}
+
 .ck-editor {
   height: calc(100vh - 300px) !important;
 
