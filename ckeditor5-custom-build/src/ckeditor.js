@@ -135,7 +135,7 @@ Editor.builtinPlugins = [
 // Editor configuration.
 Editor.defaultConfig = {
 	toolbar: {
-		shouldNotGroupWhenFull: true,
+		shouldNotGroupWhenFull: false,
 		items: [
 			'heading',
 			'|',
