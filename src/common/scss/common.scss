@@ -35,7 +35,14 @@ body {
 
 .main-side {
   z-index: 1;
-  box-shadow: 3px 3px 5px 1px $mintColor;
+
+  .ant-anchor {
+    .ant-anchor-ink {
+      &::before {
+        display: none;
+      }
+    }
+  }
 }
 
 /* 아래의 모든 코드는 영역::코드로 사용 */
@@ -52,7 +59,7 @@ body {
 .ant-anchor-wrapper::-webkit-scrollbar-thumb {
   height: 30%;
   /* 스크롤바의 길이 */
-  background: $mintColor;
+  background: $antdGrayColor;
   /* 스크롤바의 색상 */
 
   border-radius: 10px;
@@ -61,14 +68,14 @@ body {
 
 .ant-radio-group::-webkit-scrollbar-track,
 .ck-content::-webkit-scrollbar-track {
-  background: $mintColor;
+  background: white;
   /*스크롤바 뒷 배경 색상*/
 }
 
 .ant-layout,
 .site-layout-background,
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-  background: #fff;
+  background: white;
 }
 
 .ant-layout-sider-zero-width-trigger {
@@ -470,7 +477,7 @@ a.ant-typography:active {
 .ck-content pre {
   background: #272822;
   color: #fff;
-  box-shadow: 5px 5px 0 #0000001f;
+  box-shadow: 2px 2px 8px 1px grey;
   border: 0;
   margin-left: 2em;
   margin-right: 2em;
@@ -774,16 +781,30 @@ a.ant-typography:active {
       margin-bottom: 0.5em;
     }
 
+    .info-head {
+      padding: 0.5em 1em;
+      border-bottom: 0;
+      border-left: 10px solid #ff9000;
+      border-bottom: 1px solid $antdGrayColor;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      margin-bottom: 0;
+    }
+
+    .info-body {
+      padding: 1.2em 2em;
+      border-left: 10px solid #ff9000;
+      border-top: 0;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      margin-top: 0;
+    }
+
     hr {
       width: 95%;
-      margin-left: auto;
-      margin-right: auto;
-      border-radius: 10px;
-      background-color: #f4f4f4;
-      border: 3px solid #f0f1f1;
-      margin-top: 0px;
-      margin-bottom: 0px;
-      height: 20px;
+      border: 0;
+      height: 1px;
+      background-image: linear-gradient(to right, #f0f0f0, $mainColor, $fontColor, #f0f0f0);
     }
 
     ul {
@@ -858,11 +879,27 @@ a.ant-typography:active {
     }
 
     p.info-box {
-      padding: 1.2em 2em;
-      border: 1px solid #e91e63;
-      border-left: 10px solid #e91e63;
+      padding: 1.2em 0.5em;
+      border-left: 6px solid #ff9000;
       border-radius: 5px;
       margin: 1.5em;
+      box-shadow: 1px 1px 4px 0px grey;
+
+      &::before {
+        color: #ff9000;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        position: relative;
+        background: linear-gradient(90deg, #fff4e1 60%, white 90%);
+        bottom: 16.8px;
+        right: 7px;
+        width: inherit;
+        content: '✨Tip';
+        text-shadow: 1px 1px 1px;
+        text-indent: 1em;
+        border: 0;
+      }
     }
   }
 }
