@@ -810,16 +810,15 @@ a.ant-typography:active {
     ul {
       margin-top: 1em;
 
-      li,
-      ol {
+      ol>li,
+      li {
         background: url(../images/coffee_one.svg) no-repeat 0px 1px;
         list-style-type: none;
-        padding: 6px 0px 0px 40px;
+        padding: 4px 0px 4px 36px;
 
         >ul {
 
-          li,
-          ol {
+          li {
             background: url(../images/coffee_two.svg) no-repeat 0px 1px;
             list-style-type: none;
 
@@ -835,6 +834,43 @@ a.ant-typography:active {
         }
       }
     }
+
+    ol {
+      margin: 1em 0 0 0;
+      padding: 0;
+      counter-reset: li;
+      list-style: none;
+
+      li {
+        display: block;
+        overflow: hidden;
+        position: relative;
+        padding-left: 50px;
+        min-height: 35px;
+
+        &:before {
+          position: absolute;
+          top: 0px;
+          left: 0px;
+          border: 0;
+          background-color: $mainColor;
+          border-radius: 50%;
+          width: 26px;
+          height: 26px;
+          line-height: 26px;
+          text-align: center;
+          font-size: 10px;
+          font-weight: 700;
+          color: $fontColor;
+          content: counter(li);
+          counter-increment: li;
+        }
+      }
+
+      //li
+    }
+
+    //ol
 
     h1.h1-underline,
     h2.h2-underline,
