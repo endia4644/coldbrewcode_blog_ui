@@ -217,7 +217,7 @@ Editor.defaultConfig = {
 	style: {
 		definitions: [
 			{
-				name: 'Info-box',
+				name: 'info-box',
 				element: 'p',
 				classes: ['custom-box', 'info-box']
 			},

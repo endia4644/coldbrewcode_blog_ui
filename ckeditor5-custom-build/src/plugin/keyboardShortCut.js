@@ -43,17 +43,26 @@ class KeyboardShortCut extends Plugin {
       editor.execute('style', 'h2-underline');
     }, { priority: 'high' });
 
-    editor.keystrokes.set('alt+f1', (evt, cancel) => {
-      editor.execute('style', { styleName: 'h1-underline' });
+    editor.keystrokes.set('alt+z', (evt, cancel) => {
+      editor.execute('style', { styleName: 'info-box' });
     }, { priority: 'high' });
 
-    editor.keystrokes.set('alt+f2', (evt, cancel) => {
-      editor.execute('style', { styleName: 'h2-underline' });
+    editor.keystrokes.set('alt+x', (evt, cancel) => {
+      editor.execute('style', { styleName: 'tip-box' });
     }, { priority: 'high' });
 
-    editor.keystrokes.set('alt+f3', (evt, cancel) => {
-      editor.execute('style', { styleName: 'h3-underline' });
+    editor.keystrokes.set('alt+c', (evt, cancel) => {
+      editor.execute('style', { styleName: 'caution-box' });
     }, { priority: 'high' });
+
+    editor.keystrokes.set('alt+a', (evt, cancel) => {
+      editor.execute('superscript');
+    }, { priority: 'high' });
+
+    editor.keystrokes.set('alt+s', (evt, cancel) => {
+      editor.execute('highlight', { value: 'yellowMarker' });
+    }, { priority: 'high' });
+
 
     editor.keystrokes.set('tab', (evt, data) => {
       editor.execute('input', { text: "    " });
