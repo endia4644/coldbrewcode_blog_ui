@@ -36,7 +36,6 @@ import Link from '@ckeditor/ckeditor5-link/src/link.js';
 import LinkImage from '@ckeditor/ckeditor5-link/src/linkimage.js';
 import List from '@ckeditor/ckeditor5-list/src/list.js';
 import ListProperties from '@ckeditor/ckeditor5-list/src/listproperties.js';
-import MediaEmbed from '@ckeditor/ckeditor5-media-embed/src/mediaembed.js';
 import MediaEmbedToolbar from '@ckeditor/ckeditor5-media-embed/src/mediaembedtoolbar.js';
 import Mention from '@ckeditor/ckeditor5-mention/src/mention.js';
 import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
@@ -63,6 +62,8 @@ import TextTransformation from '@ckeditor/ckeditor5-typing/src/texttransformatio
 import TodoList from '@ckeditor/ckeditor5-list/src/todolist';
 import Underline from '@ckeditor/ckeditor5-basic-styles/src/underline.js';
 import WordCount from '@ckeditor/ckeditor5-word-count/src/wordcount.js';
+import HtmlEmbed from '@ckeditor/ckeditor5-html-embed/src/htmlembed';
+import MediaEmbed from '@ckeditor/ckeditor5-media-embed/src/mediaembed';
 import KeyboardShortCut from './plugin/KeyboardShortCut.js';
 
 class Editor extends ClassicEditor { }
@@ -129,7 +130,9 @@ Editor.builtinPlugins = [
 	TodoList,
 	Underline,
 	WordCount,
-	KeyboardShortCut
+	KeyboardShortCut,
+	HtmlEmbed,
+	MediaEmbed,
 ];
 
 // Editor configuration.
@@ -173,6 +176,9 @@ Editor.defaultConfig = {
 			'|',
 			'bulletedList',
 			'numberedList',
+			'|',
+			"htmlEmbed",
+			"mediaEmbed"
 		]
 	},
 	language: 'ko',
@@ -248,6 +254,9 @@ Editor.defaultConfig = {
 			},
 		]
 	},
+	mediaEmbed: {
+		previewsInData: true
+	}
 };
 
 export default Editor;

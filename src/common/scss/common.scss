@@ -812,7 +812,27 @@ a.ant-typography:active {
 
       li,
       ol {
-        padding: 0.3em;
+        background: url(../images/coffee_one.svg) no-repeat 0px 1px;
+        list-style-type: none;
+        padding: 6px 0px 0px 40px;
+
+        >ul {
+
+          li,
+          ol {
+            background: url(../images/coffee_two.svg) no-repeat 0px 1px;
+            list-style-type: none;
+
+            >ul {
+
+              li,
+              ol {
+                background: url(../images/coffee_three.svg) no-repeat 0px 1px;
+                list-style-type: none;
+              }
+            }
+          }
+        }
       }
     }
 
