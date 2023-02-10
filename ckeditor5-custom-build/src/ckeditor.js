@@ -219,7 +219,17 @@ Editor.defaultConfig = {
 			{
 				name: 'Info-box',
 				element: 'p',
-				classes: ['info-box']
+				classes: ['custom-box', 'info-box']
+			},
+			{
+				name: 'tip-box',
+				element: 'p',
+				classes: ['custom-box', 'tip-box']
+			},
+			{
+				name: 'caution-box',
+				element: 'p',
+				classes: ['custom-box', 'caution-box']
 			},
 			{
 				name: 'h1-underline',

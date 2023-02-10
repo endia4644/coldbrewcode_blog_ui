@@ -878,26 +878,63 @@ a.ant-typography:active {
       padding: 0;
     }
 
-    p.info-box {
-      padding: 1.2em 0.5em;
-      border-left: 6px solid #ff9000;
+    p.custom-box {
+      padding: 1.2em 1em;
       border-radius: 5px;
       margin: 1.5em;
-      box-shadow: 1px 1px 4px 0px grey;
+      box-shadow: 0px 0px 4px 0px grey;
+
+      &.tip-box {
+        border-left: 6px solid #ff9000;
+        background-color: #fefdf9;
+
+        &::before {
+          background-image: url(../images/bulb.svg);
+          color: #ff9000;
+          background-color: #fff4e1;
+          content: 'Tip';
+        }
+      }
+
+      &.info-box {
+        border-left: 6px solid #00b8d4;
+        background-color: #fafeff;
+
+        &::before {
+          background-image: url(../images/info.svg);
+          color: #00b8d4;
+          background-color: #e0f8fa;
+          content: 'Info';
+        }
+      }
+
+      &.caution-box {
+        border-left: 6px solid #f04f6e;
+        background-color: #fefaf9;
+
+        &::before {
+          background-image: url(../images/caution.svg);
+          color: #f04f6e;
+          background-color: #fbdbe1;
+          content: 'Info';
+        }
+      }
 
       &::before {
-        color: #ff9000;
-        height: 30px;
+        background-size: 35px 22px;
+        background-repeat: no-repeat;
+        background-position: 0px;
+        height: 40px;
         display: flex;
         align-items: center;
         position: relative;
-        background: linear-gradient(90deg, #fff4e1 60%, white 90%);
+        margin: 0 -1em;
         bottom: 16.8px;
-        right: 7px;
         width: inherit;
-        content: '✨Tip';
+        border-top-right-radius: 5px;
+        box-shadow: 0px 0px 1px 0px grey;
         text-shadow: 1px 1px 1px;
-        text-indent: 1em;
+        text-indent: 2.5em;
         border: 0;
       }
     }
