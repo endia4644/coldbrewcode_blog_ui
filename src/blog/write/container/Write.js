@@ -116,15 +116,17 @@ export default function Write() {
     dispatch(actions.setValue('permission', post?.permission));
     dispatch(actions.setValue('seriesName', post?.Series?.[0]?.seriesName));
     dispatch(actions.setValue('seriesList', post?.Series));
-  }, [post]);
+  }, [post, dispatch]);
 
   const getHtmlContent = (htmlContent) => {
     setHtmlContent(htmlContent);
   };
 
-  const goBlog = () => {
-    navigate("/blog");
-  };
+  const goBlog = useCallback(
+    () => {
+      navigate("/blog");
+    }, [navigate]
+  );
 
   const detailSetting = () => {
     const images = [];
@@ -180,7 +182,7 @@ export default function Write() {
         });
       }
     },
-    [goBlog]
+    [goBlog, deleteStatus]
   );
 
   function contentAddIndex(htmlContent) {
@@ -199,14 +201,15 @@ export default function Write() {
       let style = tag?.match(styleEx);
       let content = tag?.match(contentEx);
       switch (tagHeader?.[1]) {
-        case "<h1": newHeader = `<h1 class="level1 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content}</h1>`; break;
-        case "<h2": newHeader = `<h2 class="level2 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content}</h2>`; break;
-        case "<h3": newHeader = `<h3 class="level3 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content}</h3>`; break;
-        case "<h4": newHeader = `<h4 class="level4 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content}</h4>`; break;
-        case "<h5": newHeader = `<h5 class="level5 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content}</h5>`; break;
+        case "<h1": newHeader = `<h1 class="level1 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content[0]}</h1>`; break;
+        case "<h2": newHeader = `<h2 class="level2 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content[0]}</h2>`; break;
+        case "<h3": newHeader = `<h3 class="level3 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content[0]}</h3>`; break;
+        case "<h4": newHeader = `<h4 class="level4 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content[0]}</h4>`; break;
+        case "<h5": newHeader = `<h5 class="level5 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content[0]}</h5>`; break;
+        default: break;
       }
       id++;
-      contents = contents?.replace(tag, newHeader);
+      return contents = contents?.replace(tag, newHeader);
     })
 
     return contents;
@@ -254,7 +257,7 @@ export default function Write() {
         openTempMessage(tfetchStatus);
       }
     }
-  }, [tfetchStatus, openTempMessage]);
+  }, [postId, tempId, tfetchStatus, openTempMessage]);
 
   /* 언마운트 시 INITINAL_STATE 초기화 */
   useEffect(() => {
@@ -263,7 +266,7 @@ export default function Write() {
         dispatch(actions.setValue(key, value));
       }
     }
-  }, [])
+  }, [dispatch])
 
   return (
     <>

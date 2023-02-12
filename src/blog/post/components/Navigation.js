@@ -1,7 +1,6 @@
 
-import { Affix, Anchor, Col, Row } from "antd";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { Anchor, Col, Row } from "antd";
+import React, { useCallback, useEffect, useState } from "react";
 import AnchorLink from "./AnchorLink";
 
 export default function Navigation({ postContent }) {
@@ -19,17 +18,19 @@ export default function Navigation({ postContent }) {
    * @returns 
    * @description 재귀적으로 부모 엘리먼트를 탐색한다.
    */
-  function parentFind(prev, curr) {
-    if (prev?.parent) {
-      if (prev?.parent?.level < curr) {
-        return prev?.parent;
+  const parentFind = useCallback(
+    (prev, curr) => {
+      if (prev?.parent) {
+        if (prev?.parent?.level < curr) {
+          return prev?.parent;
+        } else {
+          return parentFind(prev?.parent, curr);
+        }
       } else {
-        return parentFind(prev?.parent, curr);
+        return -1;
       }
-    } else {
-      return -1;
-    }
-  };
+    }, []
+  );
 
   /**
    * 
@@ -75,18 +76,26 @@ export default function Navigation({ postContent }) {
       const regExId = /(?<=id=")(.*?)(?=")/g;                       // id 매칭 정규식
       const regExTag = /(?<=<(.*?)>)(.*?)(?=<\/.*>)/g;              // 태그 매칭 정규식
       const regExTstTag = /(<(.*?)>)(.*?)(<\/.*>)/gm;               // 태그 검증 정규식
+      const regSupTstTag = /(<sup>)(.*?)(<\/sup>)/g;                // sup 태그 검증 정규식
+      const regSupTag = /(\w*)(?<!((<sup>)(.*?)(<\/sup>)))/g;       // sup 태그 검증 정규식
 
       const level = tag?.match(regExLevel)?.[0];
       let title = tag?.match(regExTitle)?.[0].trim();
       const href = '#' + tag?.match(regExId);
+      console.log(title);
 
       /* 제목이 태그로 래핑되있을경우 재매핑 */
       if (regExTstTag.test(title)) {
-        title = title?.match(regExTag)?.[0];
+        /* 제목에 sup 태그가 포함되어있을 경우 재거한다 */
+        if (regSupTstTag.test(title)) {
+          title = title?.match(regSupTag)?.[0];
+        } else {
+          title = title?.match(regExTag)?.[0];
+        }
       }
 
-      /* 제목이 <br>이면 추가하지 않음 */
-      if (title != '<br>' && title != '&nbsp;') {
+      /* 제목이 <br>이거나 공백이면 추가하지 않음 */
+      if (title !== '<br>' && title !== '&nbsp;') {
         if (!prevLevel) {
           prevAnchor = { title, href, level, child: [], parent: null };
           array.push(prevAnchor);
@@ -122,9 +131,11 @@ export default function Navigation({ postContent }) {
         }
         prevLevel = level;
       }
+      return 0;
     });
+    console.log(array);
     setIndexList(array);
-  }, [postContent]);
+  }, [postContent, parentFind]);
   return (
     <div style={{ display: "fixed", top: '0', width: '0px', height: '0px' }}>
       <Row
