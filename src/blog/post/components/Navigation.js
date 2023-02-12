@@ -76,19 +76,23 @@ export default function Navigation({ postContent }) {
       const regExId = /(?<=id=")(.*?)(?=")/g;                       // id 매칭 정규식
       const regExTag = /(?<=<(.*?)>)(.*?)(?=<\/.*>)/g;              // 태그 매칭 정규식
       const regExTstTag = /(<(.*?)>)(.*?)(<\/.*>)/gm;               // 태그 검증 정규식
-      const regSupTstTag = /(<sup>)(.*?)(<\/sup>)/g;                // sup 태그 검증 정규식
-      const regSupTag = /(\w*)(?<!((<sup>)(.*?)(<\/sup>)))/g;       // sup 태그 검증 정규식
-
+      const regSupTag = /(<sup>.*?<\/sup>)/g;                // sup 태그 검증 정규식
       const level = tag?.match(regExLevel)?.[0];
       let title = tag?.match(regExTitle)?.[0].trim();
       const href = '#' + tag?.match(regExId);
-      console.log(title);
 
       /* 제목이 태그로 래핑되있을경우 재매핑 */
       if (regExTstTag.test(title)) {
         /* 제목에 sup 태그가 포함되어있을 경우 재거한다 */
-        if (regSupTstTag.test(title)) {
-          title = title?.match(regSupTag)?.[0];
+        if (regSupTag.test(title)) {
+          let supNotArray = [];
+          let supArray = title?.split(regSupTag);
+          supArray.map(item => {
+            if (!regSupTag.test(item)) {
+              supNotArray.push(item);
+            }
+          })
+          title = supNotArray.join('');
         } else {
           title = title?.match(regExTag)?.[0];
         }
@@ -133,7 +137,6 @@ export default function Navigation({ postContent }) {
       }
       return 0;
     });
-    console.log(array);
     setIndexList(array);
   }, [postContent, parentFind]);
   return (
