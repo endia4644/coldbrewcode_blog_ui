@@ -475,13 +475,11 @@ a.ant-typography:active {
 }
 
 .ck-content pre {
-  background: #272822;
-  color: #fff;
-  box-shadow: 2px 2px 8px 1px grey;
+  background: #272822 !important;
+  color: #fff !important;
+  box-shadow: 2px 2px 8px 1px grey !important;
   border: 0;
-  margin-left: 2em;
-  margin-right: 2em;
-  border-radius: 10px;
+  border-radius: 10px !important;
 
   &::before {
     content: "";
