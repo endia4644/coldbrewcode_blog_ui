@@ -83,7 +83,7 @@ if (prod) {
 }
 
 app.use("/", express.static("uploads"));
-app.use(express.json());
+app.use(express.json({ limit: 5000000 }));
 app.use(express.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -111,7 +111,6 @@ app.listen(3085, () => {
   console.log(`백엔드 서버 ${3085}번 포트에서 작동중.`);
   if (process.env.NODE_ENV === 'production') {
     schedule.scheduleJob('*/12 * * *', function () {
-      console.log('call Schedule')
       // newPostSend();
       // commentNotice();
       notUsedImageDelete();
