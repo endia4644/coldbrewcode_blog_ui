@@ -36,6 +36,7 @@ import Link from '@ckeditor/ckeditor5-link/src/link.js';
 import LinkImage from '@ckeditor/ckeditor5-link/src/linkimage.js';
 import List from '@ckeditor/ckeditor5-list/src/list.js';
 import ListProperties from '@ckeditor/ckeditor5-list/src/listproperties.js';
+import MediaEmbed from '@ckeditor/ckeditor5-media-embed/src/mediaembed.js';
 import MediaEmbedToolbar from '@ckeditor/ckeditor5-media-embed/src/mediaembedtoolbar.js';
 import Mention from '@ckeditor/ckeditor5-mention/src/mention.js';
 import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
@@ -62,8 +63,6 @@ import TextTransformation from '@ckeditor/ckeditor5-typing/src/texttransformatio
 import TodoList from '@ckeditor/ckeditor5-list/src/todolist';
 import Underline from '@ckeditor/ckeditor5-basic-styles/src/underline.js';
 import WordCount from '@ckeditor/ckeditor5-word-count/src/wordcount.js';
-import HtmlEmbed from '@ckeditor/ckeditor5-html-embed/src/htmlembed';
-import MediaEmbed from '@ckeditor/ckeditor5-media-embed/src/mediaembed';
 import KeyboardShortCut from './plugin/KeyboardShortCut.js';
 
 class Editor extends ClassicEditor { }
@@ -130,9 +129,7 @@ Editor.builtinPlugins = [
 	TodoList,
 	Underline,
 	WordCount,
-	KeyboardShortCut,
-	HtmlEmbed,
-	MediaEmbed,
+	KeyboardShortCut
 ];
 
 // Editor configuration.
@@ -176,9 +173,6 @@ Editor.defaultConfig = {
 			'|',
 			'bulletedList',
 			'numberedList',
-			'|',
-			"htmlEmbed",
-			"mediaEmbed"
 		]
 	},
 	language: 'ko',
@@ -223,19 +217,9 @@ Editor.defaultConfig = {
 	style: {
 		definitions: [
 			{
-				name: 'info-box',
+				name: 'Info-box',
 				element: 'p',
-				classes: ['custom-box', 'info-box']
-			},
-			{
-				name: 'tip-box',
-				element: 'p',
-				classes: ['custom-box', 'tip-box']
-			},
-			{
-				name: 'caution-box',
-				element: 'p',
-				classes: ['custom-box', 'caution-box']
+				classes: ['info-box']
 			},
 			{
 				name: 'h1-underline',
@@ -254,28 +238,6 @@ Editor.defaultConfig = {
 			},
 		]
 	},
-	mediaEmbed: {
-		previewsInData: true
-	},
-	codeBlock: {
-		languages: [
-			{ language: 'plaintext', label: '평문', class: 'plain-text-code' }, // The default language.
-			{ language: 'c', label: 'C' },
-			{ language: 'cs', label: 'C#' },
-			{ language: 'cpp', label: 'C++' },
-			{ language: 'css', label: 'CSS' },
-			{ language: 'diff', label: 'Diff' },
-			{ language: 'html', label: 'HTML' },
-			{ language: 'java', label: 'Java' },
-			{ language: 'javascript', label: 'JavaScript' },
-			{ language: 'php', label: 'PHP' },
-			{ language: 'python', label: 'Python' },
-			{ language: 'ruby', label: 'Ruby' },
-			{ language: 'typescript', label: 'TypeScript' },
-			{ language: 'xml', label: 'XML' },
-			{ language: 'sql', label: 'SQL' }
-		]
-	}
 };
 
 export default Editor;
