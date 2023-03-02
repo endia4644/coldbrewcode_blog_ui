@@ -234,6 +234,7 @@ router.patch("/", isLoggedIn, async (req, res, next) => {
         /* 게시글 메인데이터를 업데이트 */
         await db.Post.update(
           {
+            postName: req.body.postName,
             postContent: req.body.postContent,
             postDescription: req.body.postDescription,
             postThumbnail: req.body.postThumbnail,
@@ -261,6 +262,7 @@ router.patch("/", isLoggedIn, async (req, res, next) => {
         /* 게시글 메인데이터를 업데이트 */
         await db.Post.update(
           {
+            postName: req.body.postName,
             postContent: req.body.postContent,
             postDescription: req.body.postDescription,
             postThumbnail: req.body.postThumbnail,
