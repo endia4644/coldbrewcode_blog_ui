@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Content, Footer } from "antd/lib/layout/layout";
 import "react-quill/dist/quill.snow.css";
 import Editor from "../components/CKEditor";
@@ -14,9 +14,11 @@ import useNeedLogin from "../../../common/hook/useNeedLogin";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { FetchStatus } from "../../../common/constant";
 import { actions as common } from "../../../common/state";
+import { useCallbackPrompt } from "../../../common/hook/useCallbackPrompt";
 
 export default function Write() {
   useNeedLogin();
+
   const { id: postId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -36,6 +38,8 @@ export default function Write() {
   const seriesName = useSelector(state => state.write.seriesName);
   const postType = useSelector(state => state.write.postType);
   const tempId = useSelector(state => state.write.tempId);
+
+  const [showPrompt, confirmNavigation, cancelNavigation] = useCallbackPrompt(true);
 
   const { fetchStatus: tfetchStatus } = useFetchInfo(Types.FetchCreateTempPost);
 
@@ -270,6 +274,20 @@ export default function Write() {
 
   return (
     <>
+      <Modal
+        title="작성 취소"
+        open={showPrompt ? true : false}
+        onOk={() => {
+          // @ts-ignore
+          confirmNavigation();
+        }}
+        onCancel={() => {
+          // @ts-ignore
+          cancelNavigation();
+        }}
+      >
+        <Typography.Text>작성중인 내용이 저장되지 않았습니다.<br />작성을 그만두시겠습니까?</Typography.Text>
+      </Modal>
       <AnimatePresence>
         {level > 0 && (
           <WriteSetting
