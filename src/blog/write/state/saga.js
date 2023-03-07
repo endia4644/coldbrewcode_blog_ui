@@ -13,7 +13,7 @@ function* fetchPost(action) {
 }
 
 function* fetchCreatePost(action) {
-  yield call(callApi, {
+  const { isSuccess } = yield call(callApi, {
     method: "post",
     url: "/post",
     data: {
@@ -28,10 +28,15 @@ function* fetchCreatePost(action) {
       tempId: action.tempId,
     },
   });
+  if (isSuccess) {
+    yield put(
+      actions.setValue("txnCmpt", true)
+    );
+  }
 }
 
 function* fetchUpdatePost(action) {
-  yield call(callApi, {
+  const { isSuccess } = yield call(callApi, {
     method: "patch",
     url: "/post",
     data: {
@@ -49,6 +54,11 @@ function* fetchUpdatePost(action) {
       tempId: action.tempId,
     },
   });
+  if (isSuccess) {
+    yield put(
+      actions.setValue("txnCmpt", true)
+    );
+  }
 }
 
 function* fetchAllSeries(action) {
@@ -86,7 +96,7 @@ function* fetchCreateSeries(action) {
 }
 
 function* fetchCreateTempPost(action) {
-  yield call(callApi, {
+  const { isSuccess } = yield call(callApi, {
     method: "post",
     url: "/post/temp",
     data: {
@@ -101,6 +111,11 @@ function* fetchCreateTempPost(action) {
       imageIds: action.imageIds,
     },
   });
+  if (isSuccess) {
+    yield put(
+      actions.setValue("txnCmpt", true)
+    );
+  }
 }
 
 function* fetchTempPost(action) {

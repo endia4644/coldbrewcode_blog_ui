@@ -7,6 +7,7 @@ export const useCallbackPrompt = (when) => {
   const location = useLocation();
   const [showPrompt, setShowPrompt] = useState(false);
   const [blockedLocation, setBlockedLocation] = useState(null);
+  const txnCmpt = useSelector(state => state.write.txnCmpt);
 
   const cancelNavigation = useCallback(() => {
     setShowPrompt(false);
@@ -17,14 +18,14 @@ export const useCallbackPrompt = (when) => {
     (tx) => {
       const editor = document.getElementsByClassName('ck-editor__editable');
       const contentSize = editor[0]?.childNodes?.length > 1 ? 1 : 0;
-      if ((tx.location.pathname !== location.pathname) && contentSize) {
+      if ((tx.location.pathname !== location.pathname) && contentSize && !txnCmpt) {
         setBlockedLocation(tx);
         setShowPrompt(true);
       } else {
         tx.retry();
       }
     },
-    [location]
+    [location, txnCmpt]
   );
 
   const confirmNavigation = useCallback(() => {

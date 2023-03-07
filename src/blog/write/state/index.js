@@ -125,6 +125,7 @@ export const INITINAL_STATE = {
   thumbnailId: "",
   postType: "post",
   tempId: "",
+  txnCmpt: false,
 };
 
 const reducer = createReducer(INITINAL_STATE, {
