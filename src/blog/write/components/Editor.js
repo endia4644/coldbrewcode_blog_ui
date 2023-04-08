@@ -8,14 +8,57 @@ import ImageResize from "quill-image-resize-module-react";
 import "react-quill/dist/quill.snow.css";
 import "highlight.js/styles/github.css";
 
-/* Module Import */
-const { fontFamilyArr, fontSizeArr } = require('../module/font')(Quill);
-require('../module/codeblock');
-require('../module/imageResize')(Quill, ImageResize);
-require('../module/divider')(Quill, ReactQuill);
-require('../module/image')(Quill);
-require('../module/code')(Quill);
-/* / Module Import */
+var icons = ReactQuill.Quill.import('ui/icons');
+
+const fontFamilyArr = ["MapleStory", "NotoSans", "Roboto", "Sono", "NanumGothic"];
+let fonts = Quill.import("attributors/style/font");
+fonts.whitelist = fontFamilyArr;
+Quill.register(fonts, true);
+
+const fontSizeArr = ["8px", "10px", "11px", "12px", "14px", "18px", "24px", "36px", "48px"];
+var size = Quill.import("attributors/style/size");
+size.whitelist = fontSizeArr;
+Quill.register(size, true);
+
+const CodeBlock = Quill.import('formats/code-block');
+// See - https://github.com/quilljs/quill/blob/develop/modules/clipboard.js#L513
+CodeBlock.tagName = 'PRE';
+
+Quill.register({
+  'formats/code-block': CodeBlock
+});
+
+Quill.register("modules/imageResize", ImageResize);
+
+const BaseImage = Quill.import("formats/image");
+
+const ATTRIBUTES = ["alt", "height", "width", "style"];
+
+let BlockEmbed = Quill.import('blots/block/embed');
+
+class DividerBlot extends BlockEmbed { }
+DividerBlot.blotName = 'divider';
+DividerBlot.tagName = 'hr';
+
+Quill.register('formats/divider', DividerBlot);
+icons['divider'] = `<span role="img" aria-label="minus" class="anticon anticon-minus"><svg viewBox="64 64 896 896" focusable="false" data-icon="minus" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M872 474H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h720c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"></path></svg></span>`;
+
+class Image extends BaseImage {
+  static formats(domNode) {
+    return ATTRIBUTES.reduce(function (formats, attribute) {
+      if (domNode.hasAttribute(attribute)) {
+        formats[attribute] = domNode.getAttribute(attribute);
+      }
+      return formats;
+    }, {});
+  }
+}
+
+Quill.register(Image, true);
+
+const code = Quill.import("formats/code");
+
+Quill.register(code, true);
 
 export default function Editor({
   postType,
