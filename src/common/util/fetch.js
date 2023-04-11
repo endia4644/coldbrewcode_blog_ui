@@ -40,18 +40,12 @@ export function makeFetchSaga({
       (state) => state.common.fetchInfo.nextPageMap[actionType]?.[fetchKey] || 0
     );
     const page = fetchPage !== undefined ? fetchPage : nextPage;
-    const iterStack = [];
     let iter = fetchSaga(action, page);
     let res;
     let checkSlowTask;
     let params;
     while (true) {
       const { value, done } = iter.next(res);
-      if (getIsCallEffect(value) && getIsGeneratorFunction(value.payload.fn)) {
-        iterStack.push(iter);
-        iter = value.payload.fn(...value.payload.args);
-        continue;
-      }
       if (getIsCallEffect(value) && value.payload.fn === callApi) {
         yield put(
           actions.setFetchStatus({
@@ -100,12 +94,6 @@ export function makeFetchSaga({
         res = yield value;
       }
       if (done) {
-        const nextIter = iterStack.pop();
-        if (nextIter) {
-          iter = nextIter;
-          continue;
-        }
-
         if (params) {
           yield put(actions.setFetchStatus(params));
         }
@@ -132,21 +120,6 @@ export function getApiCacheKey(actionType, { apiHost, url, params }) {
 export function getFetchKey(action) {
   const fetchKey = action[FETCH_KEY];
   return fetchKey === undefined ? action.type : String(fetchKey);
-}
-
-function getIsGeneratorFunction(obj) {
-  const constructor = obj.constructor;
-  if (!constructor) {
-    return false;
-  }
-  if (
-    "GeneratorFunction" === constructor.name ||
-    "GeneratorFunction" === constructor.displayName
-  ) {
-    return true;
-  }
-  const proto = constructor.prototype;
-  return "function" === typeof proto.next && "function" === typeof proto.throw;
 }
 
 /**

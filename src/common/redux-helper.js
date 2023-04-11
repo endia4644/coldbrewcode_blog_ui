@@ -7,6 +7,10 @@ export function createReducer(initialState, handlerMap) {
       if (action[NOT_IMMUTABLE]) {
         return handler(state, action);
       } else {
+        /**
+         * produce의 첫번째 상대값은 기존값, 두번째 함수는 변경함수이다.
+         * 변경하여 새로운 객체를 리턴한다.
+         */
         return produce(state, (draft) => {
           const handler = handlerMap[action.type];
           handler(draft, action);
