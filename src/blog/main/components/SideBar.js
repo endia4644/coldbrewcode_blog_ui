@@ -1,8 +1,10 @@
 import { Affix, Col, Divider, Row, Tabs } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { actions } from "../state";
+import { actions, Types } from "../state";
 import Search from "./Search";
+import { actions as commonActions } from "../../../common/state";
+import { FetchType } from "../../../common/constant";
 
 export default function SideBar({ hashtag }) {
   const dispatch = useDispatch();
@@ -10,12 +12,13 @@ export default function SideBar({ hashtag }) {
 
   const onchangFunction = (sideActiveKey) => {
     window.scrollTo(0, 0);
+    dispatch(actions.setValue("post", []));
+    dispatch(commonActions.setFetchStatus({
+      actionType: Types.FetchAllPost,
+      fetchType: FetchType.Delete,
+    }))
     dispatch(
-      actions.fetchHashtagPost(
-        null,
-        0,
-        sideActiveKey !== "0" ? sideActiveKey : ""
-      )
+      actions.fetchAllPost({ hashtag: sideActiveKey !== "ALL" ? sideActiveKey : "" })
     );
   };
   /* 사이드탭 제어함수 */
@@ -36,7 +39,7 @@ export default function SideBar({ hashtag }) {
               <Tabs
                 onChange={onchangFunction}
                 tabPosition="left"
-                defaultActiveKey="0"
+                defaultActiveKey="ALL"
                 activeKey={sideActiveKey}
                 onTabClick={onTabClick}
                 items={hashtag.map((item, i) => {

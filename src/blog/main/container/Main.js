@@ -6,17 +6,29 @@ import SideBar from "../components/SideBar";
 import TopBar from "../components/TopBar";
 import UserInfo from "../components/UserInfo";
 import Post from "../components/Post";
-import { useDispatch, useSelector } from "react-redux";
-import { actions } from "../state";
-import { actions as authActions } from "../../auth/state";
 import Series from "../components/Series";
 import { UpArrowIcon } from "../../../common/components/Icon";
+import { FetchType } from "../../../common/constant";
+import { useDispatch, useSelector } from "react-redux";
+import { actions, Types } from "../state";
+import { actions as authActions } from "../../auth/state";
+import { actions as commonActions } from "../../../common/state";
 import "../scss/main.scss";
 
 export default function Main() {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(actions.fetchAllSeries());
+    /* Post, Series, Hashtag는 화면진입 할 때마다 초기화 */
+    dispatch(actions.setValue("post", []));
+    dispatch(commonActions.setFetchStatus({
+      actionType: Types.FetchAllPost,
+      fetchType: FetchType.Delete,
+    }))
+    dispatch(actions.setValue("series", []));
+    dispatch(commonActions.setFetchStatus({
+      actionType: Types.FetchAllSeries,
+      fetchType: FetchType.Delete,
+    }))
     dispatch(actions.fetchAllHashtag());
   }, [dispatch]);
   const hashtag = useSelector((state) => state.main.hashtag);

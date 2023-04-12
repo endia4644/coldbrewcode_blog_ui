@@ -2,7 +2,9 @@ import { SearchOutlined } from "@ant-design/icons";
 import { Button, Row } from "antd";
 import React, { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { actions } from "../state";
+import { actions, Types } from "../state";
+import { actions as commonActions } from "../../../common/state";
+import { FetchType } from "../../../common/constant";
 
 export default function Search() {
   const dispatch = useDispatch();
@@ -12,7 +14,14 @@ export default function Search() {
 
   const handleOnClick = () => {
     window.scrollTo(0, 0);
-    dispatch(actions.fetchSearchPost(null, 0, searchText));
+    dispatch(actions.setValue("post", []));
+    dispatch(commonActions.setFetchStatus({
+      actionType: Types.FetchAllPost,
+      fetchType: FetchType.Delete,
+    }))
+    dispatch(
+      actions.fetchAllPost({ search: searchText })
+    );
     setSearchText("");
     searchRef.current.blur();
     buttonRef.current.blur();

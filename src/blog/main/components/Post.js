@@ -35,7 +35,6 @@ export default function Post() {
   const hashtagCurrent = useSelector((state) => state.main.hashtagCurrent);
   const searchCurrent = useSelector((state) => state.main.searchCurrent);
   const { fetchStatus, totalCount } = useFetchInfo(Types.FetchAllPost);
-  const { totalCount: searchCount } = useFetchInfo(Types.FetchSearchPost);
 
   useEffect(() => {
     let observer;
@@ -44,12 +43,12 @@ export default function Post() {
         entries.forEach((entry) => {
           if (entry.isIntersecting && (fetchStatus === undefined || fetchStatus === FetchStatus.Success)) {
             dispatch(
-              actions.fetchAllPost(
+              actions.fetchAllPost({
                 post,
                 totalCount,
-                hashtagCurrent,
-                searchCurrent
-              )
+                hashtag: hashtagCurrent,
+                search: searchCurrent
+              })
             );
           }
         });
@@ -57,7 +56,7 @@ export default function Post() {
       observer.observe(targetRef.current);
     }
     return () => observer && observer.disconnect();
-  }, [dispatch, post, totalCount, hashtagCurrent, searchCurrent]);
+  }, [dispatch, post, totalCount, hashtagCurrent, searchCurrent, fetchStatus]);
   return (
     <>
       {searchCurrent && (
@@ -65,7 +64,7 @@ export default function Post() {
           <Space style={{ marginLeft: 30 }}>
             <Title level={5}>총</Title>
             <Title level={3} style={{ color: "#d8b48b" }}>
-              {searchCount}
+              {totalCount}
             </Title>
             <Title level={5}>개의 포스트를 찾았습니다.</Title>
           </Space>

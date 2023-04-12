@@ -8,11 +8,15 @@ export const FetchStatus = {
   Fail: "Fail",
   Delete: "Delete",
 };
+
+export const FetchType = {
+  Update: "Update", // 현재 사용하지는 않음
+  Delete: "Delete"
+}
+
 export const AuthStatus = {
   Login: "Login",
   NotLogin: "NotLogin",
 };
-
-export const NO_SAVE = ["main/FetchHashtagPost", "main/FetchSearchPost"];
 
 export const NOT_FIND = "NOTFIND";

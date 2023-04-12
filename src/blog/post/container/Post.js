@@ -4,8 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { actions, Types } from "../state";
 import { actions as authActions } from "../../auth/state";
-import { actions as mainActions, Types as mainTypes } from "../../main/state";
-import { actions as commonActions } from "../../../common/state";
 import { Content, Header } from "antd/lib/layout/layout";
 import Settings from "../../main/components/Settings";
 import useQuery from "../../auth/hook/useQuery";
@@ -33,7 +31,7 @@ export default function Post() {
   const comment = useSelector((state) => state.post.comment_0);
   const commentCount = useSelector((state) => state.post.commentCount);
   const { fetchStatus } = useFetchInfo(Types.FetchGetPost, id);
-  const { fetchStatus: dFetchStatus } = useFetchInfo(Types.FetchRemovePost, id);
+  const { fetchStatus: dFetchStatus } = useFetchInfo(Types.FetchRemovePost, id); // id를 패키치로 사용하여 중복문제 X
   const postType = query.get("postType") ?? 'post';
 
   const status = useSelector((state) => state.auth.status);
@@ -41,60 +39,58 @@ export default function Post() {
 
   const [open, setOpen] = useState(false);
 
+  /**
+   * 삭제 확인 모달 호출
+   */
   const showModal = () => {
     setOpen(true);
   };
 
+  /**
+   * 작성 완료 핸들러
+   */
   const handleOk = () => {
     dispatch(actions.fetchRemovePost({ postId: id }))
     setOpen(false);
   };
 
+  /**
+   *  작성 취소 핸들러
+   */
   const handleCancel = () => {
     setOpen(false);
   };
 
+  /**
+   * 로그아웃 처리
+   */
   function logout() {
     dispatch(authActions.fetchLogout());
   }
 
   useEffect(() => {
+    /* 게시글 정보 조회 */
     dispatch(actions.fetchGetPost({ id, postType }));
-  }, [dispatch, id]);
+  }, [dispatch, id, postType]);
 
   useEffect(() => {
+    /* 답글 정보 조회 */
     dispatch(actions.fetchGetComment(0, id));
   }, [dispatch, id]);
 
   useEffect(() => {
     /* 삭제가 성공한 경우 blog 화면으로 이동 */
     if (dFetchStatus === FetchStatus.Success) {
-      dispatch(mainActions.setValue("series", []));
-      dispatch(commonActions.setFetchStatus({
-        actionType: mainTypes.FetchAllSeries,
-        status: FetchStatus.Delete,
-      }))
       navigate('/blog');
     }
-  }, [dFetchStatus])
+  }, [dispatch, navigate, dFetchStatus])
 
   useLayoutEffect(() => {
+    /* 화면 로드전 게시글이 없을경우 메인페이지로 강제이동 */
     if (fetchStatus !== FetchStatus.Request && !post) {
       navigate("/blog");
     }
   }, [fetchStatus, navigate, post]);
-
-
-  useEffect(() => {
-    return () => {
-      /* 언마운트 시 Main 리스트를 최신화 */
-      dispatch(mainActions.setValue("post", []));
-      dispatch(commonActions.setFetchStatus({
-        actionType: mainTypes.FetchAllPost,
-        status: FetchStatus.Delete,
-      }))
-    }
-  }, [])
 
   return (
     <>

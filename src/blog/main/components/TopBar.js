@@ -1,7 +1,9 @@
 import { Tabs } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { actions } from "../state";
+import { actions, Types } from "../state";
+import { actions as commonActions } from "../../../common/state";
+import { FetchType } from "../../../common/constant";
 
 export default function Topbar({ hashtag }) {
   const dispatch = useDispatch();
@@ -9,12 +11,13 @@ export default function Topbar({ hashtag }) {
 
   const onchangFunction = (sideActiveKey) => {
     window.scrollTo(0, 0);
+    dispatch(actions.setValue("post", []));
+    dispatch(commonActions.setFetchStatus({
+      actionType: Types.FetchAllPost,
+      fetchType: FetchType.Delete,
+    }))
     dispatch(
-      actions.fetchHashtagPost(
-        null,
-        0,
-        sideActiveKey !== "0" ? sideActiveKey : ""
-      )
+      actions.fetchAllPost({ hashtag: sideActiveKey !== "0" ? sideActiveKey : "" })
     );
   };
   /* 사이드탭 제어함수 */

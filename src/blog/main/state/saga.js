@@ -22,53 +22,20 @@ function* fetchAllPost(action, page) {
         yield put(actions.setValue("post", data));
       }
     }
-  }
-}
-
-function* fetchSearchPost(action, page) {
-  if (page <= Math.floor(action.totalCount / 8)) {
-    const { isSuccess, data, totalCount } = yield call(callApi, {
-      url: "/post",
-      params: { limit: 8, offset: 8 * page, search: action?.search },
-    });
-    if (isSuccess && data) {
-      yield put(actions.setValue("post", data));
-      yield put(
-        common.setFetchStatus({
-          actionType: Types.FetchAllPost,
-          fetchKey: Types.FetchAllPost,
-          totalCount: totalCount,
-          nextPage: 1,
-          errorMessage: null,
-        })
-      );
+    if (action?.search) {
       yield put(actions.setValue("searchCurrent", action?.search));
-      yield put(actions.setValue("activeKey", "post"));
       yield put(actions.setValue("sideActiveKey", null));
+      yield put(actions.setValue("hashtagCurrent", null));
+      yield put(actions.setValue("activeKey", "post"));
+    } else {
+      yield put(actions.setValue("searchCurrent", null));
     }
-  }
-}
-
-function* fetchHashtagPost(action, page) {
-  if (page <= Math.floor(action.totalCount / 8)) {
-    const { isSuccess, data, totalCount } = yield call(callApi, {
-      url: "/post",
-      params: { limit: 8, offset: 8 * page, hashtag: action?.hashtag },
-    });
-    if (isSuccess && data) {
-      yield put(actions.setValue("post", data));
-      yield put(
-        common.setFetchStatus({
-          actionType: Types.FetchAllPost,
-          fetchKey: Types.FetchAllPost,
-          totalCount: totalCount,
-          nextPage: 1,
-          errorMessage: null,
-        })
-      );
+    if (action?.hashtag) {
       yield put(actions.setValue("searchCurrent", null));
       yield put(actions.setValue("hashtagCurrent", action?.hashtag));
       yield put(actions.setValue("activeKey", "post"));
+    } else {
+      yield put(actions.setValue("hashtagCurrent", null));
     }
   }
 }
@@ -89,16 +56,12 @@ function* fetchAllSeries(action, page) {
   }
 }
 
-function* FetchAllHashtag(action) {
+function* fetchAllHashtag() {
   const { isSuccess, data } = yield call(callApi, {
     url: "/hashtag",
   });
   if (isSuccess && data) {
-    if (action.hashtag) {
-      yield put(actions.setValue("hashtag", [...action.hashtag, ...data]));
-    } else {
-      yield put(actions.setValue("hashtag", data));
-    }
+    yield put(actions.setValue("hashtag", data));
   }
 }
 
@@ -110,20 +73,12 @@ export default function* () {
       makeFetchSaga({ fetchSaga: fetchAllPost, canCache: false })
     ),
     takeEvery(
-      Types.FetchHashtagPost,
-      makeFetchSaga({ fetchSaga: fetchHashtagPost, canCache: false })
-    ),
-    takeEvery(
-      Types.FetchSearchPost,
-      makeFetchSaga({ fetchSaga: fetchSearchPost, canCache: false })
-    ),
-    takeEvery(
       Types.FetchAllSeries,
       makeFetchSaga({ fetchSaga: fetchAllSeries, canCache: false })
     ),
     takeEvery(
       Types.FetchAllHashtag,
-      makeFetchSaga({ fetchSaga: FetchAllHashtag, canCache: false })
+      makeFetchSaga({ fetchSaga: fetchAllHashtag, canCache: false })
     ),
   ]);
 }

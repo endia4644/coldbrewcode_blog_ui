@@ -11,9 +11,9 @@ import { actions } from "../../main/state";
 export default function Hashtag({ hashtags }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  function onClick(e, id) {
-    dispatch(actions.setValue("sideActiveKey", id + ""));
-    dispatch(actions.fetchHashtagPost(null, 0, id));
+  function onClick(e, hashtag) {
+    dispatch(actions.setValue("sideActiveKey", hashtag + ""));
+    dispatch(actions.fetchHashtagPost({ hashtag }));
     navigate("/blog");
   }
   return (

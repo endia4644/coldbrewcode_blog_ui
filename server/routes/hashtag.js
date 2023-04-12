@@ -16,7 +16,7 @@ router.get('/', async (req, res, next) => {
       }
     });
     const hashtagAll = await db.sequelize.query(
-      'SELECT 0 as "id", "전체보기" as "hashtagName", :totalCount as "postCount" FROM dual',
+      'SELECT "ALL" as "id", "전체보기" as "hashtagName", :totalCount as "postCount" FROM dual',
       {
         replacements: { totalCount: totalCount },
         type: QueryTypes.SELECT

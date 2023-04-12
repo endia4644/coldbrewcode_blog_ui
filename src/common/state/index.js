@@ -3,7 +3,7 @@ import {
   createSetValueAction,
   setValueReducer,
 } from "../../common/redux-helper";
-import { FetchStatus } from "../constant";
+import { FetchType, FetchStatus } from "../constant";
 
 export const Types = {
   SetValue: "common/SetValue",
@@ -29,17 +29,19 @@ const INITIAL_STATE = {
 const reducer = createReducer(INITIAL_STATE, {
   [Types.SetValue]: setValueReducer,
   [Types.SetFetchStatus]: (state, action) => {
-    const { actionType, fetchKey, status, totalCount, nextPage, errorMessage } =
+    const { actionType, fetchKey, status, totalCount, nextPage, errorMessage, fetchType } =
       action.payload;
     if (!state.fetchInfo.fetchStatusMap[actionType]) {
       state.fetchInfo.fetchStatusMap[actionType] = {};
     }
-    if (status === FetchStatus.Delete) {
-      state.fetchInfo.isSlowMap[actionType] = false;
-      state.fetchInfo.fetchStatusMap[actionType] = {};
-      state.fetchInfo.totalCountMap[actionType] = {};
-      state.fetchInfo.nextPageMap[actionType] = {};
-      state.fetchInfo.errorMessageMap[actionType] = {};
+    if (fetchType === FetchType.Delete) {
+      if (actionType !== undefined) {
+        delete state.fetchInfo.isSlowMap[actionType];
+        delete state.fetchInfo.fetchStatusMap[actionType];
+        delete state.fetchInfo.totalCountMap[actionType];
+        delete state.fetchInfo.nextPageMap[actionType];
+        delete state.fetchInfo.errorMessageMap[actionType];
+      }
     } else {
       state.fetchInfo.fetchStatusMap[actionType][fetchKey] = status;
 

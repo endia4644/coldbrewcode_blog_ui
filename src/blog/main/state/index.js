@@ -15,34 +15,20 @@ export const Types = {
 
 export const actions = {
   setValue: createSetValueAction(Types.SetValue),
-  fetchAllPost: (post, totalCount = 0, hashtag = null, search = null) => ({
+  fetchAllPost: ({ post = [], totalCount = 0, hashtag = null, search = null }) => ({
     type: Types.FetchAllPost,
     post,
     hashtag,
     search,
     totalCount,
   }),
-  fetchHashtagPost: (post, totalCount = 0, hashtag = null) => ({
-    type: Types.FetchHashtagPost,
-    post,
-    hashtag,
-    totalCount,
-  }),
-  fetchSearchPost: (post, totalCount = 0, search = null) => ({
-    type: Types.FetchSearchPost,
-    post,
-    search,
-    totalCount,
-  }),
-  fetchAllSeries: (series, totalCount = 0) => ({
+  fetchAllSeries: ({ series = [], totalCount = 0 }) => ({
     type: Types.FetchAllSeries,
     series,
     totalCount,
   }),
-  fetchAllHashtag: (hashtag, totalCount = 0) => ({
-    type: Types.FetchAllHashtag,
-    hashtag,
-    totalCount,
+  fetchAllHashtag: () => ({
+    type: Types.FetchAllHashtag
   }),
 };
 const INITINAL_STATE = {
@@ -54,7 +40,7 @@ const INITINAL_STATE = {
   searchCurrent: "",
   series: [],
   activeKey: "post",
-  sideActiveKey: "0",
+  sideActiveKey: "ALL",
 };
 
 const reducer = createReducer(INITINAL_STATE, {
