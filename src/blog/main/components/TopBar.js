@@ -17,7 +17,7 @@ export default function Topbar({ hashtag }) {
       fetchType: FetchType.Delete,
     }))
     dispatch(
-      actions.fetchAllPost({ hashtag: sideActiveKey !== "0" ? sideActiveKey : "" })
+      actions.fetchAllPost({ hashtag: sideActiveKey !== "ALL" ? sideActiveKey : "" })
     );
   };
   /* 사이드탭 제어함수 */
