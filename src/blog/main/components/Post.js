@@ -120,7 +120,8 @@ export default function Post() {
                     onClick={() => navigate(`/blog/post/${item?.id}`)}
                     style={{ cursor: 'pointer' }}
                     alt="logo"
-                    src={`${API_HOST}/${item?.postThumbnail}`}
+                    // 이미지를 가져올 때 postThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
+                    src={`${item?.postThumbnail ? `${API_HOST}/${item?.postThumbnail}` : defaultImg}`}
                     onError={handleImgError}
                   />
                 </div>

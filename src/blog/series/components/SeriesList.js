@@ -4,7 +4,10 @@ import { ReactSortable } from "react-sortablejs";
 import SeriesItem from "./SeriesItem.js";
 
 export default function Post({ posts, isUpdate, getList }) {
-  const [list, setList] = useState(null);
+  const [list, setList] = useState(null); // SeriesItem에 전달하는 리스트 객체
+  /**
+   * 부모에게 받은 게시글 리스트가 변경되었을 경우 SeriesItme에 전달하는 리스트를 변경
+   */
   useEffect(() => {
     setList(posts?.map((item) => {
       return {
@@ -13,6 +16,9 @@ export default function Post({ posts, isUpdate, getList }) {
     }));
   }, [posts, isUpdate])
 
+  /**
+   * 시리즈에 속한 게시글을 시리즈에서 제거하는 함수
+   */
   const onRemove = id => {
     // user.id 가 파라미터로 일치하지 않는 원소만 추출해서 새로운 배열을 만듬
     // = user.id 가 id 인 것을 제거함

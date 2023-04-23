@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     "Post",
     {
       postContent: {
-        type: DataTypes.TEXT, // 매우 긴 글
+        type: DataTypes.TEXT('long'), // 매우 긴 글
         allowNull: false,
       },
       postName: {

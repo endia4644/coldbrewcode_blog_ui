@@ -47,6 +47,9 @@ router.get('/', async (req, res, next) => {
         }
       }],
       group: ['id'],
+      order: [
+        ["createdAt", req?.query?.order ?? 'desc'],
+      ],
     });
     const seriesTotalCount = await db.Series.count();
     return res.send(makeResponse({ data: series, totalCount: seriesTotalCount }));
@@ -121,7 +124,7 @@ router.get('/:id', async (req, res, next) => {
           },
         },
       }],
-      order: [[literal('`Posts->SeriesPost`.`idx`'), 'ASC']],
+      order: [[literal('`Posts->SeriesPost`.`idx`'), 'DESC']],
     });
     const totalCount = await db.Series.count({
       where: {

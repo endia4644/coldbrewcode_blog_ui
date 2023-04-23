@@ -20,7 +20,7 @@ export default function Series() {
     const { id } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [order, setOrder] = useState(false);
+    const order = useSelector(state => state.series.order);
     const series = useSelector(state => state.series.series);
     const posts = useSelector(state => state.series.posts);
     const status = useSelector((state) => state.auth.status);
@@ -31,22 +31,45 @@ export default function Series() {
     const fetchUpdateInfo = useFetchInfo(Types.FetchUpdateSeries, id);
     const fetchDeleteInfo = useFetchInfo(Types.FetchDeleteSeries, id);
 
+    /**
+     * 초기화 시 시리즈 조회
+     */
     useEffect(() => {
         dispatch(actions.fetchSeries({ id }))
     }, [dispatch])
 
+    /**
+     * 로그아웃 처리
+     */
     function logout() {
         dispatch(authActions.fetchLogout());
     }
 
+    /**
+     * 수정된 리스트 저장 함수
+     */
     function onsSave() {
         dispatch(actions.fetchUpdateSeries({ id, posts: list }))
     }
 
+    /* 자식 객체에게 list Set 함수 전달
+        -> 자식은 수정한 리스트를 list Set함수를 호출해서 반환
+        -> 수정되서 반환된 리스트는 부모에서 리스트 업데이트 사가함수 호출 시 사용
+    */
     const getList = (list) => {
         setList(list);
     }
 
+    /* 정렬 기준 변경 */
+    const buttonChange = (order) => {
+        const newPost = [...posts];
+        dispatch(actions.setValue("posts", newPost.reverse()));
+        dispatch(actions.setValue("order", order));
+    }
+
+    /**
+     * 시리즈 삭제 함수 - 시리즈 자체를 삭제하는 함수
+     */
     const showConfirm = () => {
         confirm({
             title: '시리즈를 삭제하시겠습니까?',
@@ -59,12 +82,21 @@ export default function Series() {
         });
     };
 
+    /**
+     * 메시지 그루핑 키
+     */
     const key = "seriesDelete";
 
+    /**
+     * 업데이트 성공 시 수정버튼 활성화 제거
+     */
     useEffect(() => {
         if (fetchUpdateInfo.fetchStatus === FetchStatus.Success) setIsUpdate(false);
     }, [fetchUpdateInfo])
 
+    /**
+     * 삭제 시 메시지 제어
+     */
     useEffect(() => {
         if (fetchDeleteInfo.fetchStatus === FetchStatus.Success) {
             message.success({
@@ -72,13 +104,6 @@ export default function Series() {
                 key,
                 duration: 2,
             });
-            dispatch(
-                commonActions.setFetchStatus({
-                    actionType: mainType.FetchAllSeries,
-                    fetchKey: mainType.FetchAllSeries,
-                    status: FetchStatus.Delete,
-                })
-            );
             setTimeout(() => {
                 navigate('/blog')
             }, 1000);
@@ -90,6 +115,9 @@ export default function Series() {
         }
     }, [fetchDeleteInfo])
 
+    /**
+     * 없는 시리즈 검색 시 블로그 메인으로 강제 이동
+     */
     useLayoutEffect(() => {
         if (fetchSeriesInfo.fetchStatus !== FetchStatus.Request && !series) {
             navigate("/blog");
@@ -124,7 +152,7 @@ export default function Series() {
                 </Row>
                 <Divider className="series-line" />
                 <Row style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <Button icon={<DownOutlined className={order ? 'desc' : 'asc'} />} className={'button-type-round button-color-normal series-order'} onClick={() => { setOrder(!order) }}>{order ? '오름차순' : '내림차순'}</Button>
+                    <Button icon={<DownOutlined className={order} />} className={'button-type-round button-color-normal series-order'} onClick={() => { buttonChange(order == 'desc' ? 'asc' : 'desc') }}>{order == 'desc' ? '내림차순' : '오름차순'}</Button>
                 </Row>
                 {status === AuthStatus.Login && user?.userType === "admin" && (
                     <Row style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>

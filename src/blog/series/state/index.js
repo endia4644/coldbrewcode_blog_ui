@@ -14,9 +14,10 @@ export const Types = {
 
 export const actions = {
   setValue: createSetValueAction(Types.SetValue),
-  fetchSeries: ({ id }) => ({
+  fetchSeries: ({ id, order = 'desc' }) => ({
     type: Types.FetchSeries,
     id,
+    order,
     [FETCH_KEY]: id,
   }),
   fetchUpdateSeries: ({ id, posts }) => ({
@@ -35,6 +36,7 @@ const INITINAL_STATE = {
   series: null,
   posts: [],
   updateList: [],
+  order: 'desc'
 };
 
 const reducer = createReducer(INITINAL_STATE, {

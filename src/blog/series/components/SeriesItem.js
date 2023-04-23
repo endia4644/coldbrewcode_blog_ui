@@ -12,6 +12,14 @@ import { API_HOST } from "../../../common/constant.js";
 import { elapsedTime } from "../../../common/util/util.js";
 import defaultImg from "./../../../common/images/beans.svg";
 
+/**
+ * 
+ * @description 아이콘 컨포넌트 생성 함수
+ * @param {{
+ *  icon: Object // 사용할 아이콘 객체
+ *  text: String // 아이콘과 매핑될 문구
+ * }} param
+ */
 const IconText = ({ icon, text }) => (
   <Space>
     {React.createElement(icon)}
@@ -19,6 +27,10 @@ const IconText = ({ icon, text }) => (
   </Space>
 );
 
+/**
+ * @description 이미지가 미존재시 에러핸들링 - 기본 이미지 주입
+ * @param {*} e
+ */
 const handleImgError = (e) => {
   e.target.src = defaultImg;
 };
@@ -55,7 +67,8 @@ export default function SeriesItem({ post, isUpdate, onRemove = null }) {
             style={{ cursor: 'pointer' }}
             onClick={() => navigate(`/blog/post/${post?.id}?postType=series`)}
             alt="logo"
-            src={`${API_HOST}/${post?.postThumbnail}`}
+            // 이미지를 가져올 때 postThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
+            src={`${post?.postThumbnail ? `${API_HOST}/${post?.postThumbnail}` : defaultImg}`}
             onError={handleImgError}
           />
         </div>

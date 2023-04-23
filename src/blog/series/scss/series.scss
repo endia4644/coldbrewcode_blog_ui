@@ -28,6 +28,16 @@
         }
       }
 
+      .anticon-down {
+        transition: all ease 0.2s;
+
+        &.desc {
+          position: relative;
+          top: -2px;
+          transform: rotate(180deg);
+        }
+      }
+
       .series {
         &:not(:last-child) {
           margin-bottom: 20px;
