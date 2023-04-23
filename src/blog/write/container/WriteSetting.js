@@ -413,7 +413,7 @@ export default function WriteSetting({
                 }}
               >
                 <Col>
-                  <Typography.Title level={3}>포스트 미리보기</Typography.Title>
+                  <Typography.Title level={3} className="menu-label">포스트 미리보기</Typography.Title>
                   <Upload
                     accept="image/*"
                     customRequest={uploadImage}
@@ -441,7 +441,7 @@ export default function WriteSetting({
                       src={`${API_HOST}/${previewImage?.fileName}`}
                     />
                   </Modal>
-                  <Typography.Title level={3} style={{ marginTop: 30 }}>
+                  <Typography.Title level={3} style={{ marginTop: 30 }} className="menu-label">
                     포스트 설명
                   </Typography.Title>
                   <TextArea
@@ -456,7 +456,7 @@ export default function WriteSetting({
                 <div className="vertical-line" />
                 {!isSeriesADD && (
                   <Col>
-                    <Typography.Title level={3}>공개 설정</Typography.Title>
+                    <Typography.Title level={3} className="menu-label">공개 설정</Typography.Title>
                     <Radio.Group
                       defaultValue={postPermission ?? 'public'}
                       onChange={(e) => {
@@ -490,7 +490,7 @@ export default function WriteSetting({
                     </Radio.Group>
                     {!seriesSelectYsno && (
                       <>
-                        <Typography.Title level={3}>
+                        <Typography.Title level={3} className="menu-label">
                           시리즈 설정
                         </Typography.Title>
                         <Button
