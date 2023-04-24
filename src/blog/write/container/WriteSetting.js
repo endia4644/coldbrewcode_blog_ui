@@ -23,13 +23,11 @@ import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { ImageIcon } from "../../../common/components/Icon";
 import { API_HOST, FetchStatus } from "../../../common/constant";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";
-import { actions as common } from "../../../common/state";
-import { Types as mainType, actions as mainActions } from "../../main/state";
+import { useGoMain } from "../../../common/hook/useGoMain";
 
 export default function WriteSetting({
   setLevel,
@@ -43,22 +41,29 @@ export default function WriteSetting({
   postId,
 }) {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
-  const goBlog = useCallback(() => {
-    navigate("/blog");
-  }, [navigate]);
+  /* 메인 화면으로 이동하기 위한 콜백함수를 생성 */
+  const goMain = useGoMain();
+
+  /**
+   * Create,Update Fetching 진행중 버튼클릭 제어 스위치
+   */
+  const isFetching = useSelector(state => state.write.isFetching);
 
   const [isSeriesADD, setIsSeriesADD] = useState(false);
   const [seriesInput, setSeriesInput] = useState(null);
   const [inputFocus, setInputFocus] = useState(false);
   const seriesList = useSelector((state) => state.write.seriesList);
-  const [seriesSelectYsno, setSeriesSelectYsno] = useState(false);
-  const [prev, setPrev] = useState("");
-  const spanRefs = useRef({});
+  // 시리즈 Span 객체 참조
+  const seriesRefs = useRef({});
+
+  // 파일 프리뷰 팝업 오픈 제어
   const [previewOpen, setPreviewOpen] = useState(false);
+  // 프리뷰 이미지 저장용
   const [previewImage, setPreviewImage] = useState(null);
+  // 등록된 이미지가 있을경우(수정) 해당 이미지 썸네일 노출용
   const [defaultFileList, setDefaultFileList] = useState([]);
+
   const permission = useSelector(state => state.write.permission);
   const description = useSelector(state => state.write.postDescription);
   const seriesName = useSelector(state => state.write.seriesName);
@@ -68,24 +73,18 @@ export default function WriteSetting({
   const tempId = useSelector(state => state.write.tempId);
   const postContent = useSelector(state => state.write.postContent);
 
-  const { fetchStatus: cfetchStatus, isFetching: cisFetching } = useFetchInfo(Types.FetchCreatePost);
-  const { fetchStatus: ufetchStatus, isFetching: uisFetching } = useFetchInfo(Types.FetchUpdatePost);
-  const { fetchStatus: tfetchStatus, isFetching: tisFetching } = useFetchInfo(Types.FetchCreateTempPost);
+  const { fetchStatus: cfetchStatus } = useFetchInfo(Types.FetchCreatePost);
+  const { fetchStatus: ufetchStatus } = useFetchInfo(Types.FetchUpdatePost);
+  const { fetchStatus: tfetchStatus } = useFetchInfo(Types.FetchCreateTempPost);
+
+  /**
+ * 메시지 그루핑 키
+ */
   const key = "updatable";
 
-  const deleteStatus = useCallback(
-    (actionType, fetchKey) => {
-      if (!fetchKey) fetchKey = actionType;
-      const params = {
-        actionType,
-        fetchKey,
-        status: FetchStatus.Delete,
-      };
-      dispatch(common.setFetchStatus(params));
-    },
-    [dispatch]
-  );
-
+  /**
+   * 작성/수정 메시지 핸들링 함수
+   */
   const openMessage = useCallback(
     (status) => {
       if (status === FetchStatus.Success) {
@@ -95,7 +94,7 @@ export default function WriteSetting({
           duration: 2,
         });
         setTimeout(() => {
-          goBlog();
+          goMain();
         }, 500);
       } else if (status === FetchStatus.Success) {
         message.error({
@@ -110,9 +109,12 @@ export default function WriteSetting({
         });
       }
     },
-    [goBlog]
+    [goMain]
   );
 
+  /**
+   * 임시저장 메시지 핸들링 함수
+   */
   const openTempMessage = useCallback(
     (status) => {
       if (status === FetchStatus.Success) {
@@ -121,9 +123,8 @@ export default function WriteSetting({
           key,
           duration: 2,
         });
-        deleteStatus(Types.FetchCreateTempPost);
         setTimeout(() => {
-          goBlog();
+          goMain();
         }, 500);
       } else if (status === FetchStatus.Success) {
         message.error({
@@ -138,10 +139,13 @@ export default function WriteSetting({
         });
       }
     },
-    [goBlog]
+    [goMain]
   );
 
-  /* 세부설정하기 2회 진입부터 체크 */
+  /**
+   * 세부설정하기 2회 진입부터 체크
+   * -> 세부설정화면에서 본문작성화면을 갔다왔을 경우 세부설정정보 보존용
+   */
   useEffect(() => {
     if (thumbnail && thumbnailId) {
       setDefaultFileList([{
@@ -153,38 +157,22 @@ export default function WriteSetting({
         id: thumbnailId,
       });
     }
-    if (seriesName) {
-      setSeriesSelectYsno(true);
-      if (seriesList?.length) {
-        setPrev(seriesName);
-      }
-    }
-  }, [])
+  }, [thumbnail, thumbnailId, postId])
 
-  /* 포스트 생성 메시지 핸들러 */
+  /* 게시글 생성 메시지 핸들러 */
   useEffect(() => {
-    if (!postId) {
-      if (cfetchStatus === FetchStatus.Request) {
-        openMessage(cfetchStatus);
-      }
-      if (cfetchStatus !== FetchStatus.Request) {
-        openMessage(cfetchStatus);
-      }
-    }
+    openMessage(cfetchStatus);
   }, [cfetchStatus, openMessage]);
 
-  /* 포스트 수정 메시지 핸들러 */
+  /* 게시글 수정 메시지 핸들러 */
   useEffect(() => {
-    if (postId) {
-      if (ufetchStatus === FetchStatus.Request) {
-        openMessage(ufetchStatus);
-      }
-      if (ufetchStatus !== FetchStatus.Request) {
-        openMessage(ufetchStatus);
-      }
-    }
+    openMessage(ufetchStatus);
   }, [ufetchStatus, openMessage]);
 
+  /* 게시글 임시저장 메시지 헨들러*/
+  useEffect(() => {
+    openTempMessage(tfetchStatus);
+  }, [tfetchStatus, openTempMessage]);
   /*  */
   const handleCancel = () => setPreviewOpen(false);
 
@@ -193,31 +181,27 @@ export default function WriteSetting({
     setPreviewOpen(true);
   };
 
-  /* 언마운트 시 호출 */
-  useEffect(() => {
-    return () => {
-      deleteStatus(Types.FetchCreatePost);
-      deleteStatus(Types.FetchUpdatePost);
-      deleteStatus(mainType.FetchAllPost);
-      deleteStatus(mainType.FetchAllHashtag);
-      deleteStatus(mainType.FetchAllSeries);
-      dispatch(mainActions.setValue('post', []));
-    }
-  }, [])
-
+  /**
+   * @description 이미지 업로드 유효성 체크
+   * @param {object} file 
+   * @returns 
+   */
   const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/jpg" || file.type === "image/png";
     if (!isJpgOrPng) {
-      message.error("You can only upload JPG/PNG file!");
+      message.error("JPG/JPEG/PNG file만 업로드가 가능합니다!");
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
-      message.error("Image must smaller than 2MB!");
+      message.error("이미지 크기는 2MB까지만 허용됩니다!");
     }
     return isJpgOrPng && isLt2M;
   };
 
-  /* 이미지 선택시 업로드 핸들링 */
+  /**
+   * @description 이미지 선택시 업로드 핸들링
+   * @param {object} options 
+   */
   const uploadImage = async (options) => {
     const { onSuccess, onError, file } = options;
     const url = `${API_HOST}/image`;
@@ -239,8 +223,12 @@ export default function WriteSetting({
     }
   };
 
-  /* 이미지 업로드 완료 후 로직 핸들러 */
-  const handleOnChange = ({ file, fileList, event }) => {
+  /**
+   * @description 이미지 업로드 콜백 함수
+   * @param {object} param
+   * @param {array} param.fileList
+   */
+  const handleOnChange = ({ fileList }) => {
     setDefaultFileList(fileList);
     setPreviewImage(fileList?.[0]?.response);
     dispatch(actions.setValue('postThumbnail', fileList?.[0]?.response?.fileName))
@@ -249,11 +237,16 @@ export default function WriteSetting({
     }
   };
 
-  /* 이미지 삭제 핸들러 */
+  /**
+   * 이미지 삭제 핸들러
+   */
   const handleOnRemove = () => {
     dispatch(actions.setValue('thumbnailId', ""));
   };
 
+  /**
+   * 등록된 썸네일이 없을 경우 노출되는 Component
+   */
   const uploadButton = (
     <div>
       <p className="ant-upload-drag-icon">
@@ -283,23 +276,27 @@ export default function WriteSetting({
   /* 시리즈 입력 시 추가 로직 */
   const addSeries = () => {
     if (seriesInput) {
-      const selected = spanRefs?.current[seriesInput];
+      // 등록하려는 시리즈 키가 맵에 있는지 확인
+      const selected = seriesRefs?.current[seriesInput];
+      // 맵에 해당 키가 없으면서 입력값이 공백이 아닌 경우 신규 시리즈 등록
       if (!selected && seriesInput !== "") {
         dispatch(actions.fetchCreateSeries(seriesInput));
       } else {
-        spanRefs.current[seriesInput].scrollIntoView({
+        // 기존에 등록되어있는 값인 경우 해당 값 위치로 스크롤 이동
+        seriesRefs.current[seriesInput].scrollIntoView({
           behavior: "auto",
           block: "center",
           inline: "center",
         });
       }
+      // 현재 선택된 시리즈 이름을 업데이트
       dispatch(actions.setValue('seriesName', seriesInput));
     }
+    // 시리즈 Input 박스를 비운다.
     setSeriesInput("");
-    setPrev(seriesInput);
   };
 
-  /* 최초 한번 시리즈를 조회한다. */
+  /* 로드시 시리즈를 조회한다. */
   useEffect(() => {
     dispatch(actions.fetchAllSeries());
   }, [dispatch]);
@@ -307,32 +304,45 @@ export default function WriteSetting({
 
   /* 시리즈 생성 시 스크롤을 해당 시리즈 위치로 이동시킨다. ( 생성 / 조회 시 실행 ) */
   useEffect(() => {
-    if (Object.keys(spanRefs).length !== 0 && prev) {
-      if (spanRefs.current[prev]) {
-        spanRefs.current[prev].scrollIntoView({
+    if (Object.keys(seriesRefs).length !== 0 && seriesName) {
+      if (seriesRefs.current[seriesName]) {
+        seriesRefs.current[seriesName].scrollIntoView({
           behavior: "auto",
           block: "center",
           inline: "center",
         });
       }
     }
-  }, [seriesList, prev]);
+  }, [seriesList, seriesName]);
 
-  /* 임시저장 */
+  /**
+   * @description 게시글 임시저장
+   * @param {object} param
+   * @param {string=} param.description // 게시글 설명
+   * @param {string=} param.permission  // 공개여부
+   * @param {string=} param.seriesName  // 시리즈이름
+   */
   function tempSubmit({ description, permission, seriesName }) {
+    // 임시저장, 나가기, 출간하기 버튼 비활성화
+    dispatch(actions.setValue("isFetching", true));
+
     let imageIds = [];
     let hashtags = [];
+    // 이미지 리스트에 저장된 값을 ImageIds에 복사
     if (imageList?.length > 0) {
       imageIds = [...imageList];
     }
+    // 썸네일 이미지가 있을 경우 ImageIds에 추가
     if (thumbnailId) {
       imageIds.push(thumbnailId);
     }
+    // 등록할 해시태그가 있는 경우 hashtags에 추가
     if (hashtag) {
       hashtag.map((item) => {
         return hashtags.push(item.key);
       });
     }
+    // 임시등록 액션 호출
     dispatch(
       actions.fetchCreateTempPost({
         postId: postId,
@@ -348,28 +358,12 @@ export default function WriteSetting({
     );
   }
 
-  /* 임시 저장 메시지 */
-  useEffect(() => {
-    if (!postId) {
-      if (tfetchStatus === FetchStatus.Request) {
-        openTempMessage(tfetchStatus);
-      }
-      if (tfetchStatus !== FetchStatus.Request) {
-        openTempMessage(tfetchStatus);
-      }
-    }
-  }, [tfetchStatus, openTempMessage]);
-
-  /* 수정 시 초기 세팅 */
+  /* 수정 시 초기화 세팅 */
   useEffect(() => {
     if (postPermission) dispatch(actions.setValue('permission', postPermission));
     if (postDescription) dispatch(actions.setValue('postDescription', postDescription));
     if (series?.seriesName) {
-      setSeriesSelectYsno(true);
-      if (seriesList?.length) {
-        dispatch(actions.setValue('seriesName', series?.seriesName));
-        setPrev(series?.seriesName);
-      }
+      dispatch(actions.setValue('seriesName', series?.seriesName));
     }
     if (postThumbnail && postThumbnail !== "null") {
       setDefaultFileList([{
@@ -383,7 +377,7 @@ export default function WriteSetting({
       dispatch(actions.setValue('thumbnailId', postThumbnailId));
       dispatch(actions.setValue('postThumbnail', postThumbnail))
     }
-  }, [dispatch, postThumbnail, postDescription, series, seriesList, postPermission, postThumbnailId])
+  }, [dispatch, postThumbnail, postDescription, series, postPermission, postThumbnailId])
 
   return (
     <>
@@ -488,7 +482,7 @@ export default function WriteSetting({
                         <LockOutlined /> 비공개
                       </Radio.Button>
                     </Radio.Group>
-                    {!seriesSelectYsno && (
+                    {!seriesName && (
                       <>
                         <Typography.Title level={3} className="menu-label">
                           시리즈 설정
@@ -506,7 +500,7 @@ export default function WriteSetting({
                         </Button>
                       </>
                     )}
-                    {seriesSelectYsno && (
+                    {seriesName && (
                       <>
                         <Typography.Title level={3}>
                           시리즈 설정
@@ -522,7 +516,6 @@ export default function WriteSetting({
                                 icon={<SettingOutlined />}
                                 onClick={() => {
                                   setIsSeriesADD(!isSeriesADD);
-                                  setSeriesSelectYsno(!seriesSelectYsno);
                                   setSeriesInput("");
                                   dispatch(actions.setValue('seriesName', null));
                                 }}
@@ -566,7 +559,6 @@ export default function WriteSetting({
                           disabled={!seriesName}
                           className="button-type-round button-color-reverse"
                           onClick={() => {
-                            setSeriesSelectYsno(true);
                             setIsSeriesADD(!isSeriesADD);
                           }}
                         >
@@ -643,7 +635,7 @@ export default function WriteSetting({
                                 {item.seriesName}
                                 <span
                                   ref={(element) =>
-                                  (spanRefs.current[item.seriesName] =
+                                  (seriesRefs.current[item.seriesName] =
                                     element)
                                   }
                                 />
@@ -676,7 +668,6 @@ export default function WriteSetting({
                           disabled={!seriesName}
                           className="button-type-round button-color-reverse"
                           onClick={() => {
-                            setSeriesSelectYsno(true);
                             setIsSeriesADD(!isSeriesADD);
                           }}
                         >
@@ -695,7 +686,7 @@ export default function WriteSetting({
                     style={{ fontWeight: 700 }}
                     className="button-border-hide button-type-round"
                     icon={<ArrowLeftOutlined />}
-                    disabled={cisFetching}
+                    disabled={isFetching}
                     onClick={() => {
                       setLevel(0);
                     }}
@@ -708,15 +699,22 @@ export default function WriteSetting({
                     <Button
                       style={{ fontWeight: 700 }}
                       className="button-border-hide button-type-round"
-                      disabled={cisFetching}
-                      onClick={() => tempSubmit({ description, permission, seriesName })}
+                      disabled={isFetching}
+                      onClick={() => {
+                        // 임시저장, 나가기, 출간하기 버튼 비활성화
+                        dispatch(actions.setValue("isFetching", true));
+                        tempSubmit({ description, permission, seriesName })
+                      }
+                      }
                     >
                       임시저장
                     </Button>
                     <Button
                       className="button-type-round button-color-reverse"
-                      disabled={cisFetching || uisFetching}
+                      disabled={isFetching}
                       onClick={() => {
+                        // 임시저장, 나가기, 출간하기 버튼 비활성화
+                        dispatch(actions.setValue("isFetching", true));
                         let imageIds = [];
                         let hashtags = [];
                         if (imageList?.length > 0) {

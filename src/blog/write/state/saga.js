@@ -1,4 +1,4 @@
-import { all, call, put, takeEvery } from "redux-saga/effects";
+import { all, call, delay, put, takeEvery, takeLatest } from "redux-saga/effects";
 import { actions, Types } from ".";
 import { callApi } from "../../../common/util/api";
 import { makeFetchSaga } from "../../../common/util/fetch";
@@ -32,6 +32,8 @@ function* fetchCreatePost(action) {
     yield put(
       actions.setValue("txnCmpt", true)
     );
+  } else {
+    yield put(actions.setValue("isFetching", false));
   }
 }
 
@@ -58,6 +60,8 @@ function* fetchUpdatePost(action) {
     yield put(
       actions.setValue("txnCmpt", true)
     );
+  } else {
+    yield put(actions.setValue("isFetching", false));
   }
 }
 
@@ -115,6 +119,8 @@ function* fetchCreateTempPost(action) {
     yield put(
       actions.setValue("txnCmpt", true)
     );
+  } else {
+    yield put(actions.setValue("isFetching", false));
   }
 }
 

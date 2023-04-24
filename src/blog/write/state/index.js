@@ -126,6 +126,7 @@ export const INITINAL_STATE = {
   postType: "post",
   tempId: "",
   txnCmpt: false,
+  isFetching: false,
 };
 
 const reducer = createReducer(INITINAL_STATE, {
