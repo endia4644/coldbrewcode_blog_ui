@@ -11,14 +11,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { API_HOST } from "../../../common/constant.js";
 import { elapsedTime } from "../../../common/util/util.js";
 import defaultImg from "./../../../common/images/beans.svg";
+import { createImgErrorHandler } from "../../../common/util/imgErrorHandler.js";
 
 /**
  * 
- * @description 아이콘 컨포넌트 생성 함수
- * @param {{
- *  icon: Object // 사용할 아이콘 객체
- *  text: String // 아이콘과 매핑될 문구
- * }} param
+ * @description 아이콘 컴포넌트 생성
+ * @param {object} param
+ * @param {object} param.icon // 사용할 아이콘 객체
+ * @param {object} param.text // 아이콘과 매핑될 문구
  */
 const IconText = ({ icon, text }) => (
   <Space>
@@ -27,16 +27,12 @@ const IconText = ({ icon, text }) => (
   </Space>
 );
 
-/**
- * @description 이미지가 미존재시 에러핸들링 - 기본 이미지 주입
- * @param {*} e
- */
-const handleImgError = (e) => {
-  e.target.src = defaultImg;
-};
-
 export default function SeriesItem({ post, isUpdate, onRemove = null }) {
   const navigate = useNavigate();
+
+  // 이미지 오류 핸들러 호출
+  const handleImgError = createImgErrorHandler({ defaultImg });
+
   return (
     <div style={{ width: '100%', backgroundColor: "white" }} className="series">
       <div className="series-header">
@@ -68,7 +64,7 @@ export default function SeriesItem({ post, isUpdate, onRemove = null }) {
             onClick={() => navigate(`/blog/post/${post?.id}?postType=series`)}
             alt="logo"
             // 이미지를 가져올 때 postThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
-            src={`${post?.postThumbnail && post?.postThumbnail != 'null' ? `${API_HOST}/${post?.postThumbnail}` : defaultImg}`}
+            src={`${post?.postThumbnail && post?.postThumbnail !== 'null' ? `${API_HOST}/${post?.postThumbnail}` : defaultImg}`}
             onError={handleImgError}
           />
         </div>

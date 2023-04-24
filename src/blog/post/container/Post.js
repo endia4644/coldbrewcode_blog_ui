@@ -31,8 +31,8 @@ export default function Post() {
   const comment = useSelector((state) => state.post.comment_0);
   const commentCount = useSelector((state) => state.post.commentCount);
   const { fetchStatus } = useFetchInfo(Types.FetchGetPost, id);
-  const { fetchStatus: dFetchStatus } = useFetchInfo(Types.FetchRemovePost, id); // id를 패키치로 사용하여 중복문제 X
-  const postType = query.get("postType") ?? 'post';
+  const { fetchStatus: dFetchStatus } = useFetchInfo(Types.FetchRemovePost, id); // id를 키로 사용하여 중복문제 X
+  const postType = query.get("postType") ?? 'post'; // 종류가 시리즈인지 글인지 정의
 
   const status = useSelector((state) => state.auth.status);
   const user = useSelector((state) => state.auth.user);

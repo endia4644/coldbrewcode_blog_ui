@@ -33,9 +33,6 @@ export default function WriteSetting({
   setLevel,
   hashtag,
   postName,
-  postThumbnail,
-  postThumbnailId,
-  postDescription,
   postPermission,
   series,
   postId,
@@ -157,7 +154,7 @@ export default function WriteSetting({
         id: thumbnailId,
       });
     }
-  }, [thumbnail, thumbnailId, postId])
+  }, [thumbnail, thumbnailId])
 
   /* 게시글 생성 메시지 핸들러 */
   useEffect(() => {
@@ -358,27 +355,6 @@ export default function WriteSetting({
     );
   }
 
-  /* 수정 시 초기화 세팅 */
-  useEffect(() => {
-    if (postPermission) dispatch(actions.setValue('permission', postPermission));
-    if (postDescription) dispatch(actions.setValue('postDescription', postDescription));
-    if (series?.seriesName) {
-      dispatch(actions.setValue('seriesName', series?.seriesName));
-    }
-    if (postThumbnail && postThumbnail !== "null") {
-      setDefaultFileList([{
-        name: postThumbnail,
-        thumbUrl: `${API_HOST}/${postThumbnail}`,
-      }]);
-      setPreviewImage({
-        fileName: postThumbnail,
-        id: postThumbnailId,
-      });
-      dispatch(actions.setValue('thumbnailId', postThumbnailId));
-      dispatch(actions.setValue('postThumbnail', postThumbnail))
-    }
-  }, [dispatch, postThumbnail, postDescription, series, postPermission, postThumbnailId])
-
   return (
     <>
       <motion.div
@@ -439,7 +415,7 @@ export default function WriteSetting({
                     포스트 설명
                   </Typography.Title>
                   <TextArea
-                    defaultValue={postDescription ?? description ?? ''}
+                    defaultValue={description}
                     showCount
                     maxLength={100}
                     onChange={(e) => {

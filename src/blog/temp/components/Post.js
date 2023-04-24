@@ -1,63 +1,34 @@
-import {
-  DeleteOutlined,
-  FieldTimeOutlined,
-  LockOutlined,
-} from "@ant-design/icons";
-import { Button, Col, List, Modal, Space, Typography } from "antd";
+import { Button, Col, List, Modal, Typography } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";
 import { actions as writeActions } from "../../write/state";
-import { elapsedTime } from "../../../common/util/util.js";
 import { API_HOST, FetchStatus } from "../../../common/constant";
 import defaultImg from "./../../../common/images/beans.svg";
-
-
-const IconText = ({ icon, text }) => (
-  <Space>
-    {React.createElement(icon)}
-    {text}
-  </Space>
-);
-
-const handleImgError = (e) => {
-  e.target.src = defaultImg;
-};
+import { createActionBar } from "../../../common/util/actionBar";
+import { createImgErrorHandler } from "../../../common/util/imgErrorHandler";
 
 export default function Post() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const targetRef = useRef(null);
-  const post = useSelector((state) => state.temp.post);
+  const post = useSelector(state => state.temp.post);
   const [delTempId, setDelTempId] = useState("");
 
-  /* 리스트의 엑션바 랜더링 함수 */
-  function action({ item }) {
-    const array = [];
-    array.push(<IconText
-      icon={FieldTimeOutlined}
-      text={elapsedTime(item.createdAt)}
-      key="list-vertical-star-o"
-    />)
-    if (item.permission === "private") {
-      array.push(<IconText
-        icon={LockOutlined}
-        text="비공개"
-        key="list-vertical-message"
-      />)
-    }
-    array.push(<IconText
-      icon={DeleteOutlined}
-      text={<Button onClick={() => showModal(item.id)} className="button-type-round button-color-white">삭제</Button>}
-      key="list-vertical-star-o"
-    />)
-    return array;
-  }
+  // 액션바 생성함수 호출
+  const action = createActionBar();
+
+  // 이미지 오류 핸들러 호출
+  const handleImgError = createImgErrorHandler({ defaultImg });
 
   const { fetchStatus, totalCount } = useFetchInfo(Types.FetchAllPost);
 
+  /**
+   * @description 게시글 클릭시 상세페이지로 이동 처리
+   * @param {object} id 
+   */
   function handleOnClick({ id }) {
     dispatch(actions.fetchWritePost({ id }))
     dispatch(writeActions.setValue("postType", "temp"));
@@ -67,16 +38,27 @@ export default function Post() {
 
   const [open, setOpen] = useState(false);
 
+  /**
+   * @description 임시글 삭제 팝업 오픈 함수
+   * @param {string} id 
+   */
   function showModal(id) {
+    // 삭제할 임시글의 ID 저장
     setDelTempId(id);
     setOpen(true);
   };
 
+  /**
+   * 임시글 삭제 핸들링
+   */
   const handleOk = () => {
     dispatch(actions.fetchDeleteTempPost({ id: delTempId, post }))
     setOpen(false);
   };
 
+  /**
+   * 임시글 삭제 취소 핸들링
+   */
   const handleCancel = () => {
     setDelTempId("");
     setOpen(false);
@@ -87,12 +69,19 @@ export default function Post() {
     if (targetRef.current) {
       observer = new IntersectionObserver((entries, observer) => {
         entries.forEach((entry) => {
+          /**
+           * 스크롤이 옵저버가 감시하는 지점이 도착했으며 FetchAllPost action의 상태가
+           * undefined 거나 Success 일때만 새로운 리스트를 요청한다.
+           * undefined는 첫 요청시에 호출되기 위하여 필요하다.
+           * 첫 요청 후 FetchAllPost action의 상태는 Success로 변경된다.
+           */
           if (entry.isIntersecting && (fetchStatus === undefined || fetchStatus === FetchStatus.Success)) {
+            // 게시글 추가 조회
             dispatch(
-              actions.fetchAllPost(
+              actions.fetchAllPost({
                 post,
                 totalCount,
-              )
+              })
             );
           }
         });
@@ -100,7 +89,7 @@ export default function Post() {
       observer.observe(targetRef.current);
     }
     return () => observer && observer.disconnect();
-  }, [dispatch, post, totalCount]);
+  }, [dispatch, post, totalCount, fetchStatus]);
   return (
     <>
       <List
@@ -122,7 +111,8 @@ export default function Post() {
               className="main-list-item"
               style={{ paddingTop: 30 }}
               key={`post_${item.id}`}
-              actions={action({ item })}
+              // showModal은 삭제버튼의 clickEvent 함수로 넘긴다.
+              actions={action({ item, type: 'temp', tempShowModal: showModal })}
             >
               <div className="thumbnail-wrappper">
                 <div className="thumbnail">
@@ -130,7 +120,8 @@ export default function Post() {
                     onClick={() => handleOnClick({ id: item?.id })}
                     style={{ cursor: 'pointer' }}
                     alt="logo"
-                    src={`${API_HOST}/${item?.postThumbnail}`}
+                    // 이미지를 가져올 때 postThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
+                    src={`${item?.postThumbnail && item?.postThumbnail !== 'null' ? `${API_HOST}/${item?.postThumbnail}` : defaultImg}`}
                     onError={handleImgError}
                   />
                 </div>

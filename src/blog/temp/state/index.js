@@ -14,7 +14,7 @@ export const Types = {
 
 export const actions = {
   setValue: createSetValueAction(Types.SetValue),
-  fetchAllPost: (post, totalCount = 0) => ({
+  fetchAllPost: ({ post = [], totalCount = 0 }) => ({
     type: Types.FetchAllPost,
     post,
     totalCount,

@@ -757,6 +757,7 @@ router.get("/like", async (req, res, next) => {
           model: db.User,
           attributes: [],
           as: 'likedUser',
+          required: true,
           through: {
             attributes: [],
             where: {

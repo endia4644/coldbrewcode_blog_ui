@@ -82,7 +82,6 @@ export default function Main() {
               className="main-tabs"
               size="large"
               onTabClick={onTabClick}
-              onClick={(e) => console.log(e)}
               animated
               centered
               activeKey={activeKey}

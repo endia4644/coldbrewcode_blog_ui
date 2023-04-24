@@ -361,9 +361,6 @@ export default function Write() {
             setLevel={setLevel}
             hashtag={hashtag}
             postName={postName}
-            postThumbnail={post?.postThumbnail}
-            postThumbnailId={post?.postThumbnailId}
-            postDescription={post?.postDescription}
             postPermission={post?.permission}
             series={post?.Series?.[0]}
             postId={postId}

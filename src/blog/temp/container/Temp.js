@@ -8,25 +8,29 @@ import { Content, Header } from "antd/lib/layout/layout";
 import Settings from "../../main/components/Settings";
 import Post from "../components/Post";
 import useNeedLogin from "../../../common/hook/useNeedLogin";
-import { FetchStatus } from "../../../common/constant";
+import { FetchType } from "../../../common/constant";
 
 export default function Temp() {
+  // 로그인필수화면 - 로그인 여부 검사
   useNeedLogin();
   const dispatch = useDispatch();
-
+  /**
+   * 로그아웃 처리
+   */
   function logout() {
     dispatch(authActions.fetchLogout());
   }
 
   useEffect(() => {
     return () => {
+      // 언마운트 시 임시글 조회 액션 상태초기화
       dispatch(commonActions.setFetchStatus({
         actionType: Types.FetchAllPost,
-        status: FetchStatus.Delete,
+        fetchType: FetchType.Delete,
       }));
       dispatch(actions.setValue('post', []));
     }
-  }, [])
+  }, [dispatch])
 
   return (
     <>
