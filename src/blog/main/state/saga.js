@@ -26,17 +26,16 @@ function* fetchAllPost(action, page) {
       yield put(actions.setValue("searchCurrent", action?.search));
       yield put(actions.setValue("sideActiveKey", null));
       yield put(actions.setValue("hashtagCurrent", null));
-      yield put(actions.setValue("activeKey", "post"));
     } else {
       yield put(actions.setValue("searchCurrent", null));
     }
     if (action?.hashtag) {
       yield put(actions.setValue("searchCurrent", null));
       yield put(actions.setValue("hashtagCurrent", action?.hashtag));
-      yield put(actions.setValue("activeKey", "post"));
     } else {
       yield put(actions.setValue("hashtagCurrent", null));
     }
+    yield put(actions.setValue("activeKey", "post"));
   }
 }
 

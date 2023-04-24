@@ -24,6 +24,8 @@ export default function SideBar({ hashtag }) {
   /* 사이드탭 제어함수 */
   const onTabClick = (target) => {
     dispatch(actions.setValue("sideActiveKey", target));
+    /* 태그 클릭 시 글/시리즈 탭도 글로 고정 */
+    dispatch(actions.setValue("activeKey", 'post'));
   };
   return (
     <>

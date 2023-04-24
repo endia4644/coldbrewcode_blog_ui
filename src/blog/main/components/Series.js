@@ -85,7 +85,7 @@ export default function Series() {
                   style={{ cursor: 'pointer' }}
                   alt="logo"
                   // 이미지를 가져올 때 postThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
-                  src={`${item?.postThumbnail ? `${API_HOST}/${item?.postThumbnail}` : defaultImg}`}
+                  src={`${item?.postThumbnail && item?.postThumbnail != 'null' ? `${API_HOST}/${item?.postThumbnail}` : defaultImg}`}
                   onError={handleImgError}
                 />
               </div>

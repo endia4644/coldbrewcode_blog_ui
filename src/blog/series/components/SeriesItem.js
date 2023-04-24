@@ -68,7 +68,7 @@ export default function SeriesItem({ post, isUpdate, onRemove = null }) {
             onClick={() => navigate(`/blog/post/${post?.id}?postType=series`)}
             alt="logo"
             // 이미지를 가져올 때 postThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
-            src={`${post?.postThumbnail ? `${API_HOST}/${post?.postThumbnail}` : defaultImg}`}
+            src={`${post?.postThumbnail && post?.postThumbnail != 'null' ? `${API_HOST}/${post?.postThumbnail}` : defaultImg}`}
             onError={handleImgError}
           />
         </div>
