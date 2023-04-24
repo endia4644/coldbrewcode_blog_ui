@@ -213,9 +213,8 @@ export default function WriteSetting({
         withCredentials: true,
       });
       onSuccess(res.data);
-      console.log("server res: ", res);
     } catch (err) {
-      console.log("Eroor: ", err);
+      console.debug("Eroor: ", err);
       onError({ err });
     }
   };
