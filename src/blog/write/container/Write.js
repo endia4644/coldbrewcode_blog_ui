@@ -476,7 +476,7 @@ export default function Write() {
         cancelText="취소"
         footer={
           <>
-            <div className="left-box" key="left-box">
+            <div className="left-box" key="left-box" style={{ marginRight: 10 }}>
               <Button key="back" className="button-type-round button-color-red" onClick={handleRmovee}>
                 삭제
               </Button>
