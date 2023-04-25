@@ -14,12 +14,14 @@ export const Types = {
   FetchCreateSeries: "write/FetchCreateSeries",
   FetchCreateTempPost: "write/FetchCreateTempPost",
   FetchTempPost: "write/FetchTempPost",
-  FetchDeleteTempPost: "write/FetchDeleteTempPost"
+  FetchDeleteTempPost: "write/FetchDeleteTempPost",
+  FetchCreateSeriesImage: "write/FetchCreateSeriesImage",
+  FetchDeleteSeriesImage: "write/FetchDeleteSeriesImage"
 };
 
 export const actions = {
   setValue: createSetValueAction(Types.SetValue),
-  fetchPost: (id) => ({
+  fetchPost: ({ id }) => ({
     type: Types.FetchPost,
     id,
   }),
@@ -96,7 +98,7 @@ export const actions = {
   fetchAllSeries: () => ({
     type: Types.FetchAllSeries,
   }),
-  fetchCreateSeries: (seriesName) => ({
+  fetchCreateSeries: ({ seriesName }) => ({
     type: Types.FetchCreateSeries,
     seriesName,
   }),
@@ -110,6 +112,16 @@ export const actions = {
     id,
     [FETCH_KEY]: id
   }),
+  fetchCreateSeriesImage: ({ imageId, fileName, seriesName }) => ({
+    type: Types.FetchCreateSeriesImage,
+    imageId,
+    fileName,
+    seriesName
+  }),
+  fetchDeleteSeriesImage: ({ seriesName }) => ({
+    type: Types.FetchDeleteSeriesImage,
+    seriesName
+  }),
 };
 export const INITINAL_STATE = {
   post: null,
@@ -120,6 +132,7 @@ export const INITINAL_STATE = {
   postThumbnail: "",
   permission: "public",
   seriesName: "",
+  seriesThumbnail: "",
   seriesList: [],
   imageList: [],
   thumbnailId: "",

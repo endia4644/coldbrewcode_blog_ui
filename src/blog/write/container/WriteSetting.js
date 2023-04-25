@@ -28,6 +28,7 @@ import { API_HOST, FetchStatus } from "../../../common/constant";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";
 import { useGoMain } from "../../../common/hook/useGoMain";
+import { useFetchInfoDelete } from "../../../common/hook/useFetchInfoDelete";
 
 export default function WriteSetting({
   setLevel,
@@ -64,15 +65,30 @@ export default function WriteSetting({
   const permission = useSelector(state => state.write.permission);
   const description = useSelector(state => state.write.postDescription);
   const seriesName = useSelector(state => state.write.seriesName);
+  const seriesThumbnail = useSelector(state => state.write.seriesThumbnail);
   const imageList = useSelector(state => state.write.imageList);
   const thumbnail = useSelector(state => state.write.postThumbnail);
   const thumbnailId = useSelector(state => state.write.thumbnailId);
   const tempId = useSelector(state => state.write.tempId);
   const postContent = useSelector(state => state.write.postContent);
 
+  // 시리즈 파일 프리뷰 팝업 오픈 제어
+  const [seriesPreviewOpen, setSeriesPreviewOpen] = useState(false);
+  // 시리즈 프리뷰 이미지 저장용
+  const [seriesPreviewImage, setSeriesPreviewImage] = useState(null);
+  // 등록된 시리즈 이미지가 있을경우(수정) 해당 이미지 썸네일 노출용
+  const [defaultSeriesFileList, setDefaultSeriesFileList] = useState([]);
+
   const { fetchStatus: cfetchStatus } = useFetchInfo(Types.FetchCreatePost);
   const { fetchStatus: ufetchStatus } = useFetchInfo(Types.FetchUpdatePost);
   const { fetchStatus: tfetchStatus } = useFetchInfo(Types.FetchCreateTempPost);
+
+  // 이미지 변경 시 seriesList에 변경된 이미지값을 추가해주기 위한 상태값
+  const { fetchStatus: siFetchStatus } = useFetchInfo(Types.FetchCreateSeriesImage);
+  // 이미지 삭제 시 seriesList에 변경된 이미지값을 삭제해주기 위한 상태값
+  const { fetchStatus: dsiFetchStatus } = useFetchInfo(Types.FetchDeleteSeriesImage);
+  /* 상태값 초기화 함수훅 생성 */
+  const deleteStatusFunction = useFetchInfoDelete();
 
   /**
  * 메시지 그루핑 키
@@ -140,7 +156,7 @@ export default function WriteSetting({
   );
 
   /**
-   * 세부설정하기 2회 진입부터 체크
+   * 세부설정하기 2회 진입부터 체크 ( 포스트 미리보기 )
    * -> 세부설정화면에서 본문작성화면을 갔다왔을 경우 세부설정정보 보존용
    */
   useEffect(() => {
@@ -155,6 +171,23 @@ export default function WriteSetting({
       });
     }
   }, [thumbnail, thumbnailId])
+
+  /**
+ * 세부설정하기 2회 진입부터 체크 ( 시리즈 미리보기 )
+ * -> 세부설정화면에서 본문작성화면을 갔다왔을 경우 세부설정정보 보존용
+ */
+  useEffect(() => {
+    if (seriesThumbnail) {
+      setDefaultSeriesFileList([{
+        name: seriesThumbnail,
+        thumbUrl: `${API_HOST}/${seriesThumbnail}`,
+      }]);
+      setSeriesPreviewImage({
+        fileName: seriesThumbnail,
+        id: seriesThumbnail,
+      });
+    }
+  }, [seriesThumbnail])
 
   /* 게시글 생성 메시지 핸들러 */
   useEffect(() => {
@@ -215,7 +248,7 @@ export default function WriteSetting({
       });
       onSuccess(res.data);
     } catch (err) {
-      console.debug("Eroor: ", err);
+      console.debug("Error: ", err);
       onError({ err });
     }
   };
@@ -233,6 +266,7 @@ export default function WriteSetting({
       dispatch(actions.setValue('thumbnailId', fileList?.[0]?.response?.id));
     }
   };
+
 
   /**
    * 이미지 삭제 핸들러
@@ -298,6 +332,30 @@ export default function WriteSetting({
     dispatch(actions.fetchAllSeries());
   }, [dispatch]);
 
+  /* 시리즈를 선택할 경우 시리즈 미리보기을 변경한다. */
+  useEffect(() => {
+    // 현재 선택된 시리즈 객체 조회
+    const currentSeries = seriesList.filter(x => x.seriesName === seriesName);
+    if (currentSeries?.[0]?.seriesThumbnail) {
+      const seriesThumbnail = currentSeries[0].seriesThumbnail;
+      // 시리즈 파일 리스트 수정
+      setDefaultSeriesFileList([{
+        name: seriesThumbnail,
+        thumbUrl: `${API_HOST}/${seriesThumbnail}`,
+      }]);
+      // 시리즈 미리보기 이미지 수정
+      setSeriesPreviewImage({
+        fileName: seriesThumbnail,
+        id: seriesThumbnail,
+      });
+    } else {
+      // 시리즈 파일 리스트 수정
+      setDefaultSeriesFileList([]);
+      // 시리즈 미리보기 이미지 수정
+      setSeriesPreviewImage(null);
+    }
+  }, [dispatch, seriesName, seriesList]);
+
 
   /* 시리즈 생성 시 스크롤을 해당 시리즈 위치로 이동시킨다. ( 생성 / 조회 시 실행 ) */
   useEffect(() => {
@@ -311,6 +369,109 @@ export default function WriteSetting({
       }
     }
   }, [seriesList, seriesName]);
+
+  /**
+   * @description 시리즈 이미지 선택시 업로드 핸들링
+   * @param {object} options 
+   */
+  const uploadSeriesImage = async (options) => {
+    const { onSuccess, onError, file } = options;
+    const url = `${API_HOST}/image`;
+    const method = "post";
+    const fmData = new FormData();
+    fmData.append("image", file);
+    try {
+      const res = await axios({
+        url,
+        method,
+        data: fmData,
+        withCredentials: true,
+      });
+      if (res.data) {
+        // 이미지 업로드가 성공했을 경우 Series에 이미지 정보를 추가한다.
+        dispatch(actions.fetchCreateSeriesImage({ imageId: res?.data?.id, fileName: res?.data?.fileName, seriesName }))
+        // 썸네일 파일명을 저장
+        dispatch(actions.setValue("seriesThumbnail", res?.data?.fileName));
+      }
+      onSuccess(res.data);
+    } catch (err) {
+      console.debug("Error: ", err);
+      onError({ err });
+    }
+  };
+
+  /**
+   * @description 시리즈 이미지 업로드 콜백 함수
+   * @param {object} param
+   * @param {array} param.fileList
+   */
+  const handleSeriesOnChange = ({ fileList }) => {
+    setDefaultSeriesFileList(fileList);
+    setSeriesPreviewImage(fileList?.[0]?.response);
+  };
+
+  /**
+   * 시리즈 이미지 삭제 핸들러
+   */
+  const handleSeriesOnRemove = () => {
+    dispatch(actions.fetchDeleteSeriesImage({ seriesName }));
+  };
+
+  /**
+   * CreateSeriesImage 액션의 상태값이 변경될 경우 SeriesList의 썸네일 경로를 업데이트
+   */
+  useEffect(() => {
+    if (siFetchStatus === FetchStatus.Success) {
+      const currentSeries = seriesList.filter(x => x.seriesName === seriesName);
+      const excludeList = seriesList.filter(x => x.seriesName !== seriesName);
+      const updateSeries = [{
+        id: currentSeries[0].id,
+        seriesName: currentSeries[0].seriesName,
+        seriesThumbnail: seriesThumbnail
+      }]
+      dispatch(actions.setValue("seriesList", [...excludeList, ...updateSeries]));
+      // 시리즈 파일 리스트 수정
+      setDefaultSeriesFileList([{
+        name: seriesThumbnail,
+        thumbUrl: `${API_HOST}/${seriesThumbnail}`,
+      }]);
+      // 시리즈 미리보기 이미지 수정
+      setSeriesPreviewImage({
+        fileName: seriesThumbnail,
+        id: seriesThumbnail,
+      });
+      deleteStatusFunction(Types.FetchCreateSeriesImage);
+    }
+  }, [dispatch, siFetchStatus, deleteStatusFunction, seriesList, seriesName, seriesThumbnail])
+
+  /**
+  * fetchDeleteSeriesImage 액션의 상태값이 변경될 경우 SeriesList의 썸네일 경로를 업데이트
+  */
+  useEffect(() => {
+    if (dsiFetchStatus === FetchStatus.Success) {
+      const currentSeries = seriesList.filter(x => x.seriesName === seriesName);
+      const excludeList = seriesList.filter(x => x.seriesName !== seriesName);
+      const updateSeries = [{
+        id: currentSeries[0].id,
+        seriesName: currentSeries[0].seriesName,
+        seriesThumbnail: null
+      }]
+      dispatch(actions.setValue("seriesList", [...excludeList, ...updateSeries]));
+      // 시리즈 파일 리스트 수정
+      setDefaultSeriesFileList([]);
+      // 시리즈 미리보기 이미지 수정
+      setSeriesPreviewImage(null);
+      deleteStatusFunction(Types.FetchDeleteSeriesImage);
+    }
+  }, [dispatch, dsiFetchStatus, deleteStatusFunction, seriesList, seriesName, seriesThumbnail])
+
+  /* 미리보기 팝업 취소 핸들링 */
+  const handleSeriesCancel = () => setSeriesPreviewOpen(false);
+
+  /* 미리보기 노출 여부 핸들링 */
+  const handleSeriesPreview = async () => {
+    setSeriesPreviewOpen(true);
+  };
 
   /**
    * @description 게시글 임시저장
@@ -399,7 +560,7 @@ export default function WriteSetting({
                   </Upload>
                   <Modal
                     open={previewOpen}
-                    title="미리보기"
+                    title="포스트 미리보기"
                     footer={null}
                     onCancel={handleCancel}
                   >
@@ -478,7 +639,7 @@ export default function WriteSetting({
                     )}
                     {seriesName && (
                       <>
-                        <Typography.Title level={3}>
+                        <Typography.Title level={3} style={{ paddingBottom: 10, }}>
                           시리즈 설정
                         </Typography.Title>
                         <Input.Group compact>
@@ -499,6 +660,36 @@ export default function WriteSetting({
                             }
                           />
                         </Input.Group>
+                        <Typography.Title level={3} style={{ paddingBottom: 10, paddingTop: 10 }}>
+                          시리즈 미리보기
+                        </Typography.Title>
+                        <Upload
+                          accept="image/*"
+                          customRequest={uploadSeriesImage}
+                          onChange={handleSeriesOnChange}
+                          listType="picture-card"
+                          fileList={defaultSeriesFileList}
+                          className="image-upload-grid"
+                          onPreview={handleSeriesPreview}
+                          beforeUpload={beforeUpload}
+                          onRemove={handleSeriesOnRemove}
+                        >
+                          {defaultSeriesFileList.length >= 1 ? null : uploadButton}
+                        </Upload>
+                        <Modal
+                          open={seriesPreviewOpen}
+                          title="시리즈 미리보기"
+                          footer={null}
+                          onCancel={handleSeriesCancel}
+                        >
+                          <img
+                            alt="example"
+                            style={{
+                              width: "100%",
+                            }}
+                            src={`${API_HOST}/${seriesPreviewImage?.fileName}`}
+                          />
+                        </Modal>
                       </>
                     )}
                   </Col>

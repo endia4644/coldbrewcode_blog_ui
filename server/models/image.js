@@ -34,6 +34,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
     });
+    db.Image.belongsTo(db.Series, {
+      foreignKey: {
+        allowNull: true,
+      },
+    });
   };
   return Image;
 };

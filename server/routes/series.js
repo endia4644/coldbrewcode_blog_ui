@@ -59,10 +59,13 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+/**
+ * 시리즈 정보 조회
+ */
 router.get('/name', async (req, res, next) => {
   try {
     const series = await db.Series.findAll({
-      attributes: ['id', 'seriesName'],
+      attributes: ['id', 'seriesName', 'seriesThumbnail'],
       order: [['createdAt', 'DESC']],
     });
     const seriesTotalCount = await db.Series.count();
@@ -74,6 +77,9 @@ router.get('/name', async (req, res, next) => {
 });
 
 
+/**
+ * 시리즈 단건 정보 조회
+ */
 router.get('/:id', async (req, res, next) => {
   try {
     const Serieses = await db.Series.findOne({
@@ -220,6 +226,136 @@ router.patch("/:id/order", isLoggedIn, async (req, res, next) => {
   }
 });
 
+/**
+ * 시리즈 미리보기 변경 API
+ */
+router.patch("/image", isLoggedIn, async (req, res, next) => {
+  try {
+    //* 트랜잭션 설정
+    await db.sequelize.transaction(async (t) => {
+      const series = await db.Series.findOne({
+        attributes: ["id"],
+        where: {
+          seriesName: {
+            [Op.eq]: req.body.seriesName,
+          },
+        },
+        transaction: t, // 이 쿼리를 트랜잭션 처리
+      });
+      if (series?.id) {
+        await db.Series.update(
+          {
+            seriesThumbnail: req.body.fileName,
+          },
+          {
+            where: {
+              id: {
+                [Op.eq]: series?.id
+              }
+            }
+          }
+        )
+        /* 포스트의 기존 이미지의 사용여부를 N으로 변경한다. */
+        await db.Image.update(
+          {
+            saveYsno: false,
+            SeriesId: null,
+          },
+          {
+            where: {
+              SeriesId: {
+                [Op.eq]: series?.id
+              },
+            },
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+          }
+        );
+        /* 사용한 이미지의 저장여부를 변경해준다. */
+        await db.Image.update(
+          {
+            saveYsno: true,
+            SeriesId: series?.id ?? null,
+          },
+          {
+            where: {
+              id: {
+                [Op.eq]: req.body.imageId,
+              },
+            },
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+          }
+        );
+      }
+      res.send(makeResponse({ data: "SUCCESS" }));
+    });
+  } catch (err) {
+    console.error(err);
+    res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "시리즈 미리보기 등록 중 오류가 발생했습니다.",
+      })
+    );
+  }
+});
+
+/**
+ * 시리즈 미리보기 삭제 API
+ */
+router.delete('/image', isLoggedIn, async (req, res, next) => {
+  try {
+    //* 트랜잭션 설정
+    await db.sequelize.transaction(async (t) => {
+      const series = await db.Series.findOne({
+        attributes: ["id"],
+        where: {
+          seriesName: {
+            [Op.eq]: req.body.seriesName,
+          },
+        },
+        transaction: t, // 이 쿼리를 트랜잭션 처리
+      });
+      if (series?.id) {
+        await db.Series.update(
+          {
+            seriesThumbnail: null,
+          },
+          {
+            where: {
+              id: {
+                [Op.eq]: series?.id
+              }
+            }
+          }
+        )
+        /* 포스트의 기존 이미지의 사용여부를 N으로 변경한다. */
+        await db.Image.update(
+          {
+            saveYsno: false,
+            SeriesId: null,
+          },
+          {
+            where: {
+              SeriesId: {
+                [Op.eq]: series?.id
+              },
+            },
+            transaction: t, // 이 쿼리를 트랜잭션 처리
+          }
+        );
+      }
+      res.send(makeResponse({ data: "SUCCESS" }));
+    });
+  } catch (err) {
+    console.error(err);
+    res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "시리즈 미리보기 삭제 중 오류가 발생했습니다.",
+      })
+    );
+  }
+});
 
 router.delete('/:id', isLoggedIn, async (req, res, next) => {
   try {
@@ -244,6 +380,32 @@ router.delete('/:id', isLoggedIn, async (req, res, next) => {
     console.error(err);
     next('시리즈 삭제 중 오류가 발생했습니다.')
   }
-})
+});
+
+
+router.delete('/:id', isLoggedIn, async (req, res, next) => {
+  try {
+    await db.sequelize.transaction(async (t) => {
+      await db.SeriesPost.destroy(
+        {
+          where: {
+            SeriesId: req.params.id,
+          },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        })
+      await db.Series.destroy(
+        {
+          where: {
+            id: req.params.id,
+          },
+          transaction: t, // 이 쿼리를 트랜잭션 처리
+        })
+    })
+    return res.send(makeResponse({ data: 'SUCCESS' }));
+  } catch (err) {
+    console.error(err);
+    next('시리즈 삭제 중 오류가 발생했습니다.')
+  }
+});
 
 module.exports = router;

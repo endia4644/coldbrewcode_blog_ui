@@ -1,4 +1,4 @@
-import { all, call, delay, put, takeEvery, takeLatest } from "redux-saga/effects";
+import { all, call, put, takeEvery } from "redux-saga/effects";
 import { actions, Types } from ".";
 import { callApi } from "../../../common/util/api";
 import { makeFetchSaga } from "../../../common/util/fetch";
@@ -140,6 +140,31 @@ function* fetchDeleteTempPost(action) {
   });
 }
 
+function* fetchCreateSeriesImage({ imageId, fileName, seriesName }) {
+  yield call(callApi, {
+    url: `/series/image`,
+    method: "patch",
+    data: {
+      imageId,
+      fileName,
+      seriesName
+    }
+  });
+}
+
+function* fetchDeleteSeriesImage({ seriesName }) {
+  const { isSuccess } = yield call(callApi, {
+    url: `/series/image`,
+    method: "delete",
+    data: {
+      seriesName
+    }
+  });
+  if (isSuccess) {
+    yield put(actions.setValue("seriesThumbnail", null));
+  }
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function* () {
   yield all([
@@ -174,6 +199,14 @@ export default function* () {
     takeEvery(
       Types.FetchDeleteTempPost,
       makeFetchSaga({ fetchSaga: fetchDeleteTempPost, canCache: false })
+    ),
+    takeEvery(
+      Types.FetchCreateSeriesImage,
+      makeFetchSaga({ fetchSaga: fetchCreateSeriesImage, canCache: false })
+    ),
+    takeEvery(
+      Types.FetchDeleteSeriesImage,
+      makeFetchSaga({ fetchSaga: fetchDeleteSeriesImage, canCache: false })
     ),
   ]);
 }

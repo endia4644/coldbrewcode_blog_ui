@@ -5,6 +5,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true,
     },
+    seriesThumbnail: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
+    },
     posts: {
       type: DataTypes.VIRTUAL,
       set(value) {
@@ -18,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   Series.associate = (db) => {
     db.Series.belongsToMany(db.Post, { through: db.SeriesPost });
     db.Series.belongsToMany(db.TempPost, { through: db.TempSeriesPost, });
+    db.Series.hasMany(db.Image);
   }
   return Series;
 }

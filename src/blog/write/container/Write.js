@@ -103,7 +103,7 @@ export default function Write() {
       return;
     }
     // id 값으로 게시글 상세조회 액션 호출
-    dispatch(actions.fetchPost(postId));
+    dispatch(actions.fetchPost({ id: postId }));
   }, [postId, dispatch]);
 
   /**
@@ -122,9 +122,9 @@ export default function Write() {
     showModal();
   }, [post, dispatch]);
 
-  /* 임시저장 게시글을 불러왔을 경우 초기화 로직 */
+  /* 수정/임시저장 게시글을 불러왔을 경우 초기화 로직 */
   useEffect(() => {
-    // 게시글 정보가 스토어에 없는 경우 신규등록|수정 이므로 종료
+    // 게시글 정보가 스토어에 없는 경우 신규등록 이므로 종료
     if (!post) {
       return;
     }
@@ -143,6 +143,7 @@ export default function Write() {
     dispatch(actions.setValue('thumbnailId', post?.postThumbnailId));
     dispatch(actions.setValue('permission', post?.permission));
     dispatch(actions.setValue('seriesName', post?.Series?.[0]?.seriesName));
+    dispatch(actions.setValue('seriesThumbnail', post?.Series?.[0]?.seriesThumbnail));
     dispatch(actions.setValue('seriesList', post?.Series));
   }, [post, dispatch]);
 

@@ -817,7 +817,7 @@ router.get("/detail/:id", async (req, res, next) => {
         {
           model: db.Series,
           required: false,
-          attributes: ['id', 'seriesName'],
+          attributes: ['id', 'seriesName', 'seriesThumbnail'],
           through: {
             attributes: []
           }
@@ -866,7 +866,7 @@ router.get("/:id", async (req, res, next) => {
           {
             model: db.Series,
             required: false,
-            attributes: ["id"],
+            attributes: ["id", "seriesThumbnail"],
             through: { attributes: [] },
           },
         ],
