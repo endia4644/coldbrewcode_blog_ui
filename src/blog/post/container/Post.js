@@ -39,6 +39,28 @@ export default function Post() {
 
   const [open, setOpen] = useState(false);
 
+  // 파일 프리뷰 팝업 오픈 제어
+  const [previewOpen, setPreviewOpen] = useState(false);
+  // 프리뷰 이미지 저장용
+  const [previewImage, setPreviewImage] = useState(null);
+
+  /**
+   * @description 동적생성된 컨텐츠에서 이미지 클릭시 이벤트 핸들링
+   * @param {object} e 
+   */
+  function clickHandler(e) {
+    let el = e.target;
+    while (el && el !== e.currentTarget && el.tagName !== "IMG") {
+      el = el.parentNode;
+    }
+    if (el && el.tagName === "IMG") {
+      // 이미지 URL을 저장
+      setPreviewImage(el.src);
+      // 이미지 팝업 오픈
+      setPreviewOpen(true);
+    }
+  }
+
   /**
    * 삭제 확인 모달 호출
    */
@@ -60,6 +82,9 @@ export default function Post() {
   const handleCancel = () => {
     setOpen(false);
   };
+
+  /* 미리보기 팝업 취소 핸들링 */
+  const handlePrevCancel = () => setPreviewOpen(false);
 
   /**
    * 로그아웃 처리
@@ -171,6 +196,7 @@ export default function Post() {
             <Row style={{ marginTop: "4rem", marginBottom: "3rem" }}>
               {post?.Hashtags && (
                 <div
+                  onClick={clickHandler}
                   className="ck-content"
                   dangerouslySetInnerHTML={{ __html: post?.postContent }}
                 ></div>
@@ -228,6 +254,20 @@ export default function Post() {
               <Typography.Text>게시글을 삭제하시겠습니까?<br />삭제한 글은 복구할 수 없습니다.</Typography.Text>
             </Modal>
           </>}
+          <Modal
+            open={previewOpen}
+            title="원본보기"
+            footer={null}
+            onCancel={handlePrevCancel}
+          >
+            <img
+              alt="example"
+              style={{
+                width: "100%",
+              }}
+              src={previewImage}
+            />
+          </Modal>
         </>
       )}
     </>

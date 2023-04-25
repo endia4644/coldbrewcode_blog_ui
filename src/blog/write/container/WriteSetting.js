@@ -170,7 +170,8 @@ export default function WriteSetting({
   useEffect(() => {
     openTempMessage(tfetchStatus);
   }, [tfetchStatus, openTempMessage]);
-  /*  */
+
+  /* 미리보기 팝업 취소 핸들링 */
   const handleCancel = () => setPreviewOpen(false);
 
   /* 미리보기 노출 여부 핸들링 */

@@ -16,7 +16,6 @@ import { FetchStatus } from "../../../common/constant";
 import { useCallbackPrompt } from "../../../common/hook/useCallbackPrompt";
 import { useFetchInfoDelete } from "../../../common/hook/useFetchInfoDelete";
 import { useGoMain } from "../../../common/hook/useGoMain";
-import { Types as mainType } from "../../main/state";
 
 export default function Write() {
   // 로그인필수화면 - 로그인 여부 검사

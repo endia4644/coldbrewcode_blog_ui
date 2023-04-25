@@ -1063,3 +1063,13 @@ a.ant-typography:active {
 }
 
 /* // 목차 CSS */
+
+
+// 모달 폰트 설정
+.ant-modal-content {
+  font-family: 'maplestory';
+
+  .ant-modal-title {
+    font-weight: bold;
+  }
+}
