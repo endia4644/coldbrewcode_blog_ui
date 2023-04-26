@@ -35,7 +35,7 @@ router.post('/', isLoggedIn, async (req, res, next) => {
 router.get('/', async (req, res, next) => {
   try {
     const series = await db.Series.findAll({
-      attributes: ['id', 'seriesName', [fn('COUNT', col('Posts.id')), 'postCount'], 'createdAt', 'updatedAt'],
+      attributes: ['id', 'seriesName', 'seriesThumbnail', [fn('COUNT', col('Posts.id')), 'postCount'], 'createdAt', 'updatedAt'],
       include: [{
         model: db.Post,
         required: false,
