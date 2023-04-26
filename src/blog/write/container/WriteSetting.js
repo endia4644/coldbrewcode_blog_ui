@@ -297,11 +297,16 @@ export default function WriteSetting({
   /* 시리즈가 변경된 경우 핸들링 */
   const onSeriesChange = (target) => {
     dispatch(actions.setValue('seriesName', target.target.value));
+    // 현재 선택된 시리즈 객체 조회
+    const currentSeries = seriesList.filter(x => x.seriesName === target.target.value);
+    // 썸네일 파일명을 저장
+    dispatch(actions.setValue("seriesThumbnail", currentSeries?.[0]?.seriesThumbnail));
   };
 
   /* 시리즈 선택이 취소된 경우 핸들링 */
   const onSeriesCancel = () => {
     dispatch(actions.setValue('seriesName', null));
+    dispatch(actions.setValue("seriesThumbnail", null));
   };
 
   /* 시리즈 입력 시 추가 로직 */
@@ -335,9 +340,7 @@ export default function WriteSetting({
   /* 시리즈를 선택할 경우 시리즈 미리보기을 변경한다. */
   useEffect(() => {
     // 현재 선택된 시리즈 객체 조회
-    const currentSeries = seriesList.filter(x => x.seriesName === seriesName);
-    if (currentSeries?.[0]?.seriesThumbnail) {
-      const seriesThumbnail = currentSeries[0].seriesThumbnail;
+    if (seriesThumbnail) {
       // 시리즈 파일 리스트 수정
       setDefaultSeriesFileList([{
         name: seriesThumbnail,
@@ -354,7 +357,7 @@ export default function WriteSetting({
       // 시리즈 미리보기 이미지 수정
       setSeriesPreviewImage(null);
     }
-  }, [dispatch, seriesName, seriesList]);
+  }, [dispatch, seriesThumbnail]);
 
 
   /* 시리즈 생성 시 스크롤을 해당 시리즈 위치로 이동시킨다. ( 생성 / 조회 시 실행 ) */
@@ -395,7 +398,7 @@ export default function WriteSetting({
       }
       onSuccess(res.data);
     } catch (err) {
-      console.debug("Error: ", err);
+      console.log("Error: ", err);
       onError({ err });
     }
   };
@@ -430,16 +433,6 @@ export default function WriteSetting({
         seriesThumbnail: seriesThumbnail
       }]
       dispatch(actions.setValue("seriesList", [...excludeList, ...updateSeries]));
-      // 시리즈 파일 리스트 수정
-      setDefaultSeriesFileList([{
-        name: seriesThumbnail,
-        thumbUrl: `${API_HOST}/${seriesThumbnail}`,
-      }]);
-      // 시리즈 미리보기 이미지 수정
-      setSeriesPreviewImage({
-        fileName: seriesThumbnail,
-        id: seriesThumbnail,
-      });
       deleteStatusFunction(Types.FetchCreateSeriesImage);
     }
   }, [dispatch, siFetchStatus, deleteStatusFunction, seriesList, seriesName, seriesThumbnail])
@@ -457,10 +450,6 @@ export default function WriteSetting({
         seriesThumbnail: null
       }]
       dispatch(actions.setValue("seriesList", [...excludeList, ...updateSeries]));
-      // 시리즈 파일 리스트 수정
-      setDefaultSeriesFileList([]);
-      // 시리즈 미리보기 이미지 수정
-      setSeriesPreviewImage(null);
       deleteStatusFunction(Types.FetchDeleteSeriesImage);
     }
   }, [dispatch, dsiFetchStatus, deleteStatusFunction, seriesList, seriesName, seriesThumbnail])
