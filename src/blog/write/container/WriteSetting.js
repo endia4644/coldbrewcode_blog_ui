@@ -316,7 +316,7 @@ export default function WriteSetting({
       const selected = seriesRefs?.current[seriesInput];
       // 맵에 해당 키가 없으면서 입력값이 공백이 아닌 경우 신규 시리즈 등록
       if (!selected && seriesInput !== "") {
-        dispatch(actions.fetchCreateSeries(seriesInput));
+        dispatch(actions.fetchCreateSeries({ seriesName: seriesInput }));
       } else {
         // 기존에 등록되어있는 값인 경우 해당 값 위치로 스크롤 이동
         seriesRefs.current[seriesInput].scrollIntoView({
