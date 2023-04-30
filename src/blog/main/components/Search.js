@@ -12,21 +12,32 @@ export default function Search() {
   const searchRef = useRef(null);
   const [searchText, setSearchText] = useState("");
 
+  /**
+   * 입력받은 검색어로 게시글 검색 ( 제목,소개,본문에서 검색함 )
+   */
   const handleOnClick = () => {
     window.scrollTo(0, 0);
     dispatch(actions.setValue("post", []));
+    // 검색 결과를 위해 기존 post 목록을 비움
     dispatch(commonActions.setFetchStatus({
       actionType: Types.FetchAllPost,
       fetchType: FetchType.Delete,
     }))
+    // 게시글 검색
     dispatch(
       actions.fetchAllPost({ search: searchText })
     );
+    // 검색바의 내용을 지운다.
     setSearchText("");
+    // 검색바의 포커싱을 제거한다.
     searchRef.current.blur();
     buttonRef.current.blur();
   };
 
+  /**
+   * @description 엔터 이벤트 핸들링
+   * @param {*} e 
+   */
   const handleOnKeyPress = (e) => {
     if (e.key === "Enter") {
       handleOnClick(); // Enter 입력이 되면 클릭 이벤트 실행

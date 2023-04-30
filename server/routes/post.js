@@ -298,6 +298,8 @@ router.get("/", async (req, res, next) => {
     const postName = {};
     const postIdList = [];
     const permission = {};
+    let mainWhere = null;
+    let countWhere = null;
     /* 태그 조회인 경우 */
     if (hashtag) {
       hashtag = await db.Hashtag.findAll({
@@ -316,27 +318,67 @@ router.get("/", async (req, res, next) => {
     } else {
       postId[Op.not] = null;
     }
-    /* 검색 조회인 경우 */
-    if (search) {
-      postName[Op.like] = `%${search}%`;
-    } else {
-      postName[Op.not] = null;
-    }
+
     /* 비공개 포스트 필터링 */
     if (req?.user?.userType === 'admin') {
       permission[Op.not] = null;
     } else {
       permission[Op.eq] = 'public';
     }
-    const posts = await db.Post.findAll({
-      where: {
-        postName: postName,
+
+    /* 검색 조회인 경우 */
+    if (search) {
+      // 검색어를 띄어쓰기 기준으로 나누어 단어로 구분한다.
+      let searchTextList = search.split(' ');
+      let searchQuery = null;
+      // 검색 단어 개수가 1개 이상인 경우
+      if (searchTextList.length > 1) {
+        // 마지막 단어를 추출한다.
+        let lastText = searchTextList.pop();
+        // Full Text Index를 사용하여 내용, 소개, 제목에서 검색어를 조회한다.
+        searchQuery = literal(`match(postContent, postName, postDescription) against('+"${searchTextList.join(' ')}"+${lastText}' IN BOOLEAN MODE)`);
+        // 검색 단어 개수가 1개인 경우
+      } else {
+        // Full Text Index를 사용하여 내용, 소개, 제목에서 검색어를 조회한다.
+        searchQuery = literal(`match(postContent, postName, postDescription) against('+"${search}' IN BOOLEAN MODE)`);
+      }
+      // 게시글 조회 쿼리에서 사용하는 조건문
+      mainWhere = {
+        searchQuery,
         id: postId,
         permission: permission,
         dltYsno: {
           [Op.eq]: 'N'
         }
-      },
+      }
+      // 게시글 갯수 조회 쿼리에서 사용하는 조건문
+      countWhere = {
+        searchQuery,
+        id: postId,
+        dltYsno: {
+          [Op.eq]: 'N'
+        }
+      }
+    } else {
+      // 게시글 조회 쿼리에서 사용하는 조건문
+      mainWhere = {
+        id: postId,
+        permission: permission,
+        dltYsno: {
+          [Op.eq]: 'N'
+        }
+      }
+      // 게시글 갯수 조회 쿼리에서 사용하는 조건문
+      countWhere = {
+        id: postId,
+        dltYsno: {
+          [Op.eq]: 'N'
+        }
+      }
+    }
+
+    const posts = await db.Post.findAll({
+      where: mainWhere,
       attributes: [
         'id',
         'postContent',
@@ -385,13 +427,7 @@ router.get("/", async (req, res, next) => {
       limit: parseInt(req.query.limit, 10) || 8,
     });
     const postCnt = await db.Post.count({
-      where: {
-        postName: postName,
-        id: postId,
-        dltYsno: {
-          [Op.eq]: 'N'
-        }
-      },
+      where: countWhere
     });
     return res.send(makeResponse({ data: posts, totalCount: postCnt }));
   } catch (err) {
@@ -399,7 +435,7 @@ router.get("/", async (req, res, next) => {
     return res.json(
       makeResponse({
         resultCode: -1,
-        resultMessage: "관심글 조회 중 오류가 발생했습니다",
+        resultMessage: "게시글 조회 중 오류가 발생했습니다",
       })
     );
   }
@@ -457,7 +493,7 @@ router.get("/temp", isLoggedIn, async (req, res, next) => {
     return res.json(
       makeResponse({
         resultCode: -1,
-        resultMessage: "관심글 조회 중 오류가 발생했습니다",
+        resultMessage: "임시글 조회 중 오류가 발생했습니다",
       })
     );
   }
@@ -584,7 +620,7 @@ router.post("/temp", isLoggedIn, async (req, res, next) => {
     return res.json(
       makeResponse({
         resultCode: -1,
-        resultMessage: "게시글 작성 중 오류가 발생했습니다.",
+        resultMessage: "임시글 작성 중 오류가 발생했습니다.",
       })
     );
   }
@@ -649,7 +685,12 @@ router.get("/temp/:id", isLoggedIn, async (req, res, next) => {
     return res.send(makeResponse({ data: post }));
   } catch (err) {
     console.error(err);
-    next("게시글 조회 중 오류가 발생했습니다");
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "임시글 삭제 중 오류가 발생했습니다.",
+      })
+    );
   }
 });
 
@@ -770,7 +811,12 @@ router.get("/like", async (req, res, next) => {
     return res.send(makeResponse({ data: posts, totalCount }));
   } catch (err) {
     console.error(err);
-    next("게시글 조회 중 오류가 발생했습니다");
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "관심글 조회 중 오류가 발생했습니다.",
+      })
+    );
   }
 });
 
@@ -827,7 +873,12 @@ router.get("/detail/:id", async (req, res, next) => {
     return res.send(makeResponse({ data: post }));
   } catch (err) {
     console.error(err);
-    next("임시저장된 포스트 조회 중 오류가 발생했습니다");
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "게시글 상세내역 조회 중 오류가 발생했습니다.",
+      })
+    );
   }
 });
 
@@ -972,7 +1023,12 @@ router.get("/:id", async (req, res, next) => {
     })
   } catch (err) {
     console.error(err);
-    next("게시글 조회 중 오류가 발생했습니다");
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "게시글 단건 조회 중 오류가 발생했습니다.",
+      })
+    );
   }
 });
 
@@ -985,7 +1041,12 @@ router.post("/:id/like", isLoggedIn, async (req, res, next) => {
     return res.send(makeResponse({ data: 'OK' }));
   } catch (err) {
     console.error(err);
-    next("게시글 찜 등록 중 오류가 발생했습니다");
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "관심글 등록 중 오류가 발생했습니다.",
+      })
+    );
   }
 });
 
@@ -1000,7 +1061,12 @@ router.delete("/:id/like", isLoggedIn, async (req, res, next) => {
     return res.send(makeResponse({ data: 'OK' }));
   } catch (err) {
     console.error(err);
-    next("게시글 찜 삭제 중 오류가 발생했습니다");
+    return res.json(
+      makeResponse({
+        resultCode: -1,
+        resultMessage: "관심글 취소 중 오류가 발생했습니다.",
+      })
+    );
   }
 });
 
