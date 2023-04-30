@@ -43,6 +43,8 @@ export default function Post() {
               actions.fetchAllPost({
                 post,
                 totalCount,
+                hashtag: hashtagCurrent,
+                search: searchCurrent,
               })
             );
           }
