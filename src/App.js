@@ -65,7 +65,7 @@ export default function App() {
         style={{ height: "100vh", minHeight: "600px" }}
         className="ant-layout-has-sider"
       >
-        <Sider
+        {/* <Sider
           className="fix-menu"
           theme="light"
           width={160}
@@ -82,7 +82,7 @@ export default function App() {
             style={{ height: "100%" }}
             items={items}
           />
-        </Sider>
+        </Sider> */}
         <Layout
           className="site-layout-background"
           style={{ minWidth: 375, width: "100%" }}

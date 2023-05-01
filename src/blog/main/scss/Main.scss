@@ -39,17 +39,17 @@
       border-left: 1px solid #f0f0f0;
     }
 
-    .ant-tabs-left > .ant-tabs-nav .ant-tabs-ink-bar,
-    .ant-tabs-left > div > .ant-tabs-nav .ant-tabs-ink-bar {
+    .ant-tabs-left>.ant-tabs-nav .ant-tabs-ink-bar,
+    .ant-tabs-left>div>.ant-tabs-nav .ant-tabs-ink-bar {
       left: 0;
     }
 
-    .ant-tabs-left > .ant-tabs-content-holder,
-    .ant-tabs-left > div > .ant-tabs-content-holder {
+    .ant-tabs-left>.ant-tabs-content-holder,
+    .ant-tabs-left>div>.ant-tabs-content-holder {
       border-left: 0;
     }
 
-    .ant-tabs-left > .ant-tabs-nav .ant-tabs-tab {
+    .ant-tabs-left>.ant-tabs-nav .ant-tabs-tab {
       padding: 0 24px;
     }
   }
@@ -109,24 +109,20 @@
   }
 }
 
-.ant-tabs-bottom > .ant-tabs-nav:before,
-.ant-tabs-bottom > div > .ant-tabs-nav:before,
-.ant-tabs-top > .ant-tabs-nav:before,
-.ant-tabs-top > div > .ant-tabs-nav:before {
+.ant-tabs-bottom>.ant-tabs-nav:before,
+.ant-tabs-bottom>div>.ant-tabs-nav:before,
+.ant-tabs-top>.ant-tabs-nav:before,
+.ant-tabs-top>div>.ant-tabs-nav:before {
   display: none;
 }
 
-.ant-tabs-top
-  > .ant-tabs-nav
-  .ant-tabs-nav-wrap.ant-tabs-nav-wrap-ping-left:before,
-.ant-tabs-top
-  > .ant-tabs-nav
-  .ant-tabs-nav-wrap.ant-tabs-nav-wrap-ping-right:after {
+.ant-tabs-top>.ant-tabs-nav .ant-tabs-nav-wrap.ant-tabs-nav-wrap-ping-left:before,
+.ant-tabs-top>.ant-tabs-nav .ant-tabs-nav-wrap.ant-tabs-nav-wrap-ping-right:after {
   opacity: 0 !important;
 }
 
-.ant-tabs > .ant-tabs-nav .ant-tabs-nav-more,
-.ant-tabs > div > .ant-tabs-nav .ant-tabs-nav-more {
+.ant-tabs>.ant-tabs-nav .ant-tabs-nav-more,
+.ant-tabs>div>.ant-tabs-nav .ant-tabs-nav-more {
   display: none;
 }
 
@@ -139,20 +135,62 @@
   opacity: 1;
 }
 
-.search-bar {
-  width: 200px;
-  height: 40px;
-  padding: 4.9px 0;
-  font-size: 18px;
-  border-radius: 2px;
-  border-color: $grayColor;
+#searchQueryInput {
+  width: 100%;
+  height: 2.8rem;
+  background: #f5f5f5;
+  outline: none;
+  border: none;
+  padding: 0 3.5rem 0 1.5rem;
+  font-size: 1rem;
 }
 
-.write-button {
-  &.ant-btn-ghost:focus,
-  &.ant-btn-ghost:hover {
-    color: $fontColor;
-    background-color: $mainColor;
-    border: 1px solid $mainColor;
+#searchQuerySubmit {
+  width: 3.5rem;
+  height: 2.8rem;
+  margin-left: -3.5rem;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+#searchQuerySubmit:hover {
+  cursor: pointer;
+}
+
+/* search box */
+
+.overlay {
+  z-index: 3;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.8);
+  will-change: opacity;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 990px;
+}
+
+.searchBar {
+  width: 85%;
+  margin: auto;
+  display: flex;
+  border-radius: 1.625rem;
+  flex-direction: row;
+  align-items: center;
+
+  &.open {
+    top: 100px;
+    left: 0;
+    right: 0;
+    position: fixed;
+    z-index: 3;
+    overflow: hidden;
+  }
+
+  &.none {
+    display: none;
   }
 }

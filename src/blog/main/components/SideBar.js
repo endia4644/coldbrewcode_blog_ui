@@ -35,7 +35,7 @@ export default function SideBar({ hashtag }) {
           style={{ position: "absolute", left: "-40.5rem", top: "14rem" }}
         >
           <Col>
-            <Search />
+            <Search className="side" />
             <Divider />
             <Col style={{ marginTop: 20 }}>
               <Tabs

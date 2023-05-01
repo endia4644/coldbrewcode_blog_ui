@@ -6,7 +6,7 @@ import { actions, Types } from "../state";
 import { actions as commonActions } from "../../../common/state";
 import { FetchType } from "../../../common/constant";
 
-export default function Search() {
+export default function Search({ className }) {
   const dispatch = useDispatch();
   const buttonRef = useRef(null);
   const searchRef = useRef(null);
@@ -44,13 +44,15 @@ export default function Search() {
     }
   };
 
+
+
   return (
     <>
       <Row>
         <input
           ref={searchRef}
           type={"text"}
-          className="search-bar ant-input"
+          className={`search-bar ant-input ${className}`}
           style={{ width: 219 }}
           value={searchText}
           onChange={(search) => setSearchText(search.target.value)}
