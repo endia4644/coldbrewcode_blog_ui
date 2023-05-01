@@ -161,7 +161,7 @@
 /* search box */
 
 .overlay {
-  z-index: 3;
+  z-index: 2;
   position: fixed;
   background: rgba(0, 0, 0, 0.8);
   will-change: opacity;
@@ -170,7 +170,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 990px;
+  max-width: 1600px;
 }
 
 .searchBar {
@@ -186,7 +186,7 @@
     left: 0;
     right: 0;
     position: fixed;
-    z-index: 3;
+    z-index: 2;
     overflow: hidden;
   }
 

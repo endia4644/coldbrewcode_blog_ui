@@ -137,6 +137,7 @@ export default function Settings({ logout }) {
       {status === AuthStatus.Login && (
         <Space>
           <Button icon={<SearchOutlined />}
+            className="top-search"
             shape="round"
             size="large"
             style={{ padding: '6.4px 10px', border: '1px solid #d9d9d9' }}
@@ -176,6 +177,7 @@ export default function Settings({ logout }) {
       {status === AuthStatus.NotLogin && (
         <Space>
           <Button icon={<SearchOutlined />}
+            className="top-search"
             shape="round"
             size="large"
             style={{ padding: '6.4px 10px', border: '1px solid #d9d9d9' }}

@@ -77,6 +77,11 @@
       bottom: 40px;
     }
   }
+
+  /* Setting 바에 있는 검색바를 숨긴다. */
+  .top-search {
+    display: none;
+  }
 }
 
 /* xl */
