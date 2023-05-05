@@ -800,6 +800,11 @@ a.ant-typography:active {
 
     ul {
       padding-top: 1em;
+      padding-left: 1.2em;
+
+      ul {
+        padding-left: 0;
+      }
     }
 
     hr {
@@ -831,7 +836,7 @@ a.ant-typography:active {
       li {
         background: url(../images/coffee_one.svg) no-repeat 0px 1px;
         list-style-type: none;
-        padding: 4px 0px 4px 36px;
+        padding: 4px 0px 4px 30px;
 
         >ul {
 
