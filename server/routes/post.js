@@ -340,7 +340,7 @@ router.get("/", async (req, res, next) => {
         // 검색 단어 개수가 1개인 경우
       } else {
         // Full Text Index를 사용하여 내용, 소개, 제목에서 검색어를 조회한다.
-        searchQuery = literal(`match(postContent, postName, postDescription) against('+"${search}' IN BOOLEAN MODE)`);
+        searchQuery = literal(`match(postContent, postName, postDescription) against(+"${search}*" IN BOOLEAN MODE)`);
       }
       // 게시글 조회 쿼리에서 사용하는 조건문
       mainWhere = {
