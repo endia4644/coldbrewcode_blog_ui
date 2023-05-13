@@ -231,6 +231,15 @@ export default function Write() {
     [goMain]
   );
 
+  /* 
+    헤더 태그에 적용 가능한 클래스 리스트
+  */
+  const HClass = [
+    'h1-underline',
+    'h2-underline',
+    'h3-underline'
+  ]
+
   /**
    * @description 목차 구조를 생성하는 함수 - 본문 내의 해드 태그들의 구조를 변경한다.
    * @param {string} htmlContent 
@@ -240,7 +249,6 @@ export default function Write() {
     const regEx = /(<h[1-5](.*?)>)(.*?)(<\/h[1-5]>)/gm;
     const splitEx = /(<h[1-5])/g;
     const classEx = /(?<=(class="))(.*?)(?=")/g;
-    const styleEx = /(?<=(style="))(.*?)(?=")/g;
     const contentEx = /(?<=<h[1-5](.*?)>)(.*?)(?=<\/h[1-5]>)/g;
     let id = 0;
     let contents = htmlContent;
@@ -248,15 +256,16 @@ export default function Write() {
     htags?.map(tag => {
       let newHeader = '';
       let tagHeader = tag.trim().split(splitEx);
-      let className = tag?.match(classEx);
-      let style = tag?.match(styleEx);
+      let className = tag?.match(classEx)?.filter((x) => {
+        return HClass.includes(x);
+      });
       let content = tag?.match(contentEx);
       switch (tagHeader?.[1]) {
-        case "<h1": newHeader = `<h1 class="level1 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content[0]}</h1>`; break;
-        case "<h2": newHeader = `<h2 class="level2 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content[0]}</h2>`; break;
-        case "<h3": newHeader = `<h3 class="level3 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content[0]}</h3>`; break;
-        case "<h4": newHeader = `<h4 class="level4 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content[0]}</h4>`; break;
-        case "<h5": newHeader = `<h5 class="level5 ${className ? className : ''}" id="tag-${id}" ${style ? `style=${style}` : ''}>${content[0]}</h5>`; break;
+        case "<h1": newHeader = `<h1 class="level1 ${className ? className : ''}" id="tag-${id}">${content[0]}</h1>`; break;
+        case "<h2": newHeader = `<h2 class="level2 ${className ? className : ''}" id="tag-${id}">${content[0]}</h2>`; break;
+        case "<h3": newHeader = `<h3 class="level3 ${className ? className : ''}" id="tag-${id}">${content[0]}</h3>`; break;
+        case "<h4": newHeader = `<h4 class="level4 ${className ? className : ''}" id="tag-${id}">${content[0]}</h4>`; break;
+        case "<h5": newHeader = `<h5 class="level5 ${className ? className : ''}" id="tag-${id}">${content[0]}</h5>`; break;
         default: break;
       }
       id++;

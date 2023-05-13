@@ -532,7 +532,7 @@ export default function WriteSetting({
                   overflow: "hidden",
                 }}
               >
-                <Col>
+                <Col style={{ marginBottom: 15 }}>
                   <Typography.Title level={3} className="menu-label">포스트 미리보기</Typography.Title>
                   <Upload
                     accept="image/*"
@@ -691,6 +691,7 @@ export default function WriteSetting({
                         flexDirection: "row",
                         alignItems: "flex-start",
                         justifyContent: "space-between",
+                        paddingBottom: 15
                       }}
                     >
                       <Typography.Title
