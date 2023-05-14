@@ -8,6 +8,9 @@ import { API_HOST, FetchStatus } from "../../../common/constant";
 import defaultImg from "./../../../common/images/beans.svg";
 import { createActionBar } from "../../../common/util/actionBar";
 import { createImgErrorHandler } from "../../../common/util/imgErrorHandler";
+import Lottie from "lottie-react";
+// @ts-ignore
+import loadingLottie from "../../../assets/lottie/loading.json";
 const { Title } = Typography;
 
 export default function Post() {
@@ -18,7 +21,7 @@ export default function Post() {
   const hashtagCurrent = useSelector((state) => state.main.hashtagCurrent);
   const searchCurrent = useSelector((state) => state.main.searchCurrent);
 
-  const { fetchStatus, totalCount } = useFetchInfo(Types.FetchAllPost);
+  const { fetchStatus, isFetched, isSlow, nextPage, totalCount } = useFetchInfo(Types.FetchAllPost);
 
   // 액션바 생성함수 호출
   const actionBar = createActionBar();
@@ -29,6 +32,7 @@ export default function Post() {
   useEffect(() => {
     let observer;
     if (targetRef.current) {
+      // @ts-ignore
       observer = new IntersectionObserver((entries, observer) => {
         entries.forEach((entry) => {
           /**
@@ -67,71 +71,76 @@ export default function Post() {
           </Space>
         </>
       )}
-      <List
-        className="main-list"
-        grid={{
-          xs: 1,
-          sm: 1,
-          md: 1,
-          lg: 2,
-          xl: 2,
-          xxl: 2,
-        }}
-        itemLayout="vertical"
-        size="large"
-        dataSource={post}
-        renderItem={(item) => (
-          <>
-            <List.Item
-              className="main-list-item"
-              style={{ paddingTop: 30 }}
-              key={`post_${item.id}`}
-              actions={actionBar({ item, type: 'default' })}
-            >
-              <div className="thumbnail-wrappper">
-                <div className="thumbnail">
-                  <img
-                    onClick={() => navigate(`/blog/post/${item?.id}`)}
-                    style={{ cursor: 'pointer' }}
-                    alt="logo"
-                    // 이미지를 가져올 때 postThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
-                    src={`${item?.postThumbnail && item?.postThumbnail !== 'null' ? `${API_HOST}/${item?.postThumbnail}` : defaultImg}`}
-                    onError={handleImgError}
-                  />
-                </div>
-              </div>
-              <Typography.Title>
-                <Link to={`/blog/post/${item.id}`}>{item.postName}</Link>
-              </Typography.Title>
-              <List.Item.Meta />
-              <Typography.Paragraph
-                style={{ minHeight: 66 }}
-                ellipsis={{
-                  rows: 3,
-                  expandable: false,
-                }}
+      {nextPage >= 1 ?
+        <List
+          className="main-list"
+          grid={{
+            xs: 1,
+            sm: 1,
+            md: 1,
+            lg: 2,
+            xl: 2,
+            xxl: 2,
+          }}
+          itemLayout="vertical"
+          size="large"
+          dataSource={post}
+          renderItem={(item) => (
+            <>
+              <List.Item
+                className="main-list-item"
+                style={{ paddingTop: 30 }}
+                key={`post_${item.id}`}
+                actions={actionBar({ item, type: 'default' })}
               >
-                {item.postDescription}
-              </Typography.Paragraph>
-              {item.Hashtags && (
-                <Col>
-                  {item.Hashtags.map((item, i) => (
-                    <Button
-                      key={`button_${i}`}
-                      className="tag-button"
-                      type="primary"
-                      shape="round"
-                      style={{ marginTop: 10, marginRight: 10 }}
-                    >
-                      {item.hashtagName}
-                    </Button>
-                  ))}
-                </Col>
-              )}
-            </List.Item>
-          </>
-        )}
-      />
+                <div className="thumbnail-wrappper">
+                  <div className="thumbnail">
+                    <img
+                      onClick={() => navigate(`/blog/post/${item?.id}`)}
+                      style={{ cursor: 'pointer' }}
+                      alt="logo"
+                      // 이미지를 가져올 때 postThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
+                      src={`${item?.postThumbnail && item?.postThumbnail !== 'null' ? `${API_HOST}/${item?.postThumbnail}` : defaultImg}`}
+                      onError={handleImgError}
+                    />
+                  </div>
+                </div>
+                <Typography.Title>
+                  <Link to={`/blog/post/${item.id}`}>{item.postName}</Link>
+                </Typography.Title>
+                <List.Item.Meta />
+                <Typography.Paragraph
+                  style={{ minHeight: 66 }}
+                  ellipsis={{
+                    rows: 3,
+                    expandable: false,
+                  }}
+                >
+                  {item.postDescription}
+                </Typography.Paragraph>
+                {item.Hashtags && (
+                  <Col>
+                    {item.Hashtags.map((item, i) => (
+                      <Button
+                        key={`button_${i}`}
+                        className="tag-button"
+                        type="primary"
+                        shape="round"
+                        style={{ marginTop: 10, marginRight: 10 }}
+                      >
+                        {item.hashtagName}
+                      </Button>
+                    ))}
+                  </Col>
+                )}
+              </List.Item>
+            </>
+          )}
+        /> : <Lottie animationData={loadingLottie} style={{ overflow: 'hidden', opacity: 0.5 }} className="lottie-loader"></Lottie>
+      }
+      {nextPage >= 1 && isSlow && !isFetched ?
+        <Lottie animationData={loadingLottie} style={{ overflow: 'hidden', opacity: 0.5 }} className="lottie-loader" /> : ''
+      }
       <div
         className="listPost"
         style={{ width: "100%", height: 10 }}

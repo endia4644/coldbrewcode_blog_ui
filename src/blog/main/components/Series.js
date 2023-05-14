@@ -8,6 +8,9 @@ import { API_HOST, FetchStatus } from "../../../common/constant";
 import defaultImg from "./../../../common/images/beans.svg";
 import { createActionBar } from "../../../common/util/actionBar";
 import { createImgErrorHandler } from "../../../common/util/imgErrorHandler";
+import Lottie from "lottie-react";
+// @ts-ignore
+import loadingLottie from "../../../assets/lottie/loading.json";
 
 export default function Series() {
   const navigate = useNavigate();
@@ -15,7 +18,7 @@ export default function Series() {
   const targetRef = useRef(null);
   const dispatch = useDispatch();
 
-  const { fetchStatus, totalCount } = useFetchInfo(Types.FetchAllSeries);
+  const { fetchStatus, isFetched, isSlow, nextPage, totalCount } = useFetchInfo(Types.FetchAllSeries);
 
   // 액션바 생성함수 호출
   const actionBar = createActionBar();
@@ -51,44 +54,49 @@ export default function Series() {
   }, [dispatch, fetchStatus, series, totalCount]);
   return (
     <>
-      <List
-        className="main-list"
-        grid={{
-          xs: 1,
-          sm: 1,
-          md: 1,
-          lg: 2,
-          xl: 2,
-          xxl: 2,
-        }}
-        itemLayout="vertical"
-        size="large"
-        dataSource={series}
-        renderItem={(item) => (
-          <List.Item
-            className="main-list-item"
-            style={{ paddingTop: 30 }}
-            key={`series_${item.id}`}
-            actions={actionBar({ item, type: "series" })}
-          >
-            <div className="thumbnail-wrappper">
-              <div className="thumbnail">
-                <img
-                  onClick={() => navigate(`/blog/series/${item.id}`)}
-                  style={{ cursor: 'pointer' }}
-                  alt="logo"
-                  // 이미지를 가져올 때 seriesThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
-                  src={`${item?.seriesThumbnail && item?.seriesThumbnail !== 'null' ? `${API_HOST}/${item?.seriesThumbnail}` : defaultImg}`}
-                  onError={handleImgError}
-                />
+      {nextPage >= 1 ?
+        <List
+          className="main-list"
+          grid={{
+            xs: 1,
+            sm: 1,
+            md: 1,
+            lg: 2,
+            xl: 2,
+            xxl: 2,
+          }}
+          itemLayout="vertical"
+          size="large"
+          dataSource={series}
+          renderItem={(item) => (
+            <List.Item
+              className="main-list-item"
+              style={{ paddingTop: 30 }}
+              key={`series_${item.id}`}
+              actions={actionBar({ item, type: "series" })}
+            >
+              <div className="thumbnail-wrappper">
+                <div className="thumbnail">
+                  <img
+                    onClick={() => navigate(`/blog/series/${item.id}`)}
+                    style={{ cursor: 'pointer' }}
+                    alt="logo"
+                    // 이미지를 가져올 때 seriesThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
+                    src={`${item?.seriesThumbnail && item?.seriesThumbnail !== 'null' ? `${API_HOST}/${item?.seriesThumbnail}` : defaultImg}`}
+                    onError={handleImgError}
+                  />
+                </div>
               </div>
-            </div>
-            <Typography.Title>
-              <Link to={`/blog/series/${item.id}`}>{item.seriesName}</Link>
-            </Typography.Title>
-          </List.Item>
-        )}
-      />
+              <Typography.Title>
+                <Link to={`/blog/series/${item.id}`}>{item.seriesName}</Link>
+              </Typography.Title>
+            </List.Item>
+          )}
+        /> : <Lottie animationData={loadingLottie} style={{ overflow: 'hidden', opacity: 0.5 }} className="lottie-loader"></Lottie>
+      }
+      {nextPage >= 1 && isSlow && !isFetched ?
+        <Lottie animationData={loadingLottie} style={{ overflow: 'hidden', opacity: 0.5 }} className="lottie-loader" /> : ''
+      }
       <div
         className="listPost"
         style={{ width: "100%", height: 10 }}
