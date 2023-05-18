@@ -65,6 +65,16 @@ body {
   border-radius: 10px;
 }
 
+.ant-radio-group::-webkit-scrollbar-thumb,
+.ck-content::-webkit-scrollbar-thumb,
+.ant-anchor-wrapper::-webkit-scrollbar-thumb {
+
+  &:hover,
+  &:active {
+    background: $fontColor;
+  }
+}
+
 
 .ant-radio-group::-webkit-scrollbar-track,
 .ck-content::-webkit-scrollbar-track {
