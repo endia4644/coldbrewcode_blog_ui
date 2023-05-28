@@ -509,9 +509,13 @@ a.ant-typography:active {
   background-color: #f8f9fb;
   border-left: 4px solid #634426 !important;
   color: #634426;
-  margin: 0;
+  margin: 2rem 0px !important;
   opacity: .9;
-  padding: 0 0 0 10px !important;
+  padding: 1rem 1rem 1rem 2rem !important;
+
+  p {
+    line-height: 1.5em;
+  }
 }
 
 .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused),
