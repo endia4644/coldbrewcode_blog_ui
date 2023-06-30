@@ -76,13 +76,18 @@ export default function Navigation({ postContent }) {
       const regExId = /(?<=id=")(.*?)(?=")/g;                       // id 매칭 정규식
       const regExTag = /(?<=<(.*?)>)(.*?)(?=<\/.*>)/g;              // 태그 매칭 정규식
       const regExTstTag = /(<(.*?)>)(.*?)(<\/.*>)/gm;               // 태그 검증 정규식
-      const regSupTag = /(<sup>.*?<\/sup>)/g;                // sup 태그 검증 정규식
+      const regSupTag = /(<sup>.*?<\/sup>)/g;                       // sup 태그 검증 정규식
+      const regSpanTag = /<(\/span|span)([^>]*)>/g;                 // span 태그 검증 정규식
       const level = tag?.match(regExLevel)?.[0];
       let title = tag?.match(regExTitle)?.[0].trim();
       const href = '#' + tag?.match(regExId);
 
       /* 제목이 태그로 래핑되있을경우 재매핑 */
       if (regExTstTag.test(title)) {
+        /* 제목이 span 태그로 매핑되어 있는 경우 제거*/
+        if (regSpanTag.test(title)) {
+          title = title.replace(regSpanTag, '');
+        }
         /* 제목에 sup 태그가 포함되어있을 경우 재거한다 */
         if (regSupTag.test(title)) {
           let supNotArray = [];
