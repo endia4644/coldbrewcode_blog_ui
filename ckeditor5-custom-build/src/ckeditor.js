@@ -217,9 +217,19 @@ Editor.defaultConfig = {
 	style: {
 		definitions: [
 			{
-				name: 'Info-box',
+				name: 'info-box',
 				element: 'p',
-				classes: ['info-box']
+				classes: ['custom-box info-box']
+			},
+			{
+				name: 'tip-box',
+				element: 'p',
+				classes: ['custom-box tip-box']
+			},
+			{
+				name: 'warning-box',
+				element: 'p',
+				classes: ['custom-box warning-box']
 			},
 			{
 				name: 'h1-underline',
