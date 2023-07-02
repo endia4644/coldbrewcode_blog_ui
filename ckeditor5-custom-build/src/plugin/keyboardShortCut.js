@@ -19,6 +19,15 @@ class KeyboardShortCut extends Plugin {
       editor.execute('heading', { value: 'paragraph' });
     }, { priority: 'high' });
 
+    editor.keystrokes.set('alt+w', (evt, cancel) => {
+      editor.execute('code');
+    }, { priority: 'high' });
+
+    editor.keystrokes.set('alt+e', (evt, cancel) => {
+      editor.execute('blockQuote');
+      evt.preventDefault();
+    }, { priority: 'high' });
+
     editor.keystrokes.set('alt+1', (evt, cancel) => {
       editor.execute('heading', { value: 'heading1' });
       editor.execute('style', { styleName: 'h1-underline' });
@@ -43,15 +52,14 @@ class KeyboardShortCut extends Plugin {
 
     editor.keystrokes.set('alt+5', (evt, cancel) => {
       editor.execute('heading', { value: 'heading5' });
-
     }, { priority: 'high' });
 
-    editor.keystrokes.set('alt+q', (evt, cancel) => {
-      editor.execute('style', 'h1-underline');
+    editor.keystrokes.set('alt+a', (evt, cancel) => {
+      editor.execute('subscript');
     }, { priority: 'high' });
 
-    editor.keystrokes.set('alt+w', (evt, cancel) => {
-      editor.execute('style', 'h2-underline');
+    editor.keystrokes.set('alt+s', (evt, cancel) => {
+      editor.execute('highlight', { value: 'yellowMarker' });
     }, { priority: 'high' });
 
     editor.keystrokes.set('alt+z', (evt, cancel) => {
