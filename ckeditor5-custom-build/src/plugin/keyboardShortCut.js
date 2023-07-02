@@ -21,6 +21,7 @@ class KeyboardShortCut extends Plugin {
 
     editor.keystrokes.set('alt+w', (evt, cancel) => {
       editor.execute('code');
+      evt.preventDefault();
     }, { priority: 'high' });
 
     editor.keystrokes.set('alt+e', (evt, cancel) => {
@@ -55,7 +56,7 @@ class KeyboardShortCut extends Plugin {
     }, { priority: 'high' });
 
     editor.keystrokes.set('alt+a', (evt, cancel) => {
-      editor.execute('subscript');
+      editor.execute('superscript');
     }, { priority: 'high' });
 
     editor.keystrokes.set('alt+s', (evt, cancel) => {
