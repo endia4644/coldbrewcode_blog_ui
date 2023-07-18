@@ -82,6 +82,12 @@ body {
   /*스크롤바 뒷 배경 색상*/
 }
 
+.ck-content {
+  pre {
+    font-size: 0.9em;
+  }
+}
+
 .ant-layout,
 .site-layout-background,
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
