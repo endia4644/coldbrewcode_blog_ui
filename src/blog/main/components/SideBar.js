@@ -10,7 +10,7 @@ export default function SideBar({ hashtag }) {
   const dispatch = useDispatch();
   const sideActiveKey = useSelector((state) => state.main.sideActiveKey);
 
-  const onchangFunction = (sideActiveKey) => {
+  const onchangeFunction = (sideActiveKey) => {
     window.scrollTo(0, 0);
     dispatch(actions.setValue("post", []));
     dispatch(commonActions.setFetchStatus({
@@ -39,7 +39,7 @@ export default function SideBar({ hashtag }) {
             <Divider />
             <Col style={{ marginTop: 20 }}>
               <Tabs
-                onChange={onchangFunction}
+                onChange={onchangeFunction}
                 tabPosition="left"
                 defaultActiveKey="ALL"
                 activeKey={sideActiveKey}
