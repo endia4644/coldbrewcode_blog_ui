@@ -6,6 +6,7 @@ import AnchorLink from "./AnchorLink";
 export default function Navigation({ postContent }) {
   const [indexList, setIndexList] = useState(null);
   const [targetOffset, setTargetOffset] = useState(undefined);
+  const special = [['&amp;', '&']];
 
   useEffect(() => {
     setTargetOffset(window.innerHeight / 2);
@@ -101,6 +102,15 @@ export default function Navigation({ postContent }) {
         } else {
           title = title?.match(regExTag)?.[0];
         }
+      }
+      /* 변환된 특수문자 재변환 */
+      if (special.length > 0) {
+        special.map(word => {
+          const regExp = new RegExp(word[0], 'g');
+          if (regExp.test(title)) {
+            title = title.replace(regExp, word[1]);
+          }
+        })
       }
 
       /* 제목이 <br>이거나 공백이면 추가하지 않음 */
