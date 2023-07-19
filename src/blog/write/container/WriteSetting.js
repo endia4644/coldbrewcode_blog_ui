@@ -870,6 +870,15 @@ export default function WriteSetting({
                       className="button-type-round button-color-reverse"
                       disabled={isFetching}
                       onClick={() => {
+                        if (postName == '' || postName == null) {
+                          // 게시글 제목이 없는 경우 경고 얼럿 노출
+                          message.error({
+                            content: "제목을 입력하지 않았습니다",
+                            key,
+                            duration: 2,
+                          });
+                          return;
+                        }
                         // 임시저장, 나가기, 출간하기 버튼 비활성화
                         dispatch(actions.setValue("isFetching", true));
                         let imageIds = [];
