@@ -21,6 +21,8 @@ import CommentForm from "../components/CommentForm";
 import ButtonGroup from "antd/lib/button/button-group";
 import Navigation from "../components/Navigation";
 import { UpArrowIcon } from "../../../common/components/Icon";
+import hljs from 'highlight.js/lib/common';
+
 
 export default function Post() {
   const { id } = useParams();
@@ -109,6 +111,13 @@ export default function Post() {
       navigate('/blog');
     }
   }, [dispatch, navigate, dFetchStatus])
+
+  useLayoutEffect(() => {
+    // 최초 로딩시 highlight 활성화
+    setTimeout(() => {
+      hljs.highlightAll();
+    }, 150);
+  },[])
 
   useLayoutEffect(() => {
     /* 화면 로드전 게시글이 없을경우 메인페이지로 강제이동 */
