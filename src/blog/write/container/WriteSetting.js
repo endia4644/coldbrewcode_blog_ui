@@ -493,6 +493,7 @@ export default function WriteSetting({
     dispatch(
       actions.fetchCreateTempPost({
         postId: postId,
+        tempId: tempId,
         postName: postName,
         hashtags: hashtags,
         postDescription: description,

@@ -468,7 +468,6 @@ router.get("/temp", isLoggedIn, async (req, res, next) => {
         },
         {
           model: db.TempHashtag,
-          as: 'Hashtags',
           required: false,
           attributes: ["id", "hashtagName"],
           through: { attributes: [] },
@@ -515,6 +514,15 @@ router.post("/temp", isLoggedIn, async (req, res, next) => {
           transaction: t, // 이 쿼리를 트랜잭션 처리
         });
       }
+      /* 기존 임시 포스트에 작성되어있던 임시 포스트 삭제 ( 자동 저장 케이스 ) */
+      await db.TempPost.destroy({
+        where: {
+          id: {
+            [Op.eq]: req?.body?.tempId
+          }
+        },
+        transaction: t, // 이 쿼리를 트랜잭션 처리
+      })
       /* 기존 포스트에 작성되어있던 임시 포스트 삭제 */
       await db.TempPost.destroy({
         where: {
@@ -613,7 +621,7 @@ router.post("/temp", isLoggedIn, async (req, res, next) => {
           }
         );
       }
-      res.send(makeResponse({ data: 'OK' }));
+      res.send(makeResponse({ data: newTempPost?.id}));
     });
   } catch (err) {
     console.error(err);
@@ -665,9 +673,8 @@ router.get("/temp/:id", isLoggedIn, async (req, res, next) => {
         },
         {
           model: db.TempHashtag,
-          as: 'Hashtags',
-          required: false,
           attributes: [['hashtagName', 'key'], 'hashtagName'],
+          required: false,
           through: {
             attributes: []
           }

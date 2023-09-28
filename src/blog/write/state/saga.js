@@ -105,6 +105,7 @@ function* fetchCreateTempPost(action) {
     url: "/post/temp",
     data: {
       postId: action.postId,
+      tempId: action.tempId,
       postName: action.postName,
       hashtags: action.hashtags,
       postDescription: action.postDescription,
@@ -122,6 +123,31 @@ function* fetchCreateTempPost(action) {
   } else {
     yield put(actions.setValue("isFetching", false));
   }
+}
+
+function* fetchCreateTempPostContinue(action) {
+  const { isSuccess, data } = yield call(callApi, {
+    method: "post",
+    url: "/post/temp",
+    data: {
+      postId: action.postId,
+      tempId: action.tempId,
+      postName: action.postName,
+      hashtags: action.hashtags,
+      postDescription: action.postDescription,
+      postContent: action.postContent,
+      postThumbnail: action.postThumbnail,
+      permission: action.permission,
+      seriesName: action.seriesName,
+      imageIds: action.imageIds,
+    },
+  });
+  if (isSuccess && data) {
+    yield put(
+      actions.setValue("tempId", data)
+    );
+  }
+  yield put(actions.setValue("isFetching", false));
 }
 
 function* fetchTempPost(action) {
@@ -191,6 +217,10 @@ export default function* () {
     takeEvery(
       Types.FetchCreateTempPost,
       makeFetchSaga({ fetchSaga: fetchCreateTempPost, canCache: false })
+    ),
+    takeEvery(
+      Types.FetchCreateTempPostContinue,
+      makeFetchSaga({ fetchSaga: fetchCreateTempPostContinue, canCache: false })
     ),
     takeEvery(
       Types.FetchTempPost,

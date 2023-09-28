@@ -59,7 +59,7 @@ app.use(session(sessionOption));
 
 const prod = process.env.NODE_ENV === "production";
 dotenv.config();
-db.sequelize.sync();
+db.sequelize.sync(); // {force: true}
 passportConfig();
 
 if (prod) {

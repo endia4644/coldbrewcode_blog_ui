@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   TempPost.associate = (db) => {
     db.TempPost.belongsTo(db.User);
-    db.TempPost.belongsToMany(db.TempHashtag, { as: 'Hashtags', through: db.TempPostHashtag, foreignKey: 'TempPostId' });
+    db.TempPost.belongsToMany(db.TempHashtag, { through: db.TempPostHashtag });
     db.TempPost.hasMany(db.Image);
     db.TempPost.belongsToMany(db.Series, { through: db.TempSeriesPost });
   };

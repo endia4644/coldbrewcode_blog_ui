@@ -47,6 +47,7 @@ export default function Write() {
   const seriesName = useSelector(state => state.write.seriesName);
   const postType = useSelector(state => state.write.postType);
   const tempId = useSelector(state => state.write.tempId);
+  const editorBody = {};
 
   const [showPrompt, confirmNavigation, cancelNavigation] = useCallbackPrompt(true);
 
@@ -129,7 +130,12 @@ export default function Write() {
       return;
     }
     setPostName(post?.postName);
-    setHashtag(post?.Hashtags ?? []);
+    if(post?.Hashtags) {
+      setHashtag(post?.Hashtags ?? []);
+    }
+    if(post?.TempHashtags) {
+      setHashtag(post?.TempHashtags ?? []);
+    }
 
     /* 해시태그값 세팅 */
     post?.Hashtags?.map(item => tagRef.current.add(item.key));
@@ -146,6 +152,13 @@ export default function Write() {
     dispatch(actions.setValue('seriesThumbnail', post?.Series?.[0]?.seriesThumbnail));
     dispatch(actions.setValue('seriesList', post?.Series));
   }, [post, dispatch]);
+
+  /* 5분 마다 상태 체크 */
+  useEffect(() => {
+    if(htmlContent) {
+      tempSubmit({ description, permission, seriesName, continueYsno: true });
+    }
+  }, [htmlContent])
 
   /**
    * CKEditor 객체에게 setContent함수 전달
@@ -278,11 +291,12 @@ export default function Write() {
   /**
    * @description 게시글 임시저장
    * @param {object} param
-   * @param {string=} param.description // 게시글 설명
-   * @param {string=} param.permission  // 공개여부
-   * @param {string=} param.seriesName  // 시리즈이름
+   * @param {string=} param.description   // 게시글 설명
+   * @param {string=} param.permission    // 공개여부
+   * @param {string=} param.seriesName    // 시리즈이름
+   * @param {boolean=} param.continueYsno // 임시저장 종료여부
    */
-  function tempSubmit({ description, permission, seriesName }) {
+  function tempSubmit({ description, permission, seriesName, continueYsno }) {
     // 임시저장, 나가기, 출간하기 버튼 비활성화
     dispatch(actions.setValue("isFetching", true));
 
@@ -305,20 +319,40 @@ export default function Write() {
     // 본문 내용중 해드 태그를 목차 등록 가능한 구조로 치환하여 리턴
     let content = contentAddIndex(htmlContent);
     // 임시등록 액션 호출
-    dispatch(
-      actions.fetchCreateTempPost({
-        postId: postId,
-        postName: postName,
-        hashtags: hashtags,
-        postDescription: description,
-        postContent: content,
-        postThumbnail: `${thumbnail ?? null}`,
-        permission: permission,
-        seriesName: seriesName,
-        imageIds: imageIds,
-      })
-    );
+    if(!continueYsno) {
+      dispatch(
+        actions.fetchCreateTempPost({
+          postId: postId,
+          tempId: tempId,
+          postName: postName,
+          hashtags: hashtags,
+          postDescription: description,
+          postContent: content,
+          postThumbnail: `${thumbnail ?? null}`,
+          permission: permission,
+          seriesName: seriesName,
+          imageIds: imageIds,
+        })
+      );
+    } else {
+      dispatch(
+        actions.fetchCreateTempPostContinue({
+          postId: postId,
+          tempId: tempId,
+          postName: postName,
+          hashtags: hashtags,
+          postDescription: description,
+          postContent: content,
+          postThumbnail: `${thumbnail ?? null}`,
+          permission: permission,
+          seriesName: seriesName,
+          imageIds: imageIds,
+        })
+      );
+    }
   }
+
+
 
   /**
    * 임시 저장 메시지 처리
@@ -437,6 +471,7 @@ export default function Write() {
           htmlContent={htmlContent}
           getHtmlContent={getHtmlContent}
           imageMap={imageMap}
+          editorBody={editorBody}
         />
       </Content>
       <Footer className="main-footer">

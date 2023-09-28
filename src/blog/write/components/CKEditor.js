@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Editor from 'ckeditor5-custom-build/build/ckeditor';
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import { API_HOST } from "../../../common/constant";
 import axios from "axios";
 import { callApi } from "../../../common/util/api";
+
 
 export default function CEitor({
   postType,
@@ -12,7 +13,10 @@ export default function CEitor({
   htmlContent,
   getHtmlContent,
   imageMap,
+  editorBody
 }) {
+
+  const [edit, setEdit] = useState(null);
   /**
    * 
    * @param {*} loader 
@@ -67,6 +71,22 @@ export default function CEitor({
     };
   }
 
+  function isEmptyObj(obj)  {
+    // 객체 타입체크
+    if(obj.constructor !== Object)  {
+      return false;
+    }
+    
+    // property 체크
+    for(let prop in obj)  {
+      if(obj.hasOwnProperty(prop))  {
+        return false;
+      }
+    }
+    
+    return true;
+  }
+
   useEffect(() => {
     if (!postId) {
       return;
@@ -84,7 +104,21 @@ export default function CEitor({
       }
     };
     fetchData();
-  }, [postId]);
+  }, []);
+
+  useEffect(() => {
+    let interval = setInterval(function() {
+      if(edit) {
+        const data = edit?.getData();
+        getHtmlContent(data);
+      }
+    },300000)
+
+    return () => {
+      // @ts-ignore
+      clearInterval(interval);
+    }
+  }, [edit])
 
   return (
     <div>
@@ -98,6 +132,11 @@ export default function CEitor({
         onBlur={(_, editor) => {
           const data = editor?.getData();
           getHtmlContent(data);
+        }}
+        onChange={(_, editor) => {
+          if(edit == null && editor?.getData()) {
+            setEdit(editor);
+          }
         }}
       />
     </div>

@@ -40,6 +40,9 @@ router.get('/', async (req, res, next) => {
         model: db.Post,
         required: false,
         attributes: [],
+        through: {
+          attributes: []
+        },
         where: {
           dltYsno: {
             [Op.eq]: 'N'

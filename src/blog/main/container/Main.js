@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { actions, Types } from "../state";
 import { actions as authActions } from "../../auth/state";
 import { actions as commonActions } from "../../../common/state";
-import "../scss/main.scss";
+import "../scss/Main.scss";
 
 export default function Main() {
   const dispatch = useDispatch();
