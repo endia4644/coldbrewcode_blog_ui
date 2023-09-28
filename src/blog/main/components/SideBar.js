@@ -44,6 +44,7 @@ export default function SideBar({ hashtag }) {
                 defaultActiveKey="ALL"
                 activeKey={sideActiveKey}
                 onTabClick={onTabClick}
+                style={{ maxHeight: "45vw" }}
                 items={hashtag.map((item, i) => {
                   return {
                     label: `${item.hashtagName} (${item.postCount})`,
