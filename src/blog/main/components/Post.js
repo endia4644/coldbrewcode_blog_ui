@@ -8,9 +8,7 @@ import { API_HOST, FetchStatus } from "../../../common/constant";
 import defaultImg from "./../../../common/images/beans.svg";
 import { createActionBar } from "../../../common/util/actionBar";
 import { createImgErrorHandler } from "../../../common/util/imgErrorHandler";
-import Lottie from "lottie-react";
-// @ts-ignore
-import loadingLottie from "../../../assets/lottie/loading.json";
+import { ReactComponent as LoadingIcon } from "./../../../common/images/loading.svg";
 const { Title } = Typography;
 
 export default function Post() {
@@ -136,10 +134,10 @@ export default function Post() {
               </List.Item>
             </>
           )}
-        /> : <Lottie animationData={loadingLottie} style={{ overflow: 'hidden', opacity: 0.5 }} className="lottie-loader"></Lottie>
+        /> : <LoadingIcon width={250} height={250} />
       }
       {nextPage >= 1 && isSlow && !isFetched ?
-        <Lottie animationData={loadingLottie} style={{ overflow: 'hidden', opacity: 0.5 }} className="lottie-loader" /> : ''
+        <LoadingIcon width={250} height={250} /> : ''
       }
       <div
         className="listPost"
