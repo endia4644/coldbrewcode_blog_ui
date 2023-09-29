@@ -26,6 +26,9 @@
 server/.env.development
 server/.env.production
 
+# synology
+.SynologyWorkingDirectory
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
