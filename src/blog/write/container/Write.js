@@ -37,6 +37,7 @@ export default function Write() {
   const [currentTag, setCurrentTag] = useState("");
   const [hashtag, setHashtag] = useState([]);
   const [htmlContent, setHtmlContent] = useState(null);
+  const [tempHtmlContent, setTempHtmlContent] = useState(null);
   const [postName, setPostName] = useState(null);
   const post = useSelector(state => state.write.post);
   const thumbnail = useSelector(state => state.write.postThumbnail);
@@ -47,7 +48,6 @@ export default function Write() {
   const seriesName = useSelector(state => state.write.seriesName);
   const postType = useSelector(state => state.write.postType);
   const tempId = useSelector(state => state.write.tempId);
-  const editorBody = {};
 
   const [showPrompt, confirmNavigation, cancelNavigation] = useCallbackPrompt(true);
 
@@ -87,9 +87,19 @@ export default function Write() {
   /**
    * 임시 글 불러오기 삭제 버튼 헨들링
    */
-  const handleRmovee = () => {
+  const handleRemove = () => {
     dispatch(actions.fetchDeleteTempPost({ id: post?.TempPostId }))
     setOpen(false);
+  };
+
+  /**
+   * 나가기 시 임시 글 삭제
+   */
+  const handleTempRemove = () => {
+    if(post?.TempPostId !== undefined && !post?.TempPostId) {
+      dispatch(actions.fetchDeleteTempPost({ id: tempId }))
+      setOpen(false);
+    }
   };
 
   /* 상태값 초기화 함수훅 생성 */
@@ -155,10 +165,11 @@ export default function Write() {
 
   /* 5분 마다 상태 체크 */
   useEffect(() => {
-    if(htmlContent) {
+    if(tempHtmlContent !== null && tempHtmlContent !== undefined && tempHtmlContent !== '') {
+      setHtmlContent(tempHtmlContent);
       tempSubmit({ description, permission, seriesName, continueYsno: true });
     }
-  }, [htmlContent])
+  }, [tempHtmlContent])
 
   /**
    * CKEditor 객체에게 setContent함수 전달
@@ -167,6 +178,15 @@ export default function Write() {
    */
   const getHtmlContent = (htmlContent) => {
     setHtmlContent(htmlContent);
+  };
+
+  /**
+   * CKEditor 객체에게 setContent함수 전달
+   * -> CKEditor는 5분마다 부모에게 받은 setContent를 호출한다.
+   * @param {string} tempHtmlContent 
+   */
+  const getTempHtmlContent = (tempHtmlContent) => {
+    setTempHtmlContent(tempHtmlContent);
   };
 
   /**
@@ -388,6 +408,9 @@ export default function Write() {
         title="작성 취소"
         open={showPrompt ? true : false}
         onOk={() => {
+          if(tempId) {
+            handleTempRemove(); 
+          }
           // @ts-ignore
           confirmNavigation();
         }}
@@ -470,8 +493,8 @@ export default function Write() {
           placeholder={"기록하고 싶은 이야기를 적어 보세요"}
           htmlContent={htmlContent}
           getHtmlContent={getHtmlContent}
+          getTempHtmlContent={getTempHtmlContent}
           imageMap={imageMap}
-          editorBody={editorBody}
         />
       </Content>
       <Footer className="main-footer">
@@ -481,7 +504,9 @@ export default function Write() {
               style={{ fontWeight: 700 }}
               className="button-border-hide button-type-round"
               icon={<ArrowLeftOutlined />}
-              onClick={goMain}
+              onClick={() => {
+                goMain();
+              }}
               disabled={isFetching}
             >
               나가기
@@ -521,12 +546,12 @@ export default function Write() {
         footer={
           <>
             <div className="left-box" key="left-box" style={{ marginRight: 10 }}>
-              <Button key="back" className="button-type-round button-color-red" onClick={handleRmovee}>
+              <Button key="back" className="button-type-round button-color-red" onClick={handleRemove}>
                 삭제
               </Button>
             </div>
             <div className="right-box" key="right-box">
-              <Button key="submit" className="button-type-round button-color-white" onClick={handleOk}>
+              <Button key="submit" className="button-type-round button-color-white" onClick={handleCancel}>
                 취소
               </Button>
               <Button

@@ -12,11 +12,13 @@ export default function CEitor({
   placeholder,
   htmlContent,
   getHtmlContent,
-  imageMap,
-  editorBody
+  getTempHtmlContent,
+  imageMap
 }) {
 
   const [edit, setEdit] = useState(null);
+
+  const [postIdInit, setPostIdInit] = useState(false);
   /**
    * 
    * @param {*} loader 
@@ -71,48 +73,51 @@ export default function CEitor({
     };
   }
 
-  function isEmptyObj(obj)  {
-    // 객체 타입체크
-    if(obj.constructor !== Object)  {
-      return false;
-    }
-    
-    // property 체크
-    for(let prop in obj)  {
-      if(obj.hasOwnProperty(prop))  {
-        return false;
-      }
-    }
-    
-    return true;
-  }
-
   useEffect(() => {
     if (!postId) {
       return;
     }
     const fetchData = async () => {
-      const { data } = await callApi({
-        method: "get",
-        url: `/post/${postId}/content?postType=${postType}`,
-      });
-      getHtmlContent(data?.postContent ?? "");
-      if (data?.images?.length > 0) {
-        data?.images?.map((item) => {
-          return imageMap.current.set(item.fileName, item.id)
-        })
+      const firstType = postType;
+      // 게시글 타입이 임시이고, 처음 호출됬을때와 타입이 변경되지 않은 경우
+      if(postType === 'temp' && firstType === postType) {
+        if(!postIdInit) {
+          setPostIdInit(true);
+          const { data } = await callApi({
+            method: "get",
+            url: `/post/${postId}/content?postType=${postType}`,
+          });
+          getHtmlContent(data?.postContent ?? "");
+          if (data?.images?.length > 0) {
+            data?.images?.map((item) => {
+              return imageMap.current.set(item.fileName, item.id)
+            })
+          }
+        }
+      } else {
+      // 게시글 타입이 게시글이거나 처음 호출됬을때와 타입이 변경된 경우 ( 임시글 불러오기 했을 경우, 또는 임시글 수정)  
+        const { data } = await callApi({
+          method: "get",
+          url: `/post/${postId}/content?postType=${postType}`,
+        });
+        getHtmlContent(data?.postContent ?? "");
+        if (data?.images?.length > 0) {
+          data?.images?.map((item) => {
+            return imageMap.current.set(item.fileName, item.id)
+          })
+        }
       }
     };
     fetchData();
-  }, []);
+  }, [postId]);
 
   useEffect(() => {
     let interval = setInterval(function() {
       if(edit) {
         const data = edit?.getData();
-        getHtmlContent(data);
+        getTempHtmlContent(data);
       }
-    },300000)
+    },10000)
 
     return () => {
       // @ts-ignore
