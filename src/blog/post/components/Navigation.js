@@ -89,7 +89,7 @@ export default function Navigation({ postContent }) {
         if (regSpanTag.test(title)) {
           title = title.replace(regSpanTag, '');
         }
-        /* 제목에 sup 태그가 포함되어있을 경우 재거한다 */
+        /* 제목에 sup 태그가 포함되어있을 경우 제거한다 */
         if (regSupTag.test(title)) {
           let supNotArray = [];
           let supArray = title?.split(regSupTag);
@@ -99,7 +99,9 @@ export default function Navigation({ postContent }) {
             }
           })
           title = supNotArray.join('');
-        } else {
+        }
+        /* 아직 중첩된 태그가 남아있을 경우 */
+        if(regExTstTag.test(title)) {
           title = title?.match(regExTag)?.[0];
         }
       }
