@@ -166,7 +166,6 @@ export default function Write() {
   /* 5분 마다 상태 체크 */
   useEffect(() => {
     if(tempHtmlContent !== null && tempHtmlContent !== undefined && tempHtmlContent !== '') {
-      setHtmlContent(tempHtmlContent);
       tempSubmit({ description, permission, seriesName, continueYsno: true });
     }
   }, [tempHtmlContent])

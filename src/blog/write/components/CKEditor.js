@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Editor from 'ckeditor5-custom-build/build/ckeditor';
 import { CKEditor } from '@ckeditor/ckeditor5-react'
-import { API_HOST } from "../../../common/constant";
+import { API_HOST, AUTO_SAVE_TIME } from "../../../common/constant";
 import axios from "axios";
 import { callApi } from "../../../common/util/api";
 
@@ -19,6 +19,12 @@ export default function CEitor({
   const [edit, setEdit] = useState(null);
 
   const [postIdInit, setPostIdInit] = useState(false);
+
+  const [typingYsno, setTypingYsno] = useState(false);
+
+  const [timerMs, setTimerMs] = useState(new Date().getTime());
+
+  const [CurrentMs, setCurrentMs] = useState(new Date().getTime() + AUTO_SAVE_TIME);
   /**
    * 
    * @param {*} loader 
@@ -112,18 +118,36 @@ export default function CEitor({
   }, [postId]);
 
   useEffect(() => {
-    let interval = setInterval(function() {
-      if(edit) {
-        const data = edit?.getData();
-        getTempHtmlContent(data);
+    const time = setInterval(() => {
+      if(new Date().getTime() - timerMs >= 2000 && !typingYsno) {
+        setTypingYsno(true);
       }
-    },10000)
+    },1000);
 
     return () => {
       // @ts-ignore
-      clearInterval(interval);
+      clearInterval(time);
     }
-  }, [edit])
+  }, [typingYsno,timerMs])
+
+  useEffect(() => {
+
+  },[CurrentMs])
+
+  useEffect(() => {
+    if(edit) {
+      // 이전 저장으로부터 5분이상이 경과했고, 2초 이상 입력이 없을 경우 임시저장을 실행한다.
+      // 커서 이동 문제로 입력이 없을경우만 임시저장
+      if(typingYsno) {
+        if(CurrentMs <= new Date().getTime()){
+          setCurrentMs(CurrentMs + AUTO_SAVE_TIME);
+          const data = edit?.getData();
+          getHtmlContent(data);
+          getTempHtmlContent(data);
+        }
+      }
+    }
+  }, [edit,typingYsno,CurrentMs,getHtmlContent,getTempHtmlContent])
 
   return (
     <div>
@@ -142,6 +166,8 @@ export default function CEitor({
           if(edit == null && editor?.getData()) {
             setEdit(editor);
           }
+          setTimerMs(new Date().getTime());
+          setTypingYsno(false);
         }}
       />
     </div>

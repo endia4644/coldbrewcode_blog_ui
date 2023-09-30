@@ -18,3 +18,5 @@ export const AuthStatus = {
 }; 
 
 export const NOT_FIND = "NOTFIND";
+
+export const AUTO_SAVE_TIME = 300000;
