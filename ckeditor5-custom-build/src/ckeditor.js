@@ -63,6 +63,8 @@ import TextTransformation from '@ckeditor/ckeditor5-typing/src/texttransformatio
 import TodoList from '@ckeditor/ckeditor5-list/src/todolist';
 import Underline from '@ckeditor/ckeditor5-basic-styles/src/underline.js';
 import WordCount from '@ckeditor/ckeditor5-word-count/src/wordcount.js';
+import Mathematics from 'ckeditor5-math/src/math';
+import AutoformatMathematics from 'ckeditor5-math/src/autoformatmath';
 // @ts-ignore
 import KeyboardShortCut from './plugin/KeyboardShortCut.js';
 
@@ -131,6 +133,8 @@ Editor.builtinPlugins = [
 	Underline,
 	WordCount,
 	KeyboardShortCut,
+	Mathematics,
+	AutoformatMathematics
 ];
 
 // Editor configuration.
@@ -174,6 +178,7 @@ Editor.defaultConfig = {
 			'|',
 			'bulletedList',
 			'numberedList',
+			'math',
 		]
 	},
 	language: 'ko',
@@ -267,6 +272,14 @@ Editor.defaultConfig = {
 			},
 		]
 	},
+	math: {
+		engine: 'katex',
+		outputType: 'span',
+		className: 'math-tex',
+	},
+    mediaEmbed: {
+        previewsInData: true
+    }
 };
 
 export default Editor;

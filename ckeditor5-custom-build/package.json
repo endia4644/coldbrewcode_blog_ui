@@ -51,5 +51,8 @@
   },
   "scripts": {
     "build": "webpack --mode production"
+  },
+  "dependencies": {
+    "ckeditor5-math": "^36.0.2"
   }
 }
