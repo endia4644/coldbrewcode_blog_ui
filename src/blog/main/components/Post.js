@@ -19,7 +19,9 @@ export default function Post() {
   const hashtagCurrent = useSelector((state) => state.main.hashtagCurrent);
   const searchCurrent = useSelector((state) => state.main.searchCurrent);
 
-  const { fetchStatus, isFetched, isSlow, nextPage, totalCount } = useFetchInfo(Types.FetchAllPost);
+  const { fetchStatus, isFetched, isSlow, nextPage, totalCount } = useFetchInfo(
+    Types.FetchAllPost
+  );
 
   // 액션바 생성함수 호출
   const actionBar = createActionBar();
@@ -39,7 +41,10 @@ export default function Post() {
            * undefined는 첫 요청시에 호출되기 위하여 필요하다.
            * 첫 요청 후 FetchAllPost action의 상태는 Success로 변경된다.
            */
-          if (entry.isIntersecting && (fetchStatus === undefined || fetchStatus === FetchStatus.Success)) {
+          if (
+            entry.isIntersecting &&
+            (fetchStatus === undefined || fetchStatus === FetchStatus.Success)
+          ) {
             // 게시글 추가 조회
             dispatch(
               actions.fetchAllPost({
@@ -69,76 +74,139 @@ export default function Post() {
           </Space>
         </>
       )}
-      {nextPage >= 1 ?
-        <List
-          className="main-list"
-          grid={{
-            xs: 1,
-            sm: 1,
-            md: 1,
-            lg: 2,
-            xl: 2,
-            xxl: 2,
-          }}
-          itemLayout="vertical"
-          size="large"
-          dataSource={post}
-          renderItem={(item) => (
-            <>
-              <List.Item
-                className="main-list-item"
-                style={{ paddingTop: 30 }}
-                key={`post_${item.id}`}
-                actions={actionBar({ item, type: 'default' })}
-              >
-                <div className="thumbnail-wrappper">
-                  <div className="thumbnail">
-                    <img
-                      onClick={() => navigate(`/blog/post/${item?.id}`)}
-                      style={{ cursor: 'pointer' }}
-                      alt="logo"
-                      // 이미지를 가져올 때 postThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
-                      src={`${item?.postThumbnail && item?.postThumbnail !== 'null' ? `${API_HOST}/${item?.postThumbnail}` : defaultImg}`}
-                      onError={handleImgError}
-                    />
-                  </div>
-                </div>
-                <Typography.Title>
-                  <Link to={`/blog/post/${item.id}`}>{item.postName}</Link>
-                </Typography.Title>
-                <List.Item.Meta />
-                <Typography.Paragraph
-                  style={{ minHeight: 66 }}
-                  ellipsis={{
-                    rows: 3,
-                    expandable: false,
-                  }}
-                >
-                  {item.postDescription}
-                </Typography.Paragraph>
-                {item.Hashtags && (
-                  <Col>
-                    {item.Hashtags.map((item, i) => (
-                      <Button
-                        key={`button_${i}`}
-                        className="tag-button"
-                        type="primary"
-                        shape="round"
-                        style={{ marginTop: 10, marginRight: 10 }}
-                      >
-                        {item.hashtagName}
-                      </Button>
-                    ))}
-                  </Col>
-                )}
-              </List.Item>
-            </>
+      {nextPage >= 1 ? (
+        <>
+          {searchCurrent ? (
+            <List
+              className="main-list"
+              grid={{
+                xs: 1,
+                sm: 1,
+                md: 1,
+                lg: 1,
+                xl: 1,
+                xxl: 1,
+              }}
+              itemLayout="vertical"
+              size="large"
+              dataSource={post}
+              renderItem={(item) => (
+                <>
+                  <List.Item
+                    className="main-list-item"
+                    style={{ paddingTop: 30 }}
+                    key={`post_${item.id}`}
+                    actions={actionBar({ item, type: "default" })}
+                  >
+                    <Typography.Title>
+                      <Link to={`/blog/post/${item.id}`}>{item.sPostName}</Link>
+                    </Typography.Title>
+                    <List.Item.Meta />
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: item.sPostContent,
+                      }}
+                    ></div>
+                    {item.Hashtags && (
+                      <Col>
+                        {item.Hashtags.map((item, i) => (
+                          <Button
+                            key={`button_${i}`}
+                            className="tag-button"
+                            type="primary"
+                            shape="round"
+                            style={{ marginTop: 10, marginRight: 10 }}
+                          >
+                            {item.hashtagName}
+                          </Button>
+                        ))}
+                      </Col>
+                    )}
+                  </List.Item>
+                </>
+              )}
+            />
+          ) : (
+            <List
+              className="main-list"
+              grid={{
+                xs: 1,
+                sm: 1,
+                md: 1,
+                lg: 2,
+                xl: 2,
+                xxl: 2,
+              }}
+              itemLayout="vertical"
+              size="large"
+              dataSource={post}
+              renderItem={(item) => (
+                <>
+                  <List.Item
+                    className="main-list-item"
+                    style={{ paddingTop: 30 }}
+                    key={`post_${item.id}`}
+                    actions={actionBar({ item, type: "default" })}
+                  >
+                    <div className="thumbnail-wrappper">
+                      <div className="thumbnail">
+                        <img
+                          onClick={() => navigate(`/blog/post/${item?.id}`)}
+                          style={{ cursor: "pointer" }}
+                          alt="logo"
+                          // 이미지를 가져올 때 postThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
+                          src={`${
+                            item?.postThumbnail &&
+                            item?.postThumbnail !== "null"
+                              ? `${API_HOST}/${item?.postThumbnail}`
+                              : defaultImg
+                          }`}
+                          onError={handleImgError}
+                        />
+                      </div>
+                    </div>
+                    <Typography.Title>
+                      <Link to={`/blog/post/${item.id}`}>{item.postName}</Link>
+                    </Typography.Title>
+                    <List.Item.Meta />
+                    <Typography.Paragraph
+                      style={{ minHeight: 66 }}
+                      ellipsis={{
+                        rows: 3,
+                        expandable: false,
+                      }}
+                    >
+                      {item.postDescription}
+                    </Typography.Paragraph>
+                    {item.Hashtags && (
+                      <Col>
+                        {item.Hashtags.map((item, i) => (
+                          <Button
+                            key={`button_${i}`}
+                            className="tag-button"
+                            type="primary"
+                            shape="round"
+                            style={{ marginTop: 10, marginRight: 10 }}
+                          >
+                            {item.hashtagName}
+                          </Button>
+                        ))}
+                      </Col>
+                    )}
+                  </List.Item>
+                </>
+              )}
+            />
           )}
-        /> : <LoadingIcon width={250} height={250} />
-      }
-      {nextPage >= 1 && isSlow && !isFetched ?
-        <LoadingIcon width={250} height={250} /> : ''
-      }
+        </>
+      ) : (
+        <LoadingIcon width={250} height={250} />
+      )}
+      {nextPage >= 1 && isSlow && !isFetched ? (
+        <LoadingIcon width={250} height={250} />
+      ) : (
+        ""
+      )}
       <div
         className="listPost"
         style={{ width: "100%", height: 10 }}

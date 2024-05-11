@@ -20,15 +20,19 @@ export default function Main() {
   useEffect(() => {
     /* Post, Series, Hashtag는 화면진입 할 때마다 초기화 */
     dispatch(actions.setValue("post", []));
-    dispatch(commonActions.setFetchStatus({
-      actionType: Types.FetchAllPost,
-      fetchType: FetchType.Delete,
-    }))
+    dispatch(
+      commonActions.setFetchStatus({
+        actionType: Types.FetchAllPost,
+        fetchType: FetchType.Delete,
+      })
+    );
     dispatch(actions.setValue("series", []));
-    dispatch(commonActions.setFetchStatus({
-      actionType: Types.FetchAllSeries,
-      fetchType: FetchType.Delete,
-    }))
+    dispatch(
+      commonActions.setFetchStatus({
+        actionType: Types.FetchAllSeries,
+        fetchType: FetchType.Delete,
+      })
+    );
     dispatch(actions.fetchAllHashtag());
   }, [dispatch]);
   const hashtag = useSelector((state) => state.main.hashtag);

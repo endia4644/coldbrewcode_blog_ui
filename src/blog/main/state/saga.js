@@ -17,6 +17,72 @@ function* fetchAllPost(action, page) {
     });
     if (isSuccess && data) {
       if (action.post) {
+        if (action?.search) {
+          data.forEach((element) => {
+            let sPostName = element.postName;
+            let sPostContent =
+              " " +
+              element.postContent
+                .replace(/(<([^>]+)>)/gi, "")
+                .replace(/&nbsp;/g, " ");
+
+            if (sPostName.indexOf(action?.search) > 0) {
+              if (sPostName.indexOf(action?.search) > 50) {
+                sPostName = sPostName.substring(
+                  sPostName.indexOf(action?.search) - 50,
+                  sPostName.indexOf(action?.search) + 50
+                );
+              } else {
+                sPostName = sPostName.substring(0, 50);
+              }
+              const reg = new RegExp(action?.search, "gi");
+              sPostName = sPostName.replace(
+                reg,
+                `<mark style="background-color:yellow">${action?.search}</mark>`
+              );
+            }
+            if (sPostContent.indexOf(action?.search) > 0) {
+              if (sPostContent.indexOf(action?.search) > 50) {
+                sPostContent = `...${sPostContent.substring(
+                  sPostContent.indexOf(action?.search) - 50,
+                  sPostContent.indexOf(action?.search) +
+                    (50 + action?.search.length)
+                )}...`;
+              } else {
+                sPostContent = `${sPostContent.substring(0, 50)}...`;
+              }
+              const reg = new RegExp(action?.search, "gi");
+              sPostContent = sPostContent.replace(
+                reg,
+                `<mark style="background-color:yellow">${action?.search}</mark>`
+              );
+            } else {
+              if (action?.search.match(/\s/)) {
+                let wordArray = action?.search.split(" ");
+                wordArray.forEach((ele) => {
+                  if (sPostContent.indexOf(ele) > 0) {
+                    if (sPostContent.indexOf(ele) > 50) {
+                      sPostContent = `...${sPostContent.substring(
+                        sPostContent.indexOf(ele) - 50,
+                        sPostContent.indexOf(ele) + (50 + ele.length)
+                      )}...`;
+                    } else {
+                      sPostContent = `${sPostContent.substring(0, 50)}...`;
+                    }
+                    const reg = new RegExp(ele, "gi");
+                    sPostContent = sPostContent.replace(
+                      reg,
+                      `<mark>${ele}</mark>`
+                    );
+                  }
+                });
+              }
+            }
+
+            element["sPostName"] = sPostName;
+            element["sPostContent"] = sPostContent;
+          });
+        }
         yield put(actions.setValue("post", [...action.post, ...data]));
       } else {
         yield put(actions.setValue("post", data));

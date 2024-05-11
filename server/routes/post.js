@@ -359,25 +359,11 @@ router.get("/", async (req, res, next) => {
     /* 검색 조회인 경우 */
     if (search) {
       // 검색어를 띄어쓰기 기준으로 나누어 단어로 구분한다.
-      let searchTextList = search.split(" ");
       let searchQuery = null;
       // 검색 단어 개수가 1개 이상인 경우
-      if (searchTextList.length > 1) {
-        // 마지막 단어를 추출한다.
-        let lastText = searchTextList.pop();
-        // Full Text Index를 사용하여 내용, 소개, 제목에서 검색어를 조회한다.
-        searchQuery = literal(
-          `match(postContent, postName, postDescription) against('+"${searchTextList.join(
-            " "
-          )}"+${lastText}' IN BOOLEAN MODE)`
-        );
-        // 검색 단어 개수가 1개인 경우
-      } else {
-        // Full Text Index를 사용하여 내용, 소개, 제목에서 검색어를 조회한다.
-        searchQuery = literal(
-          `match(postContent, postName, postDescription) against(+"${search}*" IN BOOLEAN MODE)`
-        );
-      }
+      searchQuery = literal(
+        `match(postContent, postName, postDescription) against("${search}" IN BOOLEAN MODE)`
+      );
       // 게시글 조회 쿼리에서 사용하는 조건문
       mainWhere = {
         searchQuery,
