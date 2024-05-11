@@ -99,7 +99,12 @@ export default function Post() {
                     actions={actionBar({ item, type: "default" })}
                   >
                     <Typography.Title>
-                      <Link to={`/blog/post/${item.id}`}>{item.sPostName}</Link>
+                      <Link
+                        to={`/blog/post/${item.id}`}
+                        dangerouslySetInnerHTML={{
+                          __html: item.sPostName,
+                        }}
+                      ></Link>
                     </Typography.Title>
                     <List.Item.Meta />
                     <div
