@@ -30,7 +30,7 @@ body {
 }
 
 .ant-dropdown-menu-title-content {
-  font-family: 'Noto Sans KR';
+  font-family: "Noto Sans KR";
 }
 
 .main-side {
@@ -42,6 +42,10 @@ body {
         display: none;
       }
     }
+  }
+
+  .ant-anchor-wrapper {
+    overflow: hidden;
   }
 }
 
@@ -68,13 +72,11 @@ body {
 .ant-radio-group::-webkit-scrollbar-thumb,
 .ck-content::-webkit-scrollbar-thumb,
 .ant-anchor-wrapper::-webkit-scrollbar-thumb {
-
   &:hover,
   &:active {
     background: $fontColor;
   }
 }
-
 
 .ant-radio-group::-webkit-scrollbar-track,
 .ck-content::-webkit-scrollbar-track {
@@ -114,7 +116,7 @@ h1.ant-typography {
 }
 
 .ant-menu-item-selected,
-.ant-anchor-link-active>.ant-anchor-link-title,
+.ant-anchor-link-active > .ant-anchor-link-title,
 a:active,
 a:hover {
   color: $mainColor;
@@ -136,7 +138,6 @@ a:hover {
 }
 
 .ant-input-search {
-
   .ant-input:focus,
   .ant-input:hover {
     border-color: $subColor;
@@ -149,12 +150,21 @@ a:hover {
   border-color: $subColor;
 }
 
-.ant-input-search .ant-input:focus+.ant-input-group-addon .ant-input-search-button:not(.ant-btn-primary),
-.ant-input-search .ant-input:hover+.ant-input-group-addon .ant-input-search-button:not(.ant-btn-primary) {
+.ant-input-search
+  .ant-input:focus
+  + .ant-input-group-addon
+  .ant-input-search-button:not(.ant-btn-primary),
+.ant-input-search
+  .ant-input:hover
+  + .ant-input-group-addon
+  .ant-input-search-button:not(.ant-btn-primary) {
   border-left-color: $subColor;
 }
 
-.ant-input-search>.ant-input-group>.ant-input-group-addon:last-child .ant-input-search-button:not(.ant-btn-primary) {
+.ant-input-search
+  > .ant-input-group
+  > .ant-input-group-addon:last-child
+  .ant-input-search-button:not(.ant-btn-primary) {
   color: $subColor;
 }
 
@@ -174,7 +184,6 @@ a:hover {
 }
 
 .ant-menu-light {
-
   .ant-menu-item:hover,
   .ant-menu-item-active,
   .ant-menu:not(.ant-menu-inline) .ant-menu-submenu-open,
@@ -434,9 +443,8 @@ a.ant-typography:active {
 }
 
 .comment-box {
-
-  &>.ant-comment:not(:last-child),
-  .ant-comment-nested>.ant-comment:not(:last-child) {
+  & > .ant-comment:not(:last-child),
+  .ant-comment-nested > .ant-comment:not(:last-child) {
     border-bottom: 5px solid $grayColor;
     margin-bottom: 1rem;
   }
@@ -517,7 +525,7 @@ a.ant-typography:active {
   border-left: 4px solid #634426 !important;
   color: #634426;
   margin: 2rem 0px !important;
-  opacity: .9;
+  opacity: 0.9;
   padding: 1rem 1rem 1rem 2rem !important;
 
   p {
@@ -525,7 +533,7 @@ a.ant-typography:active {
   }
 }
 
-.ck.ck-editor__main>.ck-editor__editable:not(.ck-focused),
+.ck.ck-editor__main > .ck-editor__editable:not(.ck-focused),
 .ck.ck-toolbar {
   border: 0;
 }
@@ -536,15 +544,14 @@ a.ant-typography:active {
  * For more information, check out https://ckeditor.com/docs/ckeditor5/latest/installation/advanced/content-styles.html
  */
 
-
 /* ckeditor5-font/theme/fontsize.css */
 .ck-content .text-tiny {
-  font-size: .7em;
+  font-size: 0.7em;
 }
 
 /* ckeditor5-font/theme/fontsize.css */
 .ck-content .text-small {
-  font-size: .85em;
+  font-size: 0.85em;
 }
 
 /* ckeditor5-font/theme/fontsize.css */
@@ -600,14 +607,14 @@ a.ant-typography:active {
 }
 
 /* ckeditor5-image/theme/imagecaption.css */
-.ck-content .image>figcaption {
+.ck-content .image > figcaption {
   display: table-caption;
   caption-side: bottom;
   word-break: break-word;
   color: var(--ck-color-image-caption-text);
   background-color: var(--ck-color-image-caption-background);
-  padding: .6em;
-  font-size: .75em;
+  padding: 0.6em;
+  font-size: 0.75em;
   outline-offset: -1px;
 }
 
@@ -624,7 +631,7 @@ a.ant-typography:active {
 }
 
 /* ckeditor5-image/theme/imageresize.css */
-.ck-content .image.image_resized>figcaption {
+.ck-content .image.image_resized > figcaption {
   display: block;
 }
 
@@ -678,9 +685,9 @@ a.ant-typography:active {
 }
 
 /* ckeditor5-image/theme/imagestyle.css */
-.ck-content p+.image-style-align-left,
-.ck-content p+.image-style-align-right,
-.ck-content p+.image-style-side {
+.ck-content p + .image-style-align-left,
+.ck-content p + .image-style-align-right,
+.ck-content p + .image-style-side {
   margin-top: 0;
 }
 
@@ -710,15 +717,15 @@ a.ant-typography:active {
 }
 
 /* ckeditor5-table/theme/tablecaption.css */
-.ck-content .table>figcaption {
+.ck-content .table > figcaption {
   display: table-caption;
   caption-side: top;
   word-break: break-word;
   text-align: center;
   color: var(--ck-color-table-caption-text);
   background-color: var(--ck-color-table-caption-background);
-  padding: .6em;
-  font-size: .75em;
+  padding: 0.6em;
+  font-size: 0.75em;
   outline-offset: -1px;
 }
 
@@ -741,7 +748,7 @@ a.ant-typography:active {
 .ck-content .table table td,
 .ck-content .table table th {
   min-width: 2em;
-  padding: .4em;
+  padding: 0.4em;
   border: 1px solid hsl(0, 0%, 75%);
 }
 
@@ -785,7 +792,6 @@ a.ant-typography:active {
 .main-content {
   .ck-content {
     white-space: pre-wrap;
-
 
     a {
       color: $fontColor;
@@ -832,7 +838,13 @@ a.ant-typography:active {
       width: 95%;
       border: 0;
       height: 1px;
-      background-image: linear-gradient(to right, #f0f0f0, $mainColor, $fontColor, #f0f0f0);
+      background-image: linear-gradient(
+        to right,
+        #f0f0f0,
+        $mainColor,
+        $fontColor,
+        #f0f0f0
+      );
     }
 
     li {
@@ -852,21 +864,18 @@ a.ant-typography:active {
     }
 
     ul {
-
-      ol>li,
+      ol > li,
       li {
         background: url(../images/coffee_one.svg) no-repeat 0px 1px;
         list-style-type: none;
         padding: 4px 0px 4px 30px;
 
-        >ul {
-
+        > ul {
           li {
             background: url(../images/coffee_two.svg) no-repeat 0px 1px;
             list-style-type: none;
 
-            >ul {
-
+            > ul {
               li,
               ol {
                 background: url(../images/coffee_three.svg) no-repeat 0px 1px;
@@ -951,25 +960,43 @@ a.ant-typography:active {
 
     h2.h2-underline {
       &::after {
-        background:
-          linear-gradient(90deg, $subColor 33.333333%, rgba(0, 38, 84, 0) 33.333333%),
-          linear-gradient(90deg, rgba(255, 255, 255, 1) 66.666666%, $subColor 66.666666%);
+        background: linear-gradient(
+            90deg,
+            $subColor 33.333333%,
+            rgba(0, 38, 84, 0) 33.333333%
+          ),
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 1) 66.666666%,
+            $subColor 66.666666%
+          );
       }
     }
 
     h3.h3-underline {
       &::after {
-        background:
-          linear-gradient(90deg, $subColor 20%, rgba(0, 38, 84, 0) 20%),
-          linear-gradient(90deg, rgba(255, 255, 255, 1) 40%, rgba(0, 38, 84, 0) 40%),
+        background: linear-gradient(
+            90deg,
+            $subColor 20%,
+            rgba(0, 38, 84, 0) 20%
+          ),
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 1) 40%,
+            rgba(0, 38, 84, 0) 40%
+          ),
           linear-gradient(90deg, $subColor 60%, rgba(0, 38, 84, 0) 60%),
-          linear-gradient(90deg, rgba(255, 255, 255, 1) 80%, rgba(0, 38, 84, 0) 80%),
-          linear-gradient(90deg, $subColor 100%, $subColor 100%),
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 1) 80%,
+            rgba(0, 38, 84, 0) 80%
+          ),
+          linear-gradient(90deg, $subColor 100%, $subColor 100%);
       }
     }
 
     h3.category {
-      font-family: 'Bebas Neue';
+      font-family: "Bebas Neue";
       font-size: 20px;
       font-weight: bold;
       color: #d1d1d1;
@@ -987,7 +1014,7 @@ a.ant-typography:active {
           background-image: url(../images/bulb.svg);
           color: #ff9000;
           background-color: #fff4e1;
-          content: 'Tip';
+          content: "Tip";
         }
       }
 
@@ -999,7 +1026,7 @@ a.ant-typography:active {
           background-image: url(../images/info.svg);
           color: #00b8d4;
           background-color: #e0f8fa;
-          content: 'Info';
+          content: "Info";
         }
       }
 
@@ -1011,7 +1038,7 @@ a.ant-typography:active {
           background-image: url(../images/caution.svg);
           color: #f04f6e;
           background-color: #fbdbe1;
-          content: 'Warning';
+          content: "Warning";
         }
       }
 
@@ -1050,8 +1077,8 @@ a.ant-typography:active {
   min-width: 450px;
 
   .link-visible {
-    >.ant-anchor-link {
-      >a {
+    > .ant-anchor-link {
+      > a {
         display: block;
       }
     }
@@ -1063,23 +1090,23 @@ a.ant-typography:active {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 
-  >a {
+  > a {
     padding-top: 2px;
     padding-bottom: 2px;
   }
 }
 
 .main-link {
-  >.ant-anchor-link {
-    >a {
+  > .ant-anchor-link {
+    > a {
       display: block !important;
     }
   }
 }
 
 .sub-link {
-  >.ant-anchor-link {
-    >a {
+  > .ant-anchor-link {
+    > a {
       display: none;
     }
   }
@@ -1094,10 +1121,9 @@ a.ant-typography:active {
 
 /* // 목차 CSS */
 
-
 // 모달 폰트 설정
 .ant-modal-content {
-  font-family: 'maplestory';
+  font-family: "maplestory";
 
   .ant-modal-title {
     font-weight: bold;
@@ -1105,25 +1131,25 @@ a.ant-typography:active {
 }
 
 .ck-content {
-      ::-webkit-scrollbar {
-          height: 15px;
-        }
-      
-        ::-webkit-scrollbar-track {
-          background-color: #0d1117;
-          border-radius: 10px;
-        }
-      
-        ::-webkit-scrollbar-thumb {
-          background-color: #f8f9fb;
-          border: 7px solid #0d1117;
-          border-radius: 10px;
-          &:hover,
-          &:active {
-            border: 4px solid #0d1117;
-          }
-        }
+  ::-webkit-scrollbar {
+    height: 15px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: #0d1117;
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #f8f9fb;
+    border: 7px solid #0d1117;
+    border-radius: 10px;
+    &:hover,
+    &:active {
+      border: 4px solid #0d1117;
+    }
+  }
   pre {
-      white-space: pre !important;
+    white-space: pre !important;
   }
 }
