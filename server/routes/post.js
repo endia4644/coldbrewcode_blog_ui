@@ -360,10 +360,18 @@ router.get("/", async (req, res, next) => {
     if (search) {
       // 검색어를 띄어쓰기 기준으로 나누어 단어로 구분한다.
       let searchQuery = null;
+
+      let searchTextList = search.split(" ");
       // 검색 단어 개수가 1개 이상인 경우
-      searchQuery = literal(
-        `match(postContent, postName, postDescription) against("${search}" IN BOOLEAN MODE)`
-      );
+      if (searchTextList.length > 1) {
+        searchQuery = literal(
+          `match(postContent, postName, postDescription) against("${search}" IN BOOLEAN MODE)`
+        );
+      } else {
+        searchQuery = literal(
+          `match(postContent, postName, postDescription) against("${search}*" IN BOOLEAN MODE)`
+        );
+      }
       // 게시글 조회 쿼리에서 사용하는 조건문
       mainWhere = {
         searchQuery,

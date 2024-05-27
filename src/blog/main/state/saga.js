@@ -41,12 +41,14 @@ function* fetchAllPost(action, page) {
                 `<mark style="background-color:yellow">${action?.search}</mark>`
               );
             }
-            if (sPostContent.indexOf(action?.search) > 0) {
-              if (sPostContent.indexOf(action?.search) > 50) {
+            let SearchIndex = sPostContent
+              .toLowerCase()
+              .indexOf(action?.search?.toLowerCase());
+            if (SearchIndex > 0) {
+              if (SearchIndex > 50) {
                 sPostContent = `...${sPostContent.substring(
-                  sPostContent.indexOf(action?.search) - 50,
-                  sPostContent.indexOf(action?.search) +
-                    (50 + action?.search.length)
+                  SearchIndex - 50,
+                  SearchIndex + (50 + action?.search.length)
                 )}...`;
               } else {
                 sPostContent = `${sPostContent.substring(0, 50)}...`;
@@ -76,6 +78,8 @@ function* fetchAllPost(action, page) {
                     );
                   }
                 });
+              } else {
+                sPostContent = `${sPostContent.substring(0, 50)}...`;
               }
             }
 
