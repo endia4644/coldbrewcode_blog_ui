@@ -267,9 +267,7 @@ export default function Write() {
     헤더 태그에 적용 가능한 클래스 리스트
   */
   const HClass = [
-    'h1-underline',
-    'h2-underline',
-    'h3-underline'
+    'underline'
   ]
 
   /**

@@ -3,14 +3,10 @@ import _ from 'lodash';
 // custom plugin
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 
-let h1Cnt = 0;
-let h2Cnt = 0;
-let h3Cnt = 0;
-
-let infoBoxCnt = 0;
-let TipBoxCnt = 0;
-let WarningBoxCnt = 0;
-
+let underline = 0;
+let h1 = 0;
+let h2 = 0;
+let h3 = 0;
 class KeyboardShortCut extends Plugin {
   init() {
     const editor = this.editor;
@@ -31,28 +27,67 @@ class KeyboardShortCut extends Plugin {
 
     editor.keystrokes.set('alt+1', (evt, cancel) => {
       editor.execute('heading', { value: 'heading1' });
-      editor.execute('style', { styleName: 'h1-underline' });
-      h1Cnt++;
+      if(underline < 1) {
+        editor.execute('style', { styleName: 'h1-underline' });
+      }
+      underline++;
+      if(h1 > 0) {
+        editor.execute('style', { styleName: 'h1-underline' });
+        h3 = 0;
+        h2 = 0;
+        h1 = 0;
+        underline = 0;
+      } else {
+        h1++;
+      }
     }, { priority: 'high' });
 
     editor.keystrokes.set('alt+2', (evt, cancel) => {
       editor.execute('heading', { value: 'heading2' });
-      editor.execute('style', { styleName: 'h2-underline' });
-      h2Cnt++;
+      if(underline < 1) {
+        editor.execute('style', { styleName: 'h2-underline' });
+      }
+      underline++;
+      if(h2 > 0) {
+        editor.execute('style', { styleName: 'h2-underline' });
+        h3 = 0;
+        h2 = 0;
+        h1 = 0;
+        underline = 0;
+      } else {
+        h2++;
+      }
     }, { priority: 'high' });
 
     editor.keystrokes.set('alt+3', (evt, cancel) => {
       editor.execute('heading', { value: 'heading3' });
-      editor.execute('style', { styleName: 'h3-underline' });
-      h3Cnt++;
+      if(underline < 1) {
+        editor.execute('style', { styleName: 'h3-underline' });
+      }
+      underline++;
+      if(h3 > 0) {
+        editor.execute('style', { styleName: 'h3-underline' });
+        h3 = 0;
+        h2 = 0;
+        h1 = 0;
+        underline = 0;
+      } else {
+        h3++;
+      }
     }, { priority: 'high' });
 
     editor.keystrokes.set('alt+4', (evt, cancel) => {
       editor.execute('heading', { value: 'heading4' });
+      h3 = 0;
+      h2 = 0;
+      h1 = 0;
     }, { priority: 'high' });
 
     editor.keystrokes.set('alt+5', (evt, cancel) => {
       editor.execute('heading', { value: 'heading5' });
+      h3 = 0;
+      h2 = 0;
+      h1 = 0;
     }, { priority: 'high' });
 
     editor.keystrokes.set('alt+a', (evt, cancel) => {
@@ -76,18 +111,16 @@ class KeyboardShortCut extends Plugin {
     }, { priority: 'high' });
 
     editor.keystrokes.set(['alt', 'shift', 'z'], (evt, cancel) => {
+      console.log('infoBox');
       editor.execute('style', { styleName: 'info-box' });
-      infoBoxCnt++;
     }, { priority: 'high' });
 
     editor.keystrokes.set(['alt', 'shift', 'x'], (evt, cancel) => {
       editor.execute('style', { styleName: 'tip-box' });
-      TipBoxCnt++;
     }, { priority: 'high' });
 
     editor.keystrokes.set(['alt', 'shift', 'c'], (evt, cancel) => {
       editor.execute('style', { styleName: 'warning-box' });
-      WarningBoxCnt++;
     }, { priority: 'high' });
 
     editor.keystrokes.set('tab', (evt, data) => {
@@ -96,49 +129,33 @@ class KeyboardShortCut extends Plugin {
     }, { priority: 'high' });
 
     editor.keystrokes.set('enter', (evt, data) => {
-      if (h1Cnt > 0) {
-        setTimeout(() => {
-          editor.execute('heading', { value: 'heading1' });
-          editor.execute('style', { styleName: 'h1-underline' });
-          editor.execute('heading', { value: 'paragraph' });
-          h1Cnt = 0;
-        }, 1)
-      }
-      if (h2Cnt > 0) {
-        setTimeout(() => {
-          editor.execute('heading', { value: 'heading2' });
-          editor.execute('style', { styleName: 'h2-underline' });
-          editor.execute('heading', { value: 'paragraph' });
-          h2Cnt = 0;
-        }, 1)
-      }
-      if (h3Cnt > 0) {
-        setTimeout(() => {
-          editor.execute('heading', { value: 'heading3' });
-          editor.execute('style', { styleName: 'h3-underline' });
-          editor.execute('heading', { value: 'paragraph' });
-          h3Cnt = 0;
-        }, 1)
-      }
-
-      if (infoBoxCnt > 0) {
-        setTimeout(() => {
-          editor.execute('style', { styleName: 'info-box' });
-          infoBoxCnt = 0;
-        }, 1)
-      }
-      if (TipBoxCnt > 0) {
-        setTimeout(() => {
-          editor.execute('style', { styleName: 'tip-box' });
-          TipBoxCnt = 0;
-        }, 1)
-      }
-      if (WarningBoxCnt > 0) {
-        setTimeout(() => {
-          editor.execute('style', { styleName: 'warning-box' });
-          WarningBoxCnt = 0;
-        }, 1)
-      }
+      console.log('enter');
+      underline = 0;
+      h3 = 0;
+      h2 = 0;
+      h1 = 0;
+      
+      editor.model.change(writer => {
+        const selection = editor.model.document.selection;
+        const position = selection.getFirstPosition(); // 커서 위치
+    
+        // 커서 위치의 부모 요소를 찾기
+        const parentElement = position.findAncestor('paragraph') ?? position.findAncestor('heading1') ?? position.findAncestor('heading2') ?? position.findAncestor('heading3') ?? position.findAncestor('heading4') ?? position.findAncestor('heading5');
+        if (parentElement) {
+            evt.preventDefault();
+            // 부모 요소 바로 뒤에 새 위치 설정
+            const newPosition = writer.createPositionAfter(parentElement);
+    
+            // 새로운 요소 생성
+            const newElement = writer.createElement('paragraph');
+    
+            // 새 요소 삽입
+            writer.insert(newElement, newPosition);
+    
+            // 삽입된 요소로 커서 이동
+            writer.setSelection(newElement, 'in');
+        }
+      });
     }, { priority: 'high' });
   }
 }

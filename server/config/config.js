@@ -29,7 +29,7 @@ module.exports = {
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: "coldbrewcode",
-    host: "coldbrewcode-db.endia.me",
+    host: "coldbrewcode-mysql.endia.me",
     port: "33306",
     dialect: "mysql",
     timezone: "+09:00",

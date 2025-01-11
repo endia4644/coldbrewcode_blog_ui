@@ -925,9 +925,9 @@ a.ant-typography:active {
 
     //ol
 
-    h1.h1-underline,
-    h2.h2-underline,
-    h3.h3-underline {
+    h1.underline,
+    h2.underline,
+    h3.underline {
       display: inline-block;
       padding-bottom: 15px;
       position: relative;
@@ -952,13 +952,13 @@ a.ant-typography:active {
       }
     }
 
-    h1.h1-underline {
+    h1.underline {
       &::after {
         background: $subColor;
       }
     }
 
-    h2.h2-underline {
+    h2.underline {
       &::after {
         background: linear-gradient(
             90deg,
@@ -973,7 +973,7 @@ a.ant-typography:active {
       }
     }
 
-    h3.h3-underline {
+    h3.underline {
       &::after {
         background: linear-gradient(
             90deg,
@@ -1004,7 +1004,7 @@ a.ant-typography:active {
       margin: 0;
       padding: 0;
     }
-
+    
     p {
       &.tip-box {
         border-left: 6px solid #ff9000;
@@ -1027,6 +1027,9 @@ a.ant-typography:active {
           color: #00b8d4;
           background-color: #e0f8fa;
           content: "Info";
+        }
+        &::after {
+        
         }
       }
 
@@ -1068,6 +1071,7 @@ a.ant-typography:active {
           border: 0;
         }
       }
+      
     }
   }
 }
