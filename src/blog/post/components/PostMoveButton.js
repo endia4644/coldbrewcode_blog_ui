@@ -2,7 +2,6 @@ import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import { Button, Space, Typography } from "antd";
 import { motion, useAnimationControls } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 export default function PostMoveButton({ direction, post, postType }) {
