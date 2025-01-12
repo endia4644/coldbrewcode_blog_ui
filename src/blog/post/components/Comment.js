@@ -1,5 +1,5 @@
-import React, { useRef, useState } from "react";
-import { Avatar, Button, Col, Comment, Row, Space } from "antd";
+import React, { useState } from "react";
+import { Avatar, Button, Col, Comment, Row } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { actions } from "../state";
 import CommentForm from "./CommentForm";

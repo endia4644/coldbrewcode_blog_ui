@@ -6,8 +6,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import Settings from "../../main/components/Settings";
 import { actions, Types } from "./../state";
 import { actions as authActions } from "../../auth/state";
-import { actions as commonActions } from "../../../common/state";
-import { Types as mainType } from "../../main/state";
 import "../scss/series.scss";
 import { CloseCircleOutlined, DownOutlined } from "@ant-design/icons";
 import { UpArrowIcon } from "../../../common/components/Icon";

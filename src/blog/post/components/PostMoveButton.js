@@ -4,11 +4,9 @@ import { motion, useAnimationControls } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { actions } from "../../main/state";
 
 export default function PostMoveButton({ direction, post, postType }) {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const divRef = useRef(null);
   const buttonRef = useRef(null);
 

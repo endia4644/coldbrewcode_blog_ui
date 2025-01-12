@@ -1,5 +1,4 @@
-import { UserOutlined } from "@ant-design/icons";
-import { Avatar, Typography } from "antd";
+import { Typography } from "antd";
 import React from "react";
 
 export default function UserInfo() {

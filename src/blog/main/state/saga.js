@@ -2,7 +2,6 @@ import { all, call, put, takeEvery } from "redux-saga/effects";
 import { actions, Types } from "../../main/state";
 import { callApi } from "../../../common/util/api";
 import { makeFetchSaga } from "../../../common/util/fetch";
-import { actions as common } from "../../../common/state";
 
 function* fetchAllPost(action, page) {
   if (page <= Math.floor(action.totalCount / 8)) {
