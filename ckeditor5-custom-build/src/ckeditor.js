@@ -66,7 +66,7 @@ import WordCount from '@ckeditor/ckeditor5-word-count/src/wordcount.js';
 import Mathematics from 'ckeditor5-math/src/math';
 import AutoformatMathematics from 'ckeditor5-math/src/autoformatmath';
 // @ts-ignore
-import KeyboardShortCut from './plugin/KeyboardShortCut.js';
+import KeyboardShortCut from '/src/plugin/KeyboardShortCut.js';
 
 class Editor extends ClassicEditor { }
 
