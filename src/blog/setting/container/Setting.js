@@ -1,4 +1,4 @@
-import { Button, Col, Divider, Row, Typography } from "antd";
+import { Col, Divider, Row, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { actions as authActions } from "../../auth/state";

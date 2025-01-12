@@ -3,7 +3,6 @@ import { actions, Types } from "../state";
 import { actions as authActions } from "../../auth/state";
 import { callApi } from "../../../common/util/api";
 import { makeFetchSaga } from "../../../common/util/fetch";
-import { AuthStatus } from "../../../common/constant";
 
 function* fetchCreateProfileImg({ formData, fileBlob }) {
   const reader = new FileReader();
