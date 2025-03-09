@@ -1,4 +1,4 @@
-# ColdBrewCode 블로그 개발 프로젝트
+# ColdBrewCode 블로그 UI 개발 프로젝트
 
 # INIT
 
