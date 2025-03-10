@@ -23,8 +23,7 @@
 # dotenv environment variable files
 .env.development
 .env.production
-server/.env.development
-server/.env.production
+
 
 # synology
 .SynologyWorkingDirectory
