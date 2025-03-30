@@ -196,6 +196,7 @@ export default function Write() {
     const images = [];
     /* 현재 입력중이면서 저장하지 않은 정보로 태그로 변환 */
     insertHashTag();
+
     let content = contentAddIndex(htmlContent);
 
     setLevel(1);
@@ -278,7 +279,7 @@ export default function Write() {
   function contentAddIndex(htmlContent) {
     const regEx = /(<h[1-5](.*?)>)(.*?)(<\/h[1-5]>)/gm;
     const splitEx = /(<h[1-5])/g;
-    const classEx = /(?<=(class="))(.*?)(?=")/g;
+    const classEx = /(?<=class=")[^"]*(?=")/g;
     const contentEx = /(?<=<h[1-5](.*?)>)(.*?)(?=<\/h[1-5]>)/g;
     let id = 0;
     let contents = htmlContent;
@@ -286,9 +287,15 @@ export default function Write() {
     htags?.map(tag => {
       let newHeader = '';
       let tagHeader = tag.trim().split(splitEx);
-      let className = tag?.match(classEx)?.filter((x) => {
-        return HClass.includes(x);
-      });
+      let className = "";
+      if(tag?.match(classEx)) {
+        let classList = tag?.match(classEx)[0].split(" "); // 공백을 기준으로 클래스 분리
+        for(let i = 0 ; i < classList.length; i++) {
+          if(HClass.includes(classList[i])) {
+            className += classList[i] + " ";
+          }
+        }
+      }
       let content = tag?.match(contentEx);
       switch (tagHeader?.[1]) {
         case "<h1": newHeader = `<h1 class="level1 ${className ? className : ''}" id="tag-${id}">${content[0]}</h1>`; break;
