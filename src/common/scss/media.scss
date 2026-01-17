@@ -11,8 +11,17 @@
 */
 
 @media (max-width: $mainContentSize) {
-  .main-content {
-    width: 100%;
+  #root {
+    .main {
+      &-content {
+        width: 100%;
+
+        .contentsLoading {
+          width : 125px;
+          height: 125px;
+        }
+      }
+    }
   }
 
   .main-name {
@@ -27,8 +36,15 @@
 /* 1919px */
 @media (max-width: 1919px) {
   .ant-layout {
-    .main-header {
-      width: 1376px;
+    .main, .dashboard {
+      &-header {
+        width: $contentLargeSize;
+      }
+    }
+    .dashboard {
+      &-content {
+        width: $contentLargeSize;
+      }
     }
   }
 }
@@ -36,8 +52,15 @@
 /* 1440px */
 @media (max-width: 1440px) {
   .ant-layout {
-    .main-header {
-      width: 1024px;
+    .main, .dashboard {
+      &-header {
+        width: $contentMiddleSize;
+      }
+    }
+    .dashboard {
+      &-content {
+        width: $contentMiddleSize;
+      }
     }
   }
 }
@@ -45,8 +68,15 @@
 /* 1056px */
 @media (max-width: 1056px) {
   .ant-layout {
-    .main-header {
-      width: calc(100% - -2rem);
+    .main, .dashboard {
+      &-header {
+        width: $contentSmallSize;
+      }
+    }
+    .dashboard {
+      &-content {
+        width: $contentSmallSize;
+      }
     }
   }
 }
@@ -88,9 +118,11 @@
     }
   }
 
-  /* Setting 바에 있는 검색바를 숨긴다. */
-  .top-search {
-    display: none;
+  /* 블로그 유저 메인의 Setting 바에 있는 검색바를 숨긴다. */
+  .hidden-search {
+    .top-search {
+      display: none;
+    }
   }
 
   // loadingbar 설정
@@ -101,13 +133,22 @@
       }
     }
   }
+
+  /* 카드를 클릭(드래그 시작)하는 순간 */
+  .ant-card {
+    transition: box-shadow 0.25s ease-in, transform 0.25s ease-in;
+    &:active, &:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2); /* 공중에 뜬 느낌을 위해 그림자 강화 */
+    }
+  }
 }
 
 /* xl */
 
 @media (max-width: $xl) {
   .main-header {
-    width: 1024px;
+    width: $contentMiddleSize;
   }
 
   // loadingbar 설정
@@ -144,12 +185,8 @@
     }
   }
 
-  main {
-
-    /* 게시글의 description 영역 padding 크게 조정 */
-    .ant-list-vertical .ant-list-item-action>li {
-      padding: 0 20px;
-    }
+  .ant-layout-header {
+    padding-right: 10px !important;
   }
 
   .main-writer {
@@ -464,6 +501,17 @@
     &-loader {
       svg {
         transform: translate3d(25vw, 80px, 0px) !important
+      }
+    }
+  }
+
+  // 대시보드 탭 폰트크기 조정
+  .dashboard-content {
+    .dashboard-tabs {
+      .ant-tabs-nav-wrap {
+        .ant-tabs-tab {
+          font-size: 14px;
+        }
       }
     }
   }

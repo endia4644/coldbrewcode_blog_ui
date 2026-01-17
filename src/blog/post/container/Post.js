@@ -1,5 +1,4 @@
 import {
-  BackTop,
   Button,
   Col,
   Divider,
@@ -8,28 +7,22 @@ import {
   Space,
   Typography,
 } from "antd";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { actions, Types } from "../state";
-import { actions as authActions } from "../../auth/state";
-import { Content, Header } from "antd/lib/layout/layout";
-import Settings from "../../main/components/Settings";
 import useQuery from "../../auth/hook/useQuery";
 
 import "../scss/post.scss";
 import { elapsedTime } from "../../../common/util/util";
 import Hashtag from "../components/Hashtag";
-import SideBar from "../components/SideBar";
 import Topbar from "../components/TopBar";
 import Comment from "../components/Comment";
 import PostMoveButton from "../components/PostMoveButton";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
-import { AuthStatus, FetchStatus } from "../../../common/constant";
+import {AuthStatus, BLOG, FetchStatus} from "../../../common/constant";
 import CommentForm from "../components/CommentForm";
 import ButtonGroup from "antd/lib/button/button-group";
-import Navigation from "../components/Navigation";
-import { UpArrowIcon } from "../../../common/components/Icon";
 import hljs from "highlight.js/lib/common";
 
 export default function Post() {
@@ -96,13 +89,6 @@ export default function Post() {
   /* 미리보기 팝업 취소 핸들링 */
   const handlePrevCancel = () => setPreviewOpen(false);
 
-  /**
-   * 로그아웃 처리
-   */
-  function logout() {
-    dispatch(authActions.fetchLogout());
-  }
-
   useEffect(() => {
     /* 게시글 정보 조회 */
     dispatch(actions.fetchGetPost({ id, postType }));
@@ -116,21 +102,21 @@ export default function Post() {
   useEffect(() => {
     /* 삭제가 성공한 경우 blog 화면으로 이동 */
     if (dFetchStatus === FetchStatus.Success) {
-      navigate("/blog");
+      navigate(BLOG);
     }
   }, [dispatch, navigate, dFetchStatus]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     // 최초 로딩시 highlight 활성화
     setTimeout(() => {
       hljs.highlightAll();
     }, 150);
   }, []);
 
-  useLayoutEffect(() => {
-    /* 화면 로드전 게시글이 없을경우 메인페이지로 강제이동 */
-    if (fetchStatus !== FetchStatus.Request && !post) {
-      navigate("/blog");
+  useEffect(() => {
+    /* 게시글이 없을경우 메인페이지로 강제이동 */
+    if (fetchStatus === FetchStatus.Success && !post) {
+      navigate(BLOG);
     }
   }, [fetchStatus, navigate, post]);
 
@@ -138,155 +124,129 @@ export default function Post() {
     <>
       {fetchStatus === FetchStatus.Success && (
         <>
-          <Header className="site-layout-background main-header fix-menu">
-            <Row justify="end">
-              <Col>
-                <Settings logout={logout} />
-              </Col>
-            </Row>
-          </Header>
-          <Row justify="center">
-            <Col>
-              <SideBar
-                id={id}
-                likeCount={post?.likeCount}
-                likeYsno={post?.likeYsno}
-              />
-            </Col>
-            <Col>
-              <Navigation postContent={post?.postContent} />
-            </Col>
-          </Row>
-          <Content className="post-wrap main-content">
-            <Row
+          <Row
               style={{ justifyContent: "space-between", alignItems: "center" }}
-            >
-              <Typography.Title
+          >
+            <Typography.Title
                 className="post-name"
                 style={{ marginBottom: 0 }}
-              >
-                {post?.postName}
-              </Typography.Title>
-              {status === AuthStatus.Login && user?.userType === "admin" && (
+            >
+              {post?.postName}
+            </Typography.Title>
+            {status === AuthStatus.Login && user?.id === post.User.id && (
                 <ButtonGroup>
                   <Button
-                    className="button-type-round button-color-white"
-                    style={{ marginRight: 5 }}
-                    onClick={() => {
-                      navigate(`/blog/write/${id}`);
-                    }}
+                      className="button-type-round button-color-white"
+                      style={{ marginRight: 5 }}
+                      onClick={() => {
+                        navigate(`/blog/write/${id}`);
+                      }}
                   >
                     수정
                   </Button>
                   <Button
-                    className="button-type-round button-color-white"
-                    onClick={showModal}
+                      className="button-type-round button-color-white"
+                      onClick={showModal}
                   >
                     삭제
                   </Button>
                 </ButtonGroup>
-              )}
-            </Row>
-            <Row style={{ marginTop: "2rem" }}>
-              <Space
+            )}
+          </Row>
+          <Row style={{ marginTop: "2rem" }}>
+            <Space
                 split={<Divider type="vertical" />}
                 style={{ paddingLeft: 5, opacity: 0.8 }}
                 className="post-information"
-              >
-                <Typography.Title level={5} style={{ fontWeight: 600 }}>
-                  {post?.User?.nickName}
-                </Typography.Title>
-                <Typography.Title level={5} style={{ fontWeight: 500 }}>
-                  {elapsedTime(post?.createdAt)}
-                </Typography.Title>
-                <Topbar
+            >
+              <Typography.Title level={5} style={{ fontWeight: 600 }}>
+                {post?.User?.nickName}
+              </Typography.Title>
+              <Typography.Title level={5} style={{ fontWeight: 500 }}>
+                {elapsedTime(post?.createdAt)}
+              </Typography.Title>
+              <Topbar
                   id={id}
                   likeCount={post?.likeCount}
                   likeYsno={post?.likeYsno}
-                />
-              </Space>
-            </Row>
-            <Row style={{ marginTop: "1rem" }}>
-              {post?.Hashtags && <Hashtag hashtags={post?.Hashtags} />}
-            </Row>
-            <Divider />
-            <Row style={{ marginTop: "4rem", marginBottom: "3rem" }}>
-              {post?.Hashtags && (
+              />
+            </Space>
+          </Row>
+          <Row style={{ marginTop: "1rem" }}>
+            {post?.Hashtags && <Hashtag hashtags={post?.Hashtags} />}
+          </Row>
+          <Divider />
+          <Row style={{ marginTop: "4rem", marginBottom: "3rem" }}>
+            {post?.Hashtags && (
                 <div
-                  onClick={clickHandler}
-                  className="ck-content"
-                  dangerouslySetInnerHTML={{ __html: post?.postContent }}
+                    onClick={clickHandler}
+                    className="ck-content"
+                    dangerouslySetInnerHTML={{ __html: post?.postContent }}
                 ></div>
-              )}
-            </Row>
-            <Divider />
-            {(post?.prev || post?.next) && (
+            )}
+          </Row>
+          <Divider />
+          {(post?.prev || post?.next) && (
               <>
                 <Row justify="center">
                   <Col
-                    className="post-button-box"
-                    style={!post?.prev && { justifyContent: "flex-end" }}
+                      className="post-button-box"
+                      style={!post?.prev && { justifyContent: "flex-end" }}
                   >
                     {post?.prev && (
-                      <PostMoveButton
-                        direction="left"
-                        post={post?.prev}
-                        postType={postType}
-                      />
+                        <PostMoveButton
+                            direction="left"
+                            post={post?.prev}
+                            postType={postType}
+                        />
                     )}
                     {post?.next && (
-                      <PostMoveButton
-                        direction="right"
-                        post={post?.next}
-                        postType={postType}
-                      />
+                        <PostMoveButton
+                            direction="right"
+                            post={post?.next}
+                            postType={postType}
+                        />
                     )}
                   </Col>
                 </Row>
                 <Divider />
               </>
-            )}
-            <Row justify="start" style={{ marginTop: "4rem" }}>
-              <Col>
-                <Typography.Title level={3}>
-                  {commentCount} 개의 댓글
-                </Typography.Title>
-              </Col>
-            </Row>
-            <Row justify="start" style={{ marginTop: "2rem" }}>
-              <Col>
-                <CommentForm
+          )}
+          <Row justify="start" style={{ marginTop: "4rem" }}>
+            <Col>
+              <Typography.Title level={3}>
+                {commentCount} 개의 댓글
+              </Typography.Title>
+            </Col>
+          </Row>
+          <Row justify="start" style={{ marginTop: "2rem" }}>
+            <Col>
+              <CommentForm
                   postId={id}
                   parentId={null}
                   commentDepth={"0"}
                   comment={comment}
                   commentCount={commentCount}
                   updateYsno={undefined}
-                />
-              </Col>
-            </Row>
-            <Row
+              />
+            </Col>
+          </Row>
+          <Row
               className="comment-box"
               justify="start"
               style={{ marginTop: "2rem", paddingBottom: "3rem" }}
-            >
-              {comment.length > 0 &&
+          >
+            {comment.length > 0 &&
                 comment.map((item) => (
-                  <Comment
-                    key={`comment_${item.id}`}
-                    data={item}
-                    parentId={null}
-                    postId={id}
-                  />
+                    <Comment
+                        key={`comment_${item.id}`}
+                        data={item}
+                        parentId={null}
+                        postId={id}
+                    />
                 ))}
-            </Row>
-            <BackTop>
-              <div>
-                <UpArrowIcon />
-              </div>
-            </BackTop>
-          </Content>
-          {user?.userType === "admin" && (
+          </Row>
+          {user?.id === post.User.id && (
             <>
               <Modal
                 className="modal-size-middle"

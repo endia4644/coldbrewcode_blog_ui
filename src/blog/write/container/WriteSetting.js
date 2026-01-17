@@ -27,7 +27,7 @@ import { ImageIcon } from "../../../common/components/Icon";
 import { API_HOST, FetchStatus } from "../../../common/constant";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { actions, Types } from "../state";
-import { useGoMain } from "../../../common/hook/useGoMain";
+import { useGoMyBlogMain } from "../../../common/hook/useGoMyBlogMain";
 import { useFetchInfoDelete } from "../../../common/hook/useFetchInfoDelete";
 
 export default function WriteSetting({
@@ -40,8 +40,8 @@ export default function WriteSetting({
 }) {
   const dispatch = useDispatch();
 
-  /* 메인 화면으로 이동하기 위한 콜백함수를 생성 */
-  const goMain = useGoMain();
+  /* 내 블로그 메인 화면으로 이동하기 위한 콜백함수를 생성 */
+  const goMyBlogMain = useGoMyBlogMain();
 
   /**
    * Create,Update Fetching 진행중 버튼클릭 제어 스위치
@@ -107,7 +107,7 @@ export default function WriteSetting({
           duration: 2,
         });
         setTimeout(() => {
-          goMain();
+          goMyBlogMain();
         }, 500);
       } else if (status === FetchStatus.Success) {
         message.error({
@@ -122,7 +122,7 @@ export default function WriteSetting({
         });
       }
     },
-    [goMain]
+    [goMyBlogMain]
   );
 
   /**
@@ -137,7 +137,7 @@ export default function WriteSetting({
           duration: 2,
         });
         setTimeout(() => {
-          goMain();
+          goMyBlogMain();
         }, 500);
       } else if (status === FetchStatus.Success) {
         message.error({
@@ -152,7 +152,7 @@ export default function WriteSetting({
         });
       }
     },
-    [goMain]
+    [goMyBlogMain]
   );
 
   /**

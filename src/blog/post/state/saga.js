@@ -8,8 +8,8 @@ function* fetchGetPost({ id, postType }) {
     url: `/post/${id}?postType=${postType}`,
   });
   if (isSuccess && data) {
-    yield put(actions.setValue("post", data));
-    yield put(actions.setValue("commentCount", data?.commentCount));
+    yield put(actions.setValue({key: "post", value: data}));
+    yield put(actions.setValue({key: "commentCount", value: data?.commentCount}));
   }
 }
 
@@ -36,7 +36,7 @@ function* fetchGetComment(action) {
   });
 
   if (isSuccess && data) {
-    yield put(actions.setValue(`comment_${action.id}`, data));
+    yield put(actions.setValue({key: `comment_${action.id}`, value: data}));
   }
 }
 
@@ -54,11 +54,11 @@ function* fetchAddComment(action) {
 
   if (isSuccess && data) {
     if (Number(action.commentDepth) === 0) {
-      yield put(actions.setValue('comment_0', data));
+      yield put(actions.setValue({key: 'comment_0', value: data}));
     } else {
-      yield put(actions.setValue(`comment_${data.id}`, data));
+      yield put(actions.setValue({key: `comment_${data.id}`, value: data}));
     }
-    yield put(actions.setValue("commentCount", ++action.commentCount));
+    yield put(actions.setValue({key: "commentCount", value: ++action.commentCount}));
   }
 }
 
@@ -77,9 +77,9 @@ function* fetchUpdateComment(action) {
 
   if (isSuccess && data) {
     if (Number(action.commentDepth) === 0) {
-      yield put(actions.setValue('comment_0', data));
+      yield put(actions.setValue({key: 'comment_0', value: data}));
     } else {
-      yield put(actions.setValue(`comment_${data.id}`, data));
+      yield put(actions.setValue({key: `comment_${data.id}`, value: data}));
     }
   }
 }
@@ -97,11 +97,11 @@ function* fetchRemoveComment(action) {
 
   if (isSuccess && data) {
     if (Number(action.commentDepth) === 0) {
-      yield put(actions.setValue('comment_0', data));
+      yield put(actions.setValue({key: 'comment_0', value: data}));
     } else {
-      yield put(actions.setValue(`comment_${data.id}`, data));
+      yield put(actions.setValue({key: `comment_${data.id}`, value: data}));
     }
-    yield put(actions.setValue("commentCount", --action.commentCount));
+    yield put(actions.setValue({key: "commentCount", value: --action.commentCount}));
   }
 }
 

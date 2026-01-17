@@ -1,6 +1,6 @@
 import {
   createReducer,
-  createSetValueAction,
+  createSetValueAction, FETCH_KEY,
   setValueReducer,
 } from "../../../common/redux-helper";
 
@@ -15,32 +15,37 @@ export const Types = {
 
 export const actions = {
   setValue: createSetValueAction(Types.SetValue),
-  fetchAllPost: ({ post = [], totalCount = 0, hashtag = null, search = null }) => ({
+  fetchAllPost: ({ post = [], totalCount = 0, hashtag = null, search = null, nickname = null }) => ({
     type: Types.FetchAllPost,
     post,
     hashtag,
     search,
+    nickname,
     totalCount,
+    [FETCH_KEY]: nickname
   }),
-  fetchAllSeries: ({ series = [], totalCount = 0 }) => ({
+  fetchAllSeries: ({ series = [], totalCount = 0, nickname = null }) => ({
     type: Types.FetchAllSeries,
     series,
+    nickname,
     totalCount,
+    [FETCH_KEY]: nickname
   }),
-  fetchAllHashtag: () => ({
-    type: Types.FetchAllHashtag
+  fetchAllHashtag: ({nickname = null}) => ({
+    type: Types.FetchAllHashtag,
+    [FETCH_KEY]: nickname
   }),
 };
 const INITINAL_STATE = {
   keyword: "",
   autoCompletes: [],
-  post: [],
-  hashtag: [],
-  hashtagCurrent: "",
-  searchCurrent: "",
-  series: [],
-  activeKey: "post",
-  sideActiveKey: "ALL",
+  post: {},
+  hashtag: {},
+  hashtagCurrent: {},
+  searchCurrent: {},
+  series: {},
+  activeKey: {},
+  sideActiveKey: {},
 };
 
 const reducer = createReducer(INITINAL_STATE, {

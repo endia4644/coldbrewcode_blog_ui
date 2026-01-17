@@ -14,9 +14,9 @@ function* fetchAllPost(action, page) {
     });
     if (isSuccess && data) {
       if (action.post) {
-        yield put(actions.setValue("post", [...action.post, ...data]));
+        yield put(actions.setValue({key: "post", value: [...action.post, ...data]}));
       } else {
-        yield put(actions.setValue("post", data));
+        yield put(actions.setValue({key: "post", value: data}));
       }
     }
   }

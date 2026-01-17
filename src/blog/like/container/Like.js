@@ -1,11 +1,8 @@
-import { Col, Divider, Row, Typography } from "antd";
+import { Divider, Typography } from "antd";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { actions as authActions } from "../../auth/state";
 import { actions as commonActions } from "../../../common/state";
 import { actions, Types } from "../state";
-import { Content, Header } from "antd/lib/layout/layout";
-import Settings from "../../main/components/Settings";
 import Post from "../components/Post";
 import "./../scss/like.scss";
 import useNeedLogin from "../../../common/hook/useNeedLogin";
@@ -15,13 +12,6 @@ export default function Like() {
   // 로그인필수화면 - 로그인 여부 검사
   useNeedLogin();
   const dispatch = useDispatch();
-
-  /**
-   * 로그아웃 처리
-   */
-  function logout() {
-    dispatch(authActions.fetchLogout());
-  }
 
   useEffect(() => {
     return () => {
@@ -36,18 +26,9 @@ export default function Like() {
 
   return (
     <>
-      <Header className="site-layout-background main-header fix-menu">
-        <Row justify="end">
-          <Col>
-            <Settings logout={logout} />
-          </Col>
-        </Row>
-      </Header>
-      <Content className="post-wrap main-content">
-        <Typography.Title level={3}>관심글</Typography.Title>
-        <Divider />
-        <Post />
-      </Content>
+      <Typography.Title level={3}>관심글</Typography.Title>
+      <Divider />
+      <Post />
     </>
   );
 }

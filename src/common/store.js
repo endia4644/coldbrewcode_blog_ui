@@ -2,6 +2,10 @@ import { createStore, combineReducers, compose, applyMiddleware } from "redux";
 import createSagaMiddleware from "redux-saga";
 import { all } from "redux-saga/effects";
 import commonReducer from "../common/state";
+import dashboardReducer from "../blog/dashboard/state";
+import dashboardSaga from "../blog/dashboard/state/saga";
+import searchReducer from "../blog/search/state";
+import searchSaga from "../blog/search/state/saga";
 import mainReducer from "../blog/main/state";
 import mainSaga from "../blog/main/state/saga";
 import writeReducer from "../blog/write/state";
@@ -21,6 +25,8 @@ import settingSaga from "../blog/setting/state/saga";
 
 const reducer = combineReducers({
   common: commonReducer,
+  dashboard: dashboardReducer,
+  search: searchReducer,
   main: mainReducer,
   write: writeReducer,
   auth: authReducer,
@@ -39,7 +45,7 @@ const store = createStore(
 );
 
 function* rootSaga() {
-  yield all([mainSaga(), writeSaga(), authSaga(), postSaga(), seriesSaga(), likeSaga(), tempSaga(), settingSaga()]);
+  yield all([dashboardSaga(), searchSaga(), mainSaga(), writeSaga(), authSaga(), postSaga(), seriesSaga(), likeSaga(), tempSaga(), settingSaga()]);
 }
 sagaMiddleware.run(rootSaga);
 

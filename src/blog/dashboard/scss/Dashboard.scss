@@ -1,0 +1,210 @@
+@import "./../../../common/scss/vars.scss";
+
+/*
+  $xs: 576px;
+  $sm: 576px;
+  $md: 768px;
+  $lg: 992px;
+  $xl: 1200px;
+  $xxl: 1600px;
+*/
+
+.dashboard {
+  width: 1728px;
+  &-header {
+    padding: 0 10px 0 0 ;
+  }
+
+  &-content {
+    width: $dashboardContentSize;
+    margin-left: auto;
+    margin-right: auto;
+
+    .ant-typography {
+      a {
+        color: $mainColor;
+      }
+    }
+
+    .elapsedTime {
+      margin-top: 1em;
+      margin-bottom: 0;
+      color: $fontGrayColor;
+    }
+
+    .ant-card-actions {
+      flex-wrap: wrap;
+      .userBox {
+        text-align: start;
+        padding-left:12px;
+        span {
+          box-shadow: 0px 0px 0px black;
+        }
+      }
+      li {
+        &:nth-child(1) {
+          width: 75% !important;
+          article {
+            color: rgba(0, 0, 0, .45);
+          }
+        }
+        &:nth-child(2){
+          width: 25% !important;
+        }
+        .ant-avatar {
+          color: inherit;
+        }
+        article, span {
+          &:hover {
+            color: inherit !important;                /* 글자색 유지 */
+            transform: none !important;               /* 애니메이션/확대 효과 제거 */
+          }
+        }
+      }
+    }
+  }
+
+  // Posts 스타일
+  &-list-item {
+    h1 {
+      font-size: 1.25rm;
+    }
+  }
+
+  &-name {
+    font-size: 1.5rem;
+    line-height: 1.5;
+    font-weight: bold;
+  }
+
+  &-sidebar {
+    font-size: 14px;
+
+    .tablist {
+      border-left: 1px solid #f0f0f0;
+    }
+
+    .ant-tabs-left>.ant-tabs-nav .ant-tabs-ink-bar,
+    .ant-tabs-left>div>.ant-tabs-nav .ant-tabs-ink-bar {
+      left: 0;
+    }
+
+    .ant-tabs-left>.ant-tabs-content-holder,
+    .ant-tabs-left>div>.ant-tabs-content-holder {
+      border-left: 0;
+    }
+
+    .ant-tabs-left>.ant-tabs-nav .ant-tabs-tab {
+      padding: 0 24px;
+    }
+  }
+
+  &-tabs {
+    &.ant-tabs>.ant-tabs-nav .ant-tabs-nav-wrap,
+    &.ant-tabs>div>.ant-tabs-nav .ant-tabs-nav-wrap {
+      width: 100%;
+      display: inline-block;
+      padding-left: 16px;
+    }
+    .ant-tabs-nav-wrap {
+      .ant-tabs-tab {
+        color: $subColor;
+        font-size: 18px;
+      }
+      .ant-tabs-tab-btn {
+        &:active,
+        &:focus {
+          color: $mainColor;
+        }
+      }
+    }
+  }
+
+  &-topbar {
+    .ant-tabs-nav-list {
+      .ant-tabs-tab {
+        background-color: $grayColor;
+        color: black;
+        border: 0;
+        height: 32px;
+        padding: 4px 16px;
+        font-size: 14px;
+        border-radius: 32px;
+        margin-left: 10px;
+
+        &-active {
+          background-color: #634426;
+          color: $fontColor;
+
+          .ant-tabs-tab-btn {
+            color: $fontColor;
+            font-weight: 700;
+          }
+        }
+      }
+    }
+
+    .ant-tabs-ink-bar {
+      display: none;
+    }
+  }
+}
+
+.ant-tabs-content-holder {
+  .ant-col {
+    .tag-button {
+      background-color: $subColor;
+      color: $fontColor;
+      border: 0;
+    }
+  }
+}
+
+.ant-tabs-bottom>.ant-tabs-nav:before,
+.ant-tabs-bottom>div>.ant-tabs-nav:before,
+.ant-tabs-top>.ant-tabs-nav:before,
+.ant-tabs-top>div>.ant-tabs-nav:before {
+  display: none;
+}
+
+.ant-tabs-top>.ant-tabs-nav .ant-tabs-nav-wrap.ant-tabs-nav-wrap-ping-left:before,
+.ant-tabs-top>.ant-tabs-nav .ant-tabs-nav-wrap.ant-tabs-nav-wrap-ping-right:after {
+  opacity: 0 !important;
+}
+
+.ant-tabs>.ant-tabs-nav .ant-tabs-nav-more,
+.ant-tabs>div>.ant-tabs-nav .ant-tabs-nav-more {
+  display: none;
+}
+
+.up-arrow-icon {
+  opacity: 0.5;
+}
+
+.up-arrow-icon:focus,
+.up-arrow-icon:hover {
+  opacity: 1;
+}
+
+#searchQueryInput {
+  width: 100%;
+  height: 2.8rem;
+  background: #f5f5f5;
+  outline: none;
+  border: none;
+  padding: 0 3.5rem 0 1.5rem;
+  font-size: 1rem;
+}
+
+#searchQuerySubmit {
+  width: 3.5rem;
+  height: 2.8rem;
+  margin-left: -3.5rem;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+#searchQuerySubmit:hover {
+  cursor: pointer;
+}

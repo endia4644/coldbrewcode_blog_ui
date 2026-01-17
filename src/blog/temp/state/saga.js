@@ -15,9 +15,9 @@ function* fetchAllPost(action, page) {
     });
     if (isSuccess && data) {
       if (action.post) {
-        yield put(actions.setValue("post", [...action.post, ...data]));
+        yield put(actions.setValue({key: "post", value: [...action.post, ...data]}));
       } else {
-        yield put(actions.setValue("post", data));
+        yield put(actions.setValue({key: "post", value: data}));
       }
     }
   }
@@ -28,7 +28,7 @@ function* fetchWritePost(action) {
     url: `/post/temp/${action?.id}`,
   });
   if (isSuccess && data) {
-    yield put(writeActions.setValue("post", data));
+    yield put(writeActions.setValue({key:"post", value: data}));
   }
 }
 
@@ -41,12 +41,12 @@ function* fetchDeleteTempPost(action) {
     if (action.post) {
       if (action.post.length > 1) {
         const newPost = action.post.filter((item) => item.id !== action?.id);
-        yield put(actions.setValue("post", [...newPost]));
+        yield put(actions.setValue({key: "post", value: [...newPost]}));
       } else {
-        yield put(actions.setValue("post", []));
+        yield put(actions.setValue({key: "post", value: []}));
       }
     } else {
-      yield put(actions.setValue("post", []));
+      yield put(actions.setValue({key: "post", value: []}));
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Button, Col, List, Space, Typography } from "antd";
+import { Button, Col, List, Typography } from "antd";
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,18 +9,17 @@ import defaultImg from "./../../../common/images/beans.svg";
 import { createActionBar } from "../../../common/util/actionBar";
 import { createImgErrorHandler } from "../../../common/util/imgErrorHandler";
 import { ReactComponent as LoadingIcon } from "./../../../common/images/loading.svg";
-const { Title } = Typography;
 
-export default function Post() {
+export default function Post({nickname = null}) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const targetRef = useRef(null);
-  const post = useSelector((state) => state.main.post);
-  const hashtagCurrent = useSelector((state) => state.main.hashtagCurrent);
-  const searchCurrent = useSelector((state) => state.main.searchCurrent);
+  const post = useSelector((state) => state.main.post?.[nickname]);
+  const hashtagCurrent = useSelector((state) => state.main.hashtagCurrent?.[nickname]);
+  const searchCurrent = useSelector((state) => state.main.searchCurrent?.[nickname]);
 
-  const { fetchStatus, isFetched, isSlow, nextPage, totalCount } = useFetchInfo(
-    Types.FetchAllPost
+  const { fetchStatus, isFetching, isSlow, nextPage, totalCount } = useFetchInfo(
+    Types.FetchAllPost, nickname
   );
 
   // 액션바 생성함수 호출
@@ -30,109 +29,43 @@ export default function Post() {
   const handleImgError = createImgErrorHandler({ defaultImg });
 
   useEffect(() => {
-    let observer;
-    if (targetRef.current) {
-      // @ts-ignore
-      observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach((entry) => {
-          /**
-           * 스크롤이 옵저버가 감시하는 지점이 도착했으며 FetchAllPost action의 상태가
-           * undefined 거나 Success 일때만 새로운 리스트를 요청한다.
-           * undefined는 첫 요청시에 호출되기 위하여 필요하다.
-           * 첫 요청 후 FetchAllPost action의 상태는 Success로 변경된다.
-           */
-          if (
+    if (!targetRef.current) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      /**
+       * 스크롤이 옵저버가 감시하는 지점이 도착했으며 FetchAllPost action의 상태가
+       * undefined 거나 Success 일때만 새로운 리스트를 요청한다.
+       * undefined는 첫 요청시에 호출되기 위하여 필요하다.
+       * 첫 요청 후 FetchAllPost action의 상태는 Success로 변경된다.
+       */
+      entries.forEach((entry) => {
+        if (
             entry.isIntersecting &&
             (fetchStatus === undefined || fetchStatus === FetchStatus.Success)
-          ) {
-            // 게시글 추가 조회
-            dispatch(
+        ) {
+          // 게시글 추가 조회
+          dispatch(
               actions.fetchAllPost({
                 post,
                 totalCount,
                 hashtag: hashtagCurrent,
                 search: searchCurrent,
+                nickname,
               })
-            );
-          }
-        });
+          );
+        }
       });
-      observer.observe(targetRef.current);
-    }
-    return () => observer && observer.disconnect();
-  }, [dispatch, post, totalCount, hashtagCurrent, searchCurrent, fetchStatus]);
+    });
+
+    observer.observe(targetRef.current);
+
+    return () => observer.disconnect();
+  }, [nickname]);
   return (
     <>
-      {searchCurrent && (
+      {nextPage >= 1 && (
         <>
-          <Space style={{ marginLeft: 30 }}>
-            <Title level={5}>총</Title>
-            <Title level={3} style={{ color: "#d8b48b" }}>
-              {totalCount}
-            </Title>
-            <Title level={5}>개의 포스트를 찾았습니다.</Title>
-          </Space>
-        </>
-      )}
-      {nextPage >= 1 ? (
-        <>
-          {searchCurrent ? (
-            <List
-              className="main-list"
-              grid={{
-                xs: 1,
-                sm: 1,
-                md: 1,
-                lg: 1,
-                xl: 1,
-                xxl: 1,
-              }}
-              itemLayout="vertical"
-              size="large"
-              dataSource={post}
-              renderItem={(item) => (
-                <>
-                  <List.Item
-                    className="main-list-item"
-                    style={{ paddingTop: 30 }}
-                    key={`post_${item.id}`}
-                    actions={actionBar({ item, type: "default" })}
-                  >
-                    <Typography.Title>
-                      <Link
-                        to={`/blog/post/${item.id}`}
-                        dangerouslySetInnerHTML={{
-                          __html: item.sPostName,
-                        }}
-                      ></Link>
-                    </Typography.Title>
-                    <List.Item.Meta />
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: item.sPostContent,
-                      }}
-                    ></div>
-                    {item.Hashtags && (
-                      <Col>
-                        {item.Hashtags.map((item, i) => (
-                          <Button
-                            key={`button_${i}`}
-                            className="tag-button"
-                            type="primary"
-                            shape="round"
-                            style={{ marginTop: 10, marginRight: 10 }}
-                          >
-                            {item.hashtagName}
-                          </Button>
-                        ))}
-                      </Col>
-                    )}
-                  </List.Item>
-                </>
-              )}
-            />
-          ) : (
-            <List
+          <List
               className="main-list"
               grid={{
                 xs: 1,
@@ -148,69 +81,64 @@ export default function Post() {
               renderItem={(item) => (
                 <>
                   <List.Item
-                    className="main-list-item"
-                    style={{ paddingTop: 30 }}
-                    key={`post_${item.id}`}
-                    actions={actionBar({ item, type: "default" })}
+                      className="main-list-item"
+                      style={{ paddingTop: 30 }}
+                      key={`post_${item.id}`}
+                      actions={actionBar({ item, type: "default" })}
                   >
                     <div className="thumbnail-wrappper">
                       <div className="thumbnail">
                         <img
-                          onClick={() => navigate(`/blog/post/${item?.id}`)}
-                          style={{ cursor: "pointer" }}
-                          alt="logo"
-                          // 이미지를 가져올 때 postThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
-                          src={`${
-                            item?.postThumbnail &&
-                            item?.postThumbnail !== "null"
-                              ? `${API_HOST}/${item?.postThumbnail}`
-                              : defaultImg
-                          }`}
-                          onError={handleImgError}
+                            onClick={() => navigate(`/blog/@${item.User.nickName}/post/${item?.id}`)}
+                            style={{ cursor: "pointer" }}
+                            alt="logo"
+                            // 이미지를 가져올 때 postThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
+                            src={`${
+                                item?.postThumbnail &&
+                                item?.postThumbnail !== "null"
+                                    ? `${API_HOST}/${item?.postThumbnail}`
+                                    : defaultImg
+                            }`}
+                            onError={handleImgError}
                         />
                       </div>
                     </div>
                     <Typography.Title>
-                      <Link to={`/blog/post/${item.id}`}>{item.postName}</Link>
+                      <Link to={`/blog/@${item.User.nickName}/post/${item?.id}`}>{item.postName}</Link>
                     </Typography.Title>
                     <List.Item.Meta />
                     <Typography.Paragraph
-                      style={{ minHeight: 66 }}
-                      ellipsis={{
-                        rows: 3,
-                        expandable: false,
-                      }}
+                        style={{ minHeight: 66 }}
+                        ellipsis={{
+                          rows: 3,
+                          expandable: false,
+                        }}
                     >
                       {item.postDescription}
                     </Typography.Paragraph>
                     {item.Hashtags && (
-                      <Col>
-                        {item.Hashtags.map((item, i) => (
-                          <Button
-                            key={`button_${i}`}
-                            className="tag-button"
-                            type="primary"
-                            shape="round"
-                            style={{ marginTop: 10, marginRight: 10 }}
-                          >
-                            {item.hashtagName}
-                          </Button>
-                        ))}
-                      </Col>
+                        <Col>
+                          {item.Hashtags.map((item, i) => (
+                              <Button
+                                  key={`button_${i}`}
+                                  className="tag-button"
+                                  type="primary"
+                                  shape="round"
+                                  style={{ marginTop: 10, marginRight: 10 }}
+                              >
+                                {item.hashtagName}
+                              </Button>
+                          ))}
+                        </Col>
                     )}
                   </List.Item>
                 </>
               )}
-            />
-          )}
+          />
         </>
-      ) : (
-        <LoadingIcon width={250} height={250} />
       )}
-      {nextPage >= 1 && isSlow && !isFetched ? (
-        <LoadingIcon width={250} height={250} />
-      ) : (
-        ""
+      {(isSlow || isFetching) && (
+          <LoadingIcon className={"contentsLoading"} width={250} height={250} />
       )}
       <div
         className="listPost"

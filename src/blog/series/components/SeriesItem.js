@@ -12,6 +12,8 @@ import { API_HOST } from "../../../common/constant.js";
 import { elapsedTime } from "../../../common/util/util.js";
 import defaultImg from "./../../../common/images/beans.svg";
 import { createImgErrorHandler } from "../../../common/util/imgErrorHandler.js";
+import {useSelector} from "react-redux";
+import useGetWriterName from "../../../common/hook/useGetWriterName";
 
 /**
  * 
@@ -29,6 +31,7 @@ const IconText = ({ icon, text }) => (
 
 export default function SeriesItem({ post, isUpdate, onRemove = null }) {
   const navigate = useNavigate();
+  const { nickname } = useGetWriterName();
 
   // 이미지 오류 핸들러 호출
   const handleImgError = createImgErrorHandler({ defaultImg });
@@ -40,7 +43,7 @@ export default function SeriesItem({ post, isUpdate, onRemove = null }) {
           <li>
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
               <Typography.Title>
-                <Link to={`/blog/post/${post.id}?postType=series`}>{post.postName}</Link>
+                <Link to={`/blog/@${nickname}/post/${post?.id}?postType=series`}>{post.postName}</Link>
               </Typography.Title>
               {isUpdate &&
                 <Button
@@ -61,7 +64,7 @@ export default function SeriesItem({ post, isUpdate, onRemove = null }) {
         <div className="series-thumnail">
           <img
             style={{ cursor: 'pointer' }}
-            onClick={() => navigate(`/blog/post/${post?.id}?postType=series`)}
+            onClick={() => navigate(`/blog/@${nickname}/post/${post?.id}?postType=series`)}
             alt="logo"
             // 이미지를 가져올 때 postThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
             src={`${post?.postThumbnail && post?.postThumbnail !== 'null' ? `${API_HOST}/${post?.postThumbnail}` : defaultImg}`}

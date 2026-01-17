@@ -61,7 +61,7 @@ function* fetchGetEmail(action) {
   });
 
   if (isSuccess && data) {
-    yield put(actions.setValue("email", data?.address ?? NOT_FIND));
+    yield put(actions.setValue({key: "email", value: data?.address ?? NOT_FIND}));
   }
 }
 

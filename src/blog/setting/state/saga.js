@@ -13,8 +13,8 @@ function* fetchCreateProfileImg({ formData, fileBlob }) {
     data: formData
   });
   if (isSuccess && data) {
-    yield put(authActions.setValue("user", data));
-    yield put(actions.setValue("profileImg", reader.result));
+    yield put(authActions.setValue({key: "user", value: data}));
+    yield put(actions.setValue({key: "profileImg", value: reader.result}));
   }
 }
 
@@ -24,8 +24,8 @@ function* fetchDeleteProfileImg() {
     method: 'delete',
   });
   if (isSuccess && data) {
-    yield put(authActions.setValue("user", data));
-    yield put(actions.setValue("profileImg", null));
+    yield put(authActions.setValue({key: "user", value: data}));
+    yield put(actions.setValue({key: "profileImg", value: null}));
   }
 }
 
@@ -36,7 +36,7 @@ function* fetchUpdateNickName({ nickName }) {
     data: { nickName }
   });
   if (isSuccess && data) {
-    yield put(authActions.setValue("user", data));
+    yield put(authActions.setValue({key: "user", value: data}));
   }
 }
 
@@ -47,7 +47,7 @@ function* fetchUpdateCommentNoticeYsno({ commentNoticeYsno }) {
     data: { commentNoticeYsno }
   });
   if (isSuccess && data) {
-    yield put(authActions.setValue("user", data));
+    yield put(authActions.setValue({key: "user", value: data}));
   }
 }
 
@@ -58,7 +58,7 @@ function* fetchUpdateNewPostNoticeYsno({ newPostNoticeYsno }) {
     data: { newPostNoticeYsno }
   });
   if (isSuccess && data) {
-    yield put(authActions.setValue("user", data));
+    yield put(authActions.setValue({key: "user", value: data}));
   }
 }
 

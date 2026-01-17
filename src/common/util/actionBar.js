@@ -10,7 +10,7 @@ import { Button, Space } from "antd";
  * @param {object} param.icon // 사용할 아이콘 객체
  * @param {object} param.text // 아이콘과 매핑될 문구
  */
-const IconText = ({ icon, text }) => (
+export const IconText = ({ icon, text }) => (
   <Space>
     {React.createElement(icon)}
     {text}
@@ -79,6 +79,12 @@ export const createActionBar = () => {
         icon={BookOutlined}
         text={`${item.postCount}개의 포스트`}
         key="list-vertical-like-o"
+      />)
+    } else if(type === 'dashboard') {
+      array.push(<IconText
+          icon={FieldTimeOutlined}
+          text={elapsedTime(item.createdAt)}
+          key="list-vertical-star-o"
       />)
     }
     return array;

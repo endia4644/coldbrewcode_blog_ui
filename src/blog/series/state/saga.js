@@ -20,10 +20,10 @@ function* fetchSeries({ id, order }) {
     }
   });
   if (isSuccess) {
-    yield put(actions.setValue("series", data ?? null));
-    yield put(actions.setValue("posts", data?.Posts ?? []));
+    yield put(actions.setValue({key: "series", value: data ?? null}));
+    yield put(actions.setValue({key: "posts", value: data?.Posts ?? []}));
     if (order) {
-      yield put(actions.setValue("order", order));
+      yield put(actions.setValue({key: "order", value: order}));
     }
   }
 }
@@ -46,7 +46,7 @@ function* fetchUpdateSeries({ id, posts }) {
     }
   });
   if (isSuccess && data) {
-    yield put(actions.setValue("posts", data?.Posts));
+    yield put(actions.setValue({key: "posts", value: data?.Posts}));
   }
 }
 

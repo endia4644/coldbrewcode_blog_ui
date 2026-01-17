@@ -20,3 +20,7 @@ export const AuthStatus = {
 export const NOT_FIND = "NOTFIND";
 
 export const AUTO_SAVE_TIME = 300000;
+
+// 페이지 URL
+export const HOME = "/";
+export const BLOG = "/blog"

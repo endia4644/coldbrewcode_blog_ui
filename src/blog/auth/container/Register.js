@@ -20,7 +20,7 @@ import {
 import useBlockLoginUser from "../hook/useBlockLoginUser";
 import useBlockLNotEmail from "../hook/useBlockNotEmail";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
-import { FetchStatus } from "../../../common/constant";
+import {BLOG, FetchStatus} from "../../../common/constant";
 
 export default function Register() {
   useBlockLoginUser();
@@ -59,7 +59,7 @@ export default function Register() {
   const emailRef = useRef(null);
 
   const goBlog = () => {
-    navigate("/blog");
+    navigate(BLOG);
   };
 
   const validateNickName = (input, value) => {

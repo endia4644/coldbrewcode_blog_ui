@@ -1163,3 +1163,70 @@ a.ant-typography:active {
     white-space: pre !important;
   }
 }
+
+// 말줌임표 처리
+.ellipsis {
+  width: 100%;           /* 너비가 지정되어 있어야 함 */
+  white-space: nowrap;    /* 텍스트가 줄바꿈되지 않게 함 */
+  overflow: hidden;       /* 넘치는 부분은 숨김 */
+  text-overflow: ellipsis; /* 넘치는 부분을 ...으로 표시 */
+}
+
+/* search box */
+
+#searchQueryInput {
+  width: 100%;
+  height: 2.8rem;
+  background: #f5f5f5;
+  outline: none;
+  border: none;
+  padding: 0 3.5rem 0 1.5rem;
+  font-size: 1rem;
+}
+
+#searchQuerySubmit {
+  width: 3.5rem;
+  height: 2.8rem;
+  margin-left: -3.5rem;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+#searchQuerySubmit:hover {
+  cursor: pointer;
+}
+
+.overlay {
+  z-index: 3;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.8);
+  will-change: opacity;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+}
+
+.searchBar {
+  width: 80%;
+  margin: auto;
+  display: flex;
+  border-radius: 1.625rem;
+  flex-direction: row;
+  align-items: center;
+
+  &.open {
+    top: 100px;
+    left: 0;
+    right: 0;
+    position: fixed;
+    z-index: 3;
+    overflow: hidden;
+  }
+
+  &.none {
+    display: none;
+  }
+}

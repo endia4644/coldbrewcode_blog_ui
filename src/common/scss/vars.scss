@@ -2,11 +2,17 @@ $mainColor: #382119;
 $subColor: #634426;
 $fontColor: #d8b48b;
 $grayColor: #f8f9fb;
+$fontGrayColor: #868e96;
 $antdGrayColor: #d9d9d9;
 $mintColor: #f4f4f4;
 
 $mainContentSize: 756px;
 $mainSidebarSize: 992px;
+$dashboardContentSize: 1728px;
+
+$contentLargeSize: 1476px;
+$contentMiddleSize: 1024px;
+$contentSmallSize: calc(100% + 2rem - 30px);
 
 $xs: 576px;
 $sm: 576px;

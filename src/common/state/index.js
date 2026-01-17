@@ -2,7 +2,7 @@ import {
   createReducer,
   createSetValueAction,
   setValueReducer,
-} from "../../common/redux-helper";
+} from "../redux-helper";
 import { FetchType, FetchStatus } from "../constant";
 
 export const Types = {

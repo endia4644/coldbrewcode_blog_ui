@@ -23,10 +23,26 @@ export function createReducer(initialState, handlerMap) {
 }
 
 export function createSetValueAction(type) {
-  return (key, value) => ({ type, key, value });
+  return ({key, value, fetchKey}) => {
+    const action = { type, key, value };
+    if (fetchKey) {
+      action[FETCH_KEY] = fetchKey;
+    }
+    return action;
+  };
 }
 export function setValueReducer(state, action) {
-  state[action.key] = action.value;
+  const key = action.key; // 'post', 'keyword' 등
+  const fetchKey = action[FETCH_KEY]; // Symbol 값으로 꺼낸 키
+
+  if (!fetchKey) {
+    // fetchKey가 없는 일반적인 업데이트 처리
+    state[key] = action.value;
+  } else {
+    // fetchKey가 있는 경우: 해당 객체가 없으면 생성 후 할당
+    if (!state[key]) state[key] = {};
+    state[key][fetchKey] = action.value;
+  }
 }
 
 export const FETCH_PAGE = Symbol("FETCH_PAGE");

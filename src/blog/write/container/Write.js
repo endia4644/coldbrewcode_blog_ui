@@ -4,7 +4,7 @@ import "react-quill/dist/quill.snow.css";
 import Editor from "../components/CKEditor";
 import { Button, Col, Divider, Input, message, Modal, Row, Space, Typography } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import "../scss/write.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { actions, INITINAL_STATE, Types } from "../state";
@@ -15,7 +15,7 @@ import useFetchInfo from "../../../common/hook/useFetchInfo";
 import { FetchStatus } from "../../../common/constant";
 import { useCallbackPrompt } from "../../../common/hook/useCallbackPrompt";
 import { useFetchInfoDelete } from "../../../common/hook/useFetchInfoDelete";
-import { useGoMain } from "../../../common/hook/useGoMain";
+import { useGoMyBlogMain } from "../../../common/hook/useGoMyBlogMain";
 
 export default function Write() {
   // 로그인필수화면 - 로그인 여부 검사
@@ -26,8 +26,8 @@ export default function Write() {
  */
   const isFetching = useSelector(state => state.write.isFetching);
 
-  /* 메인 화면으로 이동하기 위한 콜백함수를 생성 */
-  const goMain = useGoMain();
+  /* 블로그 메인 화면으로 이동하기 위한 콜백함수를 생성 */
+  const goMyBlogMain = useGoMyBlogMain();
 
   const { id: postId } = useParams();
   const dispatch = useDispatch();
@@ -48,6 +48,8 @@ export default function Write() {
   const seriesName = useSelector(state => state.write.seriesName);
   const postType = useSelector(state => state.write.postType);
   const tempId = useSelector(state => state.write.tempId);
+  const user = useSelector(state => state.auth.user);
+  const navigate = useNavigate();
 
   const [showPrompt, confirmNavigation, cancelNavigation] = useCallbackPrompt(true);
 
@@ -246,7 +248,7 @@ export default function Write() {
           duration: 1,
         });
         setTimeout(() => {
-          goMain();
+          goMyBlogMain();
         }, 500);
       } else if (status === FetchStatus.Fail) {
         message.error({
@@ -261,7 +263,7 @@ export default function Write() {
         });
       }
     },
-    [goMain]
+    [goMyBlogMain]
   );
 
   /* 
@@ -406,6 +408,15 @@ export default function Write() {
     }
   }, [dispatch, deleteStatusFunction])
 
+  /**
+   * 비로그인 상태에서 진입 시, 메인으로 이동
+   */
+  useEffect(() => {
+    if(!user) {
+      navigate("/blog");
+    }
+  }, [user, navigate])
+
   return (
     <>
       <Modal
@@ -439,7 +450,7 @@ export default function Write() {
       </AnimatePresence>
       <Content
         className="main-content main-writer"
-        style={{ marginTop: 30, paddingBottom: "4rem" }}
+        style={{ marginTop: 70, paddingBottom: "4rem" }}
       >
         <Input
           className="post-title"
@@ -509,7 +520,7 @@ export default function Write() {
               className="button-border-hide button-type-round"
               icon={<ArrowLeftOutlined />}
               onClick={() => {
-                goMain();
+                goMyBlogMain();
               }}
               disabled={isFetching}
             >

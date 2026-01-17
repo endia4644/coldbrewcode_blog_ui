@@ -1,7 +1,9 @@
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { actions, Types } from "../../main/state";
+import { actions, Types } from "./index";
 import { callApi } from "../../../common/util/api";
 import { makeFetchSaga } from "../../../common/util/fetch";
+import {FETCH_KEY} from "../../../common/redux-helper";
+import {isEmpty} from "../../../common/util/util";
 
 function* fetchAllPost(action, page) {
   if (page <= Math.floor(action.totalCount / 8)) {
@@ -12,11 +14,12 @@ function* fetchAllPost(action, page) {
         offset: 8 * page,
         hashtag: action?.hashtag,
         search: action?.search,
+        nickname: action?.nickname,
       },
     });
     if (isSuccess && data) {
-      if (action.post) {
-        if (action?.search) {
+      if (action.post.length > 0) {
+        if (!isEmpty(action?.search)) {
           data.forEach((element) => {
             let sPostName = element.postName;
             let sPostContent =
@@ -40,6 +43,7 @@ function* fetchAllPost(action, page) {
                 `<mark style="background-color:yellow">${action?.search}</mark>`
               );
             }
+            console.log(sPostContent)
             let SearchIndex = sPostContent
               .toLowerCase()
               .indexOf(action?.search?.toLowerCase());
@@ -86,25 +90,27 @@ function* fetchAllPost(action, page) {
             element["sPostContent"] = sPostContent;
           });
         }
-        yield put(actions.setValue("post", [...action.post, ...data]));
+        yield put(actions.setValue({ key: "post", value: [...action.post, ...data], fetchKey: action[FETCH_KEY]}));
       } else {
-        yield put(actions.setValue("post", data));
+        yield put(actions.setValue({ key: "post", value: data, fetchKey: action[FETCH_KEY]}));
       }
+    } else {
+      yield put(actions.setValue({ key: "post", value: [], fetchKey: action[FETCH_KEY]}));
     }
     if (action?.search) {
-      yield put(actions.setValue("searchCurrent", action?.search));
-      yield put(actions.setValue("sideActiveKey", null));
-      yield put(actions.setValue("hashtagCurrent", null));
+      yield put(actions.setValue({ key: "searchCurrent", value: action?.search, fetchKey: action[FETCH_KEY]}));
+      yield put(actions.setValue({ key: "sideActiveKey", value: {}, fetchKey: action[FETCH_KEY]}));
+      yield put(actions.setValue({ key: "hashtagCurrent", value: {}, fetchKey: action[FETCH_KEY]}));
     } else {
-      yield put(actions.setValue("searchCurrent", null));
+      yield put(actions.setValue({ key: "searchCurrent", value: {}, fetchKey: action[FETCH_KEY]}));
     }
     if (action?.hashtag) {
-      yield put(actions.setValue("searchCurrent", null));
-      yield put(actions.setValue("hashtagCurrent", action?.hashtag));
+      yield put(actions.setValue({ key: "searchCurrent", value: {}, fetchKey: action[FETCH_KEY]}));
+      yield put(actions.setValue({ key: "hashtagCurrent", value: action?.hashtag, fetchKey: action[FETCH_KEY]}));
     } else {
-      yield put(actions.setValue("hashtagCurrent", null));
+      yield put(actions.setValue({ key: "hashtagCurrent", value: {}, fetchKey: action[FETCH_KEY]}));
     }
-    yield put(actions.setValue("activeKey", "post"));
+    yield put(actions.setValue({ key: "activeKey", value: "post", fetchKey: action[FETCH_KEY]}));
   }
 }
 
@@ -116,20 +122,23 @@ function* fetchAllSeries(action, page) {
     });
     if (isSuccess && data) {
       if (action.series) {
-        yield put(actions.setValue("series", [...action.series, ...data]));
+        yield put(actions.setValue({ key: "series", value: [...action.series, ...data], fetchKey: action[FETCH_KEY]}));
       } else {
-        yield put(actions.setValue("series", data));
+        yield put(actions.setValue({ key: "series", value: data, fetchKey: action[FETCH_KEY]}));
       }
     }
   }
 }
 
-function* fetchAllHashtag() {
+function* fetchAllHashtag(action) {
   const { isSuccess, data } = yield call(callApi, {
     url: "/hashtag",
+    params: { nickname: action[FETCH_KEY] },
   });
   if (isSuccess && data) {
-    yield put(actions.setValue("hashtag", data));
+    yield put(actions.setValue({ key: "hashtag", value: data, fetchKey: action[FETCH_KEY]}));
+  } else {
+    yield put(actions.setValue({ key: "hashtag", value: [], fetchKey: action[FETCH_KEY]}));
   }
 }
 

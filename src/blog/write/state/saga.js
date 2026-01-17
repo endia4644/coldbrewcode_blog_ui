@@ -8,7 +8,7 @@ function* fetchPost(action) {
     url: `/post/detail/${action.id}`,
   });
   if (isSuccess && data) {
-    yield put(actions.setValue("post", data));
+    yield put(actions.setValue({key:"post", value: data}));
   }
 }
 
@@ -30,10 +30,10 @@ function* fetchCreatePost(action) {
   });
   if (isSuccess) {
     yield put(
-      actions.setValue("txnCmpt", true)
+      actions.setValue({key : "txnCmpt", value: true})
     );
   } else {
-    yield put(actions.setValue("isFetching", false));
+    yield put(actions.setValue({key: "isFetching", value: false}));
   }
 }
 
@@ -58,10 +58,10 @@ function* fetchUpdatePost(action) {
   });
   if (isSuccess) {
     yield put(
-      actions.setValue("txnCmpt", true)
+      actions.setValue({key: "txnCmpt", value: true})
     );
   } else {
-    yield put(actions.setValue("isFetching", false));
+    yield put(actions.setValue({key: "isFetching", value: false}));
   }
 }
 
@@ -72,10 +72,10 @@ function* fetchAllSeries(action) {
   if (isSuccess && data) {
     if (action.series) {
       yield put(
-        actions.setValue("seriesList", [...action.seriesList, ...data])
+        actions.setValue({key: "seriesList", value: [...action.seriesList, ...data]})
       );
     } else {
-      yield put(actions.setValue("seriesList", data));
+      yield put(actions.setValue({key: "seriesList", value: data}));
     }
   }
 }
@@ -91,10 +91,10 @@ function* fetchCreateSeries(action) {
   if (isSuccess && data) {
     if (action.series) {
       yield put(
-        actions.setValue("seriesList", [...action.seriesList, ...data])
+        actions.setValue({key: "seriesList", value: [...action.seriesList, ...data]})
       );
     } else {
-      yield put(actions.setValue("seriesList", data));
+      yield put(actions.setValue({key: "seriesList", value: data}));
     }
   }
 }
@@ -118,10 +118,10 @@ function* fetchCreateTempPost(action) {
   });
   if (isSuccess) {
     yield put(
-      actions.setValue("txnCmpt", true)
+      actions.setValue({key: "txnCmpt", value: true})
     );
   } else {
-    yield put(actions.setValue("isFetching", false));
+    yield put(actions.setValue({key: "isFetching", value: false}));
   }
 }
 
@@ -144,10 +144,10 @@ function* fetchCreateTempPostContinue(action) {
   });
   if (isSuccess && data) {
     yield put(
-      actions.setValue("tempId", data)
+      actions.setValue({key: "tempId", value: data})
     );
   }
-  yield put(actions.setValue("isFetching", false));
+  yield put(actions.setValue({key: "isFetching", value: false}));
 }
 
 function* fetchTempPost(action) {
@@ -155,7 +155,7 @@ function* fetchTempPost(action) {
     url: `/post/temp/${action?.id}?id=${action.postId}`,
   });
   if (isSuccess && data) {
-    yield put(actions.setValue("post", data));
+    yield put(actions.setValue({key:"post", value:data}));
   }
 }
 
@@ -187,7 +187,7 @@ function* fetchDeleteSeriesImage({ seriesName }) {
     }
   });
   if (isSuccess) {
-    yield put(actions.setValue("seriesThumbnail", null));
+    yield put(actions.setValue({key : "seriesThumbnail", value: null}));
   }
 }
 

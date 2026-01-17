@@ -12,13 +12,13 @@ import Lottie from "lottie-react";
 // @ts-ignore
 import loadingLottie from "../../../assets/lottie/loading.json";
 
-export default function Series() {
+export default function Series({nickname = null}) {
   const navigate = useNavigate();
-  const series = useSelector((state) => state.main.series);
+  const series = useSelector((state) => state.main.series[nickname] || []);
   const targetRef = useRef(null);
   const dispatch = useDispatch();
 
-  const { fetchStatus, isFetched, isSlow, nextPage, totalCount } = useFetchInfo(Types.FetchAllSeries);
+  const { fetchStatus, isFetching, isSlow, nextPage, totalCount } = useFetchInfo(Types.FetchAllSeries, nickname);
 
   // 액션바 생성함수 호출
   const actionBar = createActionBar();
@@ -42,6 +42,7 @@ export default function Series() {
             dispatch(
               actions.fetchAllSeries({
                 series,
+                nickname,
                 totalCount,
               })
             );
@@ -51,10 +52,10 @@ export default function Series() {
       observer.observe(targetRef.current);
     }
     return () => observer && observer.disconnect();
-  }, [dispatch, fetchStatus, series, totalCount]);
+  }, [nickname]);
   return (
     <>
-      {nextPage >= 1 ?
+      {nextPage >= 1 && (
         <List
           className="main-list"
           grid={{
@@ -78,7 +79,7 @@ export default function Series() {
               <div className="thumbnail-wrappper">
                 <div className="thumbnail">
                   <img
-                    onClick={() => navigate(`/blog/series/${item.id}`)}
+                    onClick={() => navigate(`/blog/series/@${nickname}/post/${item?.id}`)}
                     style={{ cursor: 'pointer' }}
                     alt="logo"
                     // 이미지를 가져올 때 seriesThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
@@ -88,15 +89,15 @@ export default function Series() {
                 </div>
               </div>
               <Typography.Title>
-                <Link to={`/blog/series/${item.id}`}>{item.seriesName}</Link>
+                <Link to={`/blog/series/@${nickname}/post/${item?.id}`}>{item.seriesName}</Link>
               </Typography.Title>
             </List.Item>
           )}
-        /> : <Lottie animationData={loadingLottie} style={{ overflow: 'hidden', opacity: 0.5 }} className="lottie-loader"></Lottie>
-      }
-      {nextPage >= 1 && isSlow && !isFetched ?
-        <Lottie animationData={loadingLottie} style={{ overflow: 'hidden', opacity: 0.5 }} className="lottie-loader" /> : ''
-      }
+        />
+      )}
+      {isSlow && isFetching && (
+        <Lottie animationData={loadingLottie} style={{ overflow: 'hidden', opacity: 0.5 }} className="lottie-loader" />
+      )}
       <div
         className="listPost"
         style={{ width: "100%", height: 10 }}
