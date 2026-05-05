@@ -118,7 +118,7 @@ function* fetchAllSeries(action, page) {
   if (page <= Math.floor(action.totalCount / 8)) {
     const { isSuccess, data } = yield call(callApi, {
       url: "/series",
-      params: { limit: 8, offset: 8 * page },
+      params: { limit: 8, offset: 8 * page, nickname: action?.nickname },
     });
     if (isSuccess && data) {
       if (action.series) {

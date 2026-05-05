@@ -12,16 +12,17 @@ function* fetchAllPost(action, page) {
         offset: 8 * page,
         hashtag: action?.hashtag,
         search: action?.search,
+        tab: action?.tab,
+        period: action?.period,
       },
     });
     if (isSuccess && data) {
-      if (action.post) {
+      if (action.post?.length > 0) {
         yield put(actions.setValue({key: "post", value: [...action.post, ...data]}));
       } else {
         yield put(actions.setValue({key: "post", value: data}));
       }
     }
-    yield put(actions.setValue({key: "activeKey", value: "trend"}));
   }
 }
 

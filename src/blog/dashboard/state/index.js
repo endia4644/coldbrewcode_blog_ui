@@ -15,12 +15,14 @@ export const Types = {
 
 export const actions = {
   setValue: createSetValueAction(Types.SetValue),
-  fetchAllPost: ({ post = [], totalCount = 0, hashtag = null, search = null }) => ({
+  fetchAllPost: ({ post = [], totalCount = 0, hashtag = null, search = null, tab = "trending", period = "week" }) => ({
     type: Types.FetchAllPost,
     post,
     hashtag,
     search,
     totalCount,
+    tab,
+    period,
   }),
   fetchAllSeries: ({ series = [], totalCount = 0 }) => ({
     type: Types.FetchAllSeries,
@@ -41,6 +43,7 @@ const INITINAL_STATE = {
   series: [],
   activeKey: "trend",
   sideActiveKey: "ALL",
+  trendingPeriod: "week",
 };
 
 const reducer = createReducer(INITINAL_STATE, {

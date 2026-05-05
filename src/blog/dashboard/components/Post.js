@@ -17,6 +17,8 @@ export default function Post() {
   const navigate = useNavigate();
   const targetRef = useRef(null);
   const post = useSelector((state) => state.dashboard.post);
+  const activeKey = useSelector((state) => state.dashboard.activeKey);
+  const trendingPeriod = useSelector((state) => state.dashboard.trendingPeriod);
   const { fetchStatus, isFetching, isSlow, totalCount } = useFetchInfo(
     Types.FetchAllPost
   );
@@ -38,6 +40,8 @@ export default function Post() {
                   actions.fetchAllPost({
                     post,
                     totalCount,
+                    tab: activeKey === "trend" ? "trending" : "latest",
+                    period: trendingPeriod,
                   })
               );
             }
@@ -56,7 +60,7 @@ export default function Post() {
     observer.observe(targetRef.current);
 
     return () => observer.disconnect();
-  }, [post]);
+  }, [post, activeKey, trendingPeriod]);
 
   return (
     <>
