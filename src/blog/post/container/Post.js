@@ -11,6 +11,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { actions, Types } from "../state";
+import { actions as common } from "../../../common/state";
 import useQuery from "../../auth/hook/useQuery";
 
 import "../scss/post.scss";
@@ -22,6 +23,7 @@ import PostMoveButton from "../components/PostMoveButton";
 import useFetchInfo from "../../../common/hook/useFetchInfo";
 import {AuthStatus, BLOG, FetchStatus} from "../../../common/constant";
 import CommentForm from "../components/CommentForm";
+import SideBar from "../components/SideBar";
 import ButtonGroup from "antd/lib/button/button-group";
 import hljs from "highlight.js/lib/common";
 
@@ -34,12 +36,16 @@ export default function Post() {
   const comment = useSelector((state) => state.post.comment_0);
   const commentCount = useSelector((state) => state.post.commentCount);
   const { fetchStatus } = useFetchInfo(Types.FetchGetPost, id);
-  const { fetchStatus: dFetchStatus } = useFetchInfo(Types.FetchRemovePost, id); // id를 키로 사용하여 중복문제 X
-  const postType = query.get("postType") ?? "post"; // 종류가 시리즈인지 글인지 정의
+  const { fetchStatus: dFetchStatus } = useFetchInfo(Types.FetchRemovePost, id);
+  const { fetchStatus: likeAddStatus } = useFetchInfo(Types.FetchAddPostLike, id);
+  const { fetchStatus: likeRemoveStatus } = useFetchInfo(Types.FetchRemovePostLike, id);
+  const postType = query.get("postType") ?? "post";
 
   const status = useSelector((state) => state.auth.status);
   const user = useSelector((state) => state.auth.user);
 
+  const [activeLike, setActiveLike] = useState(false);
+  const [activeLikeCount, setActiveLikeCount] = useState(0);
   const [open, setOpen] = useState(false);
 
   // 파일 프리뷰 팝업 오픈 제어
@@ -120,10 +126,49 @@ export default function Post() {
     }
   }, [fetchStatus, navigate, post]);
 
+  useEffect(() => {
+    if (post) {
+      setActiveLike(post.likeYsno);
+      setActiveLikeCount(post.likeCount);
+    }
+  }, [post?.id]);
+
+  useEffect(() => {
+    if (likeAddStatus === FetchStatus.Fail) {
+      setActiveLike((prev) => !prev);
+      setActiveLikeCount((prev) => prev - 1);
+      dispatch(common.setFetchStatus({ actionType: Types.FetchAddPostLike, fetchKey: id, status: FetchStatus.Delete }));
+    }
+  }, [likeAddStatus]);
+
+  useEffect(() => {
+    if (likeRemoveStatus === FetchStatus.Fail) {
+      setActiveLike((prev) => !prev);
+      setActiveLikeCount((prev) => prev + 1);
+      dispatch(common.setFetchStatus({ actionType: Types.FetchRemovePostLike, fetchKey: id, status: FetchStatus.Delete }));
+    }
+  }, [likeRemoveStatus]);
+
+  function likeClick() {
+    setActiveLike((prev) => !prev);
+    if (activeLike) {
+      dispatch(actions.fetchRemovePostLike(id));
+      setActiveLikeCount((prev) => prev - 1);
+    } else {
+      dispatch(actions.fetchAddPostLike(id));
+      setActiveLikeCount((prev) => prev + 1);
+    }
+  }
+
   return (
     <>
       {fetchStatus === FetchStatus.Success && (
         <>
+          <Row justify="center">
+            <Col>
+              <SideBar id={id} activeLike={activeLike} activeLikeCount={activeLikeCount} onLikeClick={likeClick} />
+            </Col>
+          </Row>
           <Row
               style={{ justifyContent: "space-between", alignItems: "center" }}
           >
@@ -166,9 +211,9 @@ export default function Post() {
                 {elapsedTime(post?.createdAt)}
               </Typography.Title>
               <Topbar
-                  id={id}
-                  likeCount={post?.likeCount}
-                  likeYsno={post?.likeYsno}
+                  activeLike={activeLike}
+                  activeLikeCount={activeLikeCount}
+                  onLikeClick={likeClick}
               />
             </Space>
           </Row>

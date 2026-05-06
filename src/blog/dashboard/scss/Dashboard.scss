@@ -71,6 +71,16 @@
     }
   }
 
+  &-list {
+    .ant-card-cover {
+      img {
+        background: $grayColor url('../../../common/images/beans.svg') center / 40% no-repeat;
+        min-height: 160px;
+        object-fit: cover;
+      }
+    }
+  }
+
   &-name {
     font-size: 1.5rem;
     line-height: 1.5;
@@ -175,6 +185,52 @@
 .ant-tabs>.ant-tabs-nav .ant-tabs-nav-more,
 .ant-tabs>div>.ant-tabs-nav .ant-tabs-nav-more {
   display: none;
+}
+
+.period-filter {
+  .ant-radio-button-wrapper {
+    border-radius: 20px;
+    border: 1px solid $antdGrayColor;
+    margin-left: 4px;
+
+    &:not(:first-child)::before {
+      display: none;
+    }
+
+    &:hover {
+      color: $mainColor;
+    }
+
+    &:focus-within,
+    &.ant-radio-button-wrapper:focus-within {
+      box-shadow: 0 0 0 3px rgba(216, 180, 139, 0.3) !important;
+      border-color: $fontColor !important;
+      background-color: white !important;
+      color: $mainColor !important;
+    }
+
+    &-checked:not(.ant-radio-button-wrapper-disabled):focus-within {
+      background-color: $mainColor !important;
+      border-color: $fontColor !important;
+      color: $fontColor !important;
+    }
+
+    .ant-radio-button:focus-visible {
+      outline: none;
+    }
+
+    &-checked:not(.ant-radio-button-wrapper-disabled) {
+      background: $mainColor;
+      border-color: $mainColor;
+      color: $fontColor;
+
+      &:hover {
+        background: $subColor;
+        border-color: $subColor;
+        color: $fontColor;
+      }
+    }
+  }
 }
 
 .up-arrow-icon {

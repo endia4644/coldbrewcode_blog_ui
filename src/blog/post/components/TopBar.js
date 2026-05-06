@@ -1,78 +1,11 @@
 import { HeartFilled } from "@ant-design/icons";
 import { Badge, Button } from "antd";
 import { motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
-import { FetchStatus } from "../../../common/constant";
-import useFetchInfo from "../../../common/hook/useFetchInfo";
-import { actions, Types } from "../state";
-import { actions as common } from "../../../common/state";
+import React, { useRef } from "react";
 
-export default function Topbar({ id, likeCount, likeYsno }) {
-  const dispatch = useDispatch();
+export default function Topbar({ activeLike, activeLikeCount, onLikeClick }) {
   const divRef = useRef(null);
-  const [activeLike, setActiveLike] = useState(likeYsno);
-  const [activeLikeCount, setActiveLikeCount] = useState(likeCount);
-  const { fetchStatus: addStatus } = useFetchInfo(Types.FetchAddPostLike, id);
-  const { fetchStatus: removeStatus } = useFetchInfo(
-    Types.FetchRemovePostLike,
-    id
-  );
 
-  useEffect(() => {
-    if (addStatus === FetchStatus.Fail) {
-      setActiveLike(!activeLike);
-      setActiveLikeCount(activeLikeCount - 1);
-      dispatch(
-        common.setFetchStatus({
-          actionType: Types.FetchAddPostLike,
-          fetchKey: id,
-          status: FetchStatus.Delete,
-        })
-      );
-    }
-  }, [
-    addStatus,
-    id,
-    setActiveLikeCount,
-    activeLikeCount,
-    setActiveLike,
-    activeLike,
-    dispatch,
-  ]);
-
-  useEffect(() => {
-    if (removeStatus === FetchStatus.Fail) {
-      setActiveLike(!activeLike);
-      setActiveLikeCount(activeLikeCount + 1);
-      dispatch(
-        common.setFetchStatus({
-          actionType: Types.FetchRemovePostLike,
-          fetchKey: id,
-          status: FetchStatus.Delete,
-        })
-      );
-    }
-  }, [
-    removeStatus,
-    id,
-    setActiveLikeCount,
-    activeLikeCount,
-    setActiveLike,
-    activeLike,
-    dispatch,
-  ]);
-
-  function likeClick() {
-    setActiveLike(!activeLike);
-    if (activeLike) {
-      dispatch(actions.fetchRemovePostLike(id));
-      setActiveLikeCount(activeLikeCount - 1);
-    } else {
-      dispatch(actions.fetchAddPostLike(id));
-      setActiveLikeCount(activeLikeCount + 1);
-    }
-  }
   return (
     <>
       <Badge count={activeLikeCount} className="main-topbar">
@@ -97,11 +30,11 @@ export default function Topbar({ id, likeCount, likeYsno }) {
               border: "1px solid #d9d9d9",
               marginBottom: "0.5rem",
             }}
-            onClick={likeClick}
+            onClick={onLikeClick}
             icon={
               <HeartFilled style={{ fontSize: "1rem", color: "#d9d9d9" }} />
             }
-          ></Button>
+          />
         </motion.div>
       </Badge>
     </>

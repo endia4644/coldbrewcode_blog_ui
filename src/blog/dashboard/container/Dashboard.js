@@ -76,6 +76,7 @@ export default function Dashboard() {
                     onChange={onPeriodChange}
                     buttonStyle="solid"
                     size="small"
+                    className="period-filter"
                     style={{ marginRight: 16 }}
                   >
                     <Radio.Button value="day">오늘</Radio.Button>

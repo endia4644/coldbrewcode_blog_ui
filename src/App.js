@@ -33,6 +33,7 @@ import {makeUrlWithParams} from "./common/util/util";
 
 export default function App() {
   const dispatch = useDispatch();
+  const [siderCollapsed, setSiderCollapsed] = useState(true);
   const searchFlag = useSelector(state => state.common.searchFlag);
   const searchRef = useRef(null);
   const buttonRef = useRef(null);
@@ -132,14 +133,28 @@ export default function App() {
         style={{ height: "100vh", minHeight: "600px" }}
         className="ant-layout-has-sider"
       >
+        <div
+          style={{
+            position: "fixed",
+            top: 10,
+            left: siderCollapsed ? 5 : 165,
+            zIndex: 10,
+            transition: "left 0.2s",
+          }}
+        >
+          <BarsOutlined
+            style={{ fontSize: 22, cursor: "pointer", padding: 6 }}
+            onClick={() => setSiderCollapsed(!siderCollapsed)}
+          />
+        </div>
         <Sider
           className="fix-menu"
           theme="light"
           width={160}
           style={{ paddingTop: 40, zIndex: 2, height: "100%" }}
-          breakpoint="xxl"
-          defaultCollapsed={true}
+          collapsed={siderCollapsed}
           collapsedWidth="0"
+          trigger={null}
         >
           <div className="logo" />
           <Menu

@@ -1,78 +1,10 @@
 import { HeartFilled } from "@ant-design/icons";
 import { Affix, Badge, Button, Col, Row } from "antd";
 import { motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
-import { FetchStatus } from "../../../common/constant";
-import { actions, Types } from "../state";
-import { actions as common } from "../../../common/state";
-import useFetchInfo from "../../../common/hook/useFetchInfo";
+import React, { useRef } from "react";
 
-export default function SideBar({ id, likeCount, likeYsno }) {
-  const dispatch = useDispatch();
+export default function SideBar({ id, activeLike, activeLikeCount, onLikeClick }) {
   const divRef = useRef(null);
-  const [activeLike, setActiveLike] = useState(likeYsno);
-  const [activeLikeCount, setActiveLikeCount] = useState(likeCount);
-  const { fetchStatus: addStatus } = useFetchInfo(Types.FetchAddPostLike, id);
-  const { fetchStatus: removeStatus } = useFetchInfo(
-    Types.FetchRemovePostLike,
-    id
-  );
-
-  useEffect(() => {
-    if (addStatus === FetchStatus.Fail) {
-      setActiveLike(!activeLike);
-      setActiveLikeCount(activeLikeCount - 1);
-      dispatch(
-        common.setFetchStatus({
-          actionType: Types.FetchAddPostLike,
-          fetchKey: id,
-          status: FetchStatus.Delete,
-        })
-      );
-    }
-  }, [
-    addStatus,
-    id,
-    setActiveLikeCount,
-    activeLikeCount,
-    setActiveLike,
-    activeLike,
-    dispatch,
-  ]);
-
-  useEffect(() => {
-    if (removeStatus === FetchStatus.Fail) {
-      setActiveLike(!activeLike);
-      setActiveLikeCount(activeLikeCount + 1);
-      dispatch(
-        common.setFetchStatus({
-          actionType: Types.FetchRemovePostLike,
-          fetchKey: id,
-          status: FetchStatus.Delete,
-        })
-      );
-    }
-  }, [
-    removeStatus,
-    id,
-    setActiveLikeCount,
-    activeLikeCount,
-    setActiveLike,
-    activeLike,
-    dispatch,
-  ]);
-
-  function likeClick() {
-    setActiveLike(!activeLike);
-    if (activeLike) {
-      dispatch(actions.fetchRemovePostLike(id));
-      setActiveLikeCount(activeLikeCount - 1);
-    } else {
-      dispatch(actions.fetchAddPostLike(id));
-      setActiveLikeCount(activeLikeCount + 1);
-    }
-  }
 
   return (
     <>
@@ -96,8 +28,7 @@ export default function SideBar({ id, likeCount, likeYsno }) {
                   }}
                 >
                   <Button
-                    className={`like-btn ${activeLike ? "like-btn-active" : ""
-                      }`}
+                    className={`like-btn ${activeLike ? "like-btn-active" : ""}`}
                     style={{
                       width: "4rem",
                       height: "4rem",
@@ -108,13 +39,13 @@ export default function SideBar({ id, likeCount, likeYsno }) {
                       borderRadius: 12,
                       border: "1px solid #d9d9d9",
                     }}
-                    onClick={likeClick}
+                    onClick={onLikeClick}
                     icon={
                       <HeartFilled
                         style={{ fontSize: "2rem", color: "#d9d9d9" }}
                       />
                     }
-                  ></Button>
+                  />
                 </motion.div>
               </Badge>
             </div>
