@@ -157,7 +157,7 @@ export default function Post() {
                       <div className="thumbnail">
                         <img
                           onClick={() => navigate(`/blog/@${item.User.nickName}/post/${item?.id}`)}
-                          style={{ cursor: "pointer" }}
+                          style={{ cursor: "pointer", visibility: 'hidden' }}
                           alt="logo"
                           // 이미지를 가져올 때 postThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
                           src={`${
@@ -166,6 +166,7 @@ export default function Post() {
                               ? `${API_HOST}/${item?.postThumbnail}`
                               : defaultImg
                           }`}
+                          onLoad={(e) => { e.target.style.visibility = ''; }}
                           onError={handleImgError}
                         />
                       </div>

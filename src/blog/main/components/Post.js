@@ -28,28 +28,32 @@ export default function Post({nickname = null}) {
   // 이미지 오류 핸들러 호출
   const handleImgError = createImgErrorHandler({ defaultImg });
 
+  const postRef = useRef(post);
+  const fetchStatusRef = useRef(fetchStatus);
+  const totalCountRef = useRef(totalCount);
+  const hashtagCurrentRef = useRef(hashtagCurrent);
+  const searchCurrentRef = useRef(searchCurrent);
+  postRef.current = post;
+  fetchStatusRef.current = fetchStatus;
+  totalCountRef.current = totalCount;
+  hashtagCurrentRef.current = hashtagCurrent;
+  searchCurrentRef.current = searchCurrent;
+
   useEffect(() => {
     if (!targetRef.current) return;
 
     const observer = new IntersectionObserver((entries) => {
-      /**
-       * 스크롤이 옵저버가 감시하는 지점이 도착했으며 FetchAllPost action의 상태가
-       * undefined 거나 Success 일때만 새로운 리스트를 요청한다.
-       * undefined는 첫 요청시에 호출되기 위하여 필요하다.
-       * 첫 요청 후 FetchAllPost action의 상태는 Success로 변경된다.
-       */
       entries.forEach((entry) => {
         if (
             entry.isIntersecting &&
-            (fetchStatus === undefined || fetchStatus === FetchStatus.Success)
+            (fetchStatusRef.current === undefined || fetchStatusRef.current === FetchStatus.Success)
         ) {
-          // 게시글 추가 조회
           dispatch(
               actions.fetchAllPost({
-                post,
-                totalCount,
-                hashtag: hashtagCurrent,
-                search: searchCurrent,
+                post: postRef.current,
+                totalCount: totalCountRef.current,
+                hashtag: hashtagCurrentRef.current,
+                search: searchCurrentRef.current,
                 nickname,
               })
           );
@@ -90,7 +94,7 @@ export default function Post({nickname = null}) {
                       <div className="thumbnail">
                         <img
                             onClick={() => navigate(`/blog/@${item.User.nickName}/post/${item?.id}`)}
-                            style={{ cursor: "pointer" }}
+                            style={{ cursor: "pointer", visibility: 'hidden' }}
                             alt="logo"
                             // 이미지를 가져올 때 postThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
                             src={`${
@@ -99,6 +103,7 @@ export default function Post({nickname = null}) {
                                     ? `${API_HOST}/${item?.postThumbnail}`
                                     : defaultImg
                             }`}
+                            onLoad={(e) => { e.target.style.visibility = ''; }}
                             onError={handleImgError}
                         />
                       </div>

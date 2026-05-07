@@ -26,6 +26,8 @@ import CommentForm from "../components/CommentForm";
 import SideBar from "../components/SideBar";
 import ButtonGroup from "antd/lib/button/button-group";
 import hljs from "highlight.js/lib/common";
+import renderMathInElement from "katex/contrib/auto-render";
+import "katex/dist/katex.min.css";
 
 export default function Post() {
   const { id } = useParams();
@@ -106,9 +108,8 @@ export default function Post() {
   }, [dispatch, id]);
 
   useEffect(() => {
-    /* 삭제가 성공한 경우 blog 화면으로 이동 */
     if (dFetchStatus === FetchStatus.Success) {
-      navigate(BLOG);
+      navigate(`/blog/@${user.nickName}`);
     }
   }, [dispatch, navigate, dFetchStatus]);
 
@@ -118,6 +119,12 @@ export default function Post() {
       hljs.highlightAll();
     }, 150);
   }, []);
+
+  useEffect(() => {
+    if (!post?.postContent) return;
+    const el = document.querySelector('.ck-content');
+    if (el) renderMathInElement(el, { throwOnError: false });
+  }, [post]);
 
   useEffect(() => {
     /* 게시글이 없을경우 메인페이지로 강제이동 */

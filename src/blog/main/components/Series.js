@@ -26,32 +26,32 @@ export default function Series({nickname = null}) {
   // 이미지 오류 핸들러 호출
   const handleImgError = createImgErrorHandler({ defaultImg });
 
+  const seriesRef = useRef(series);
+  const fetchStatusRef = useRef(fetchStatus);
+  const totalCountRef = useRef(totalCount);
+  seriesRef.current = series;
+  fetchStatusRef.current = fetchStatus;
+  totalCountRef.current = totalCount;
+
   useEffect(() => {
-    let observer;
-    if (targetRef.current) {
-      observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach((entry) => {
-          /**
-           * 스크롤이 옵저버가 감시하는 지점이 도착했으며 FetchAllSeries action의 상태가
-           * undefined 거나 Success 일때만 새로운 리스트를 요청한다.
-           * undefined는 첫 요청시에 호출되기 위하여 필요하다.
-           * 첫 요청 후 FetchAllSeries action의 상태는 Success로 변경된다.
-           */
-          if (entry.isIntersecting && (fetchStatus === undefined || fetchStatus === FetchStatus.Success)) {
-            // 시리즈 추가 조회
-            dispatch(
-              actions.fetchAllSeries({
-                series,
-                nickname,
-                totalCount,
-              })
-            );
-          }
-        });
+    if (!targetRef.current) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && (fetchStatusRef.current === undefined || fetchStatusRef.current === FetchStatus.Success)) {
+          dispatch(
+            actions.fetchAllSeries({
+              series: seriesRef.current,
+              nickname,
+              totalCount: totalCountRef.current,
+            })
+          );
+        }
       });
-      observer.observe(targetRef.current);
-    }
-    return () => observer && observer.disconnect();
+    });
+
+    observer.observe(targetRef.current);
+    return () => observer.disconnect();
   }, [nickname]);
   return (
     <>
@@ -80,10 +80,11 @@ export default function Series({nickname = null}) {
                 <div className="thumbnail">
                   <img
                     onClick={() => navigate(`/blog/series/@${nickname}/post/${item?.id}`)}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', visibility: 'hidden' }}
                     alt="logo"
                     // 이미지를 가져올 때 seriesThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
                     src={`${item?.seriesThumbnail && item?.seriesThumbnail !== 'null' ? `${API_HOST}/${item?.seriesThumbnail}` : defaultImg}`}
+                    onLoad={(e) => { e.target.style.visibility = ''; }}
                     onError={handleImgError}
                   />
                 </div>

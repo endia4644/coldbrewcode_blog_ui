@@ -78,20 +78,23 @@ export default function Post() {
               <div className="thumbnail-wrappper">
                 <div className="thumbnail">
                   <img
-                    onClick={() => navigate(`/blog/post/${item?.id}`)}
-                    style={{ cursor: 'pointer' }}
+                    onClick={() => navigate(`/blog/@${item?.User?.nickName}/post/${item?.id}`)}
+                    style={{ cursor: 'pointer', visibility: 'hidden' }}
                     alt="logo"
                     // 이미지를 가져올 때 postThumbnail 값이 없을 경우 의미없는 404 에러 발생 방지
                     src={`${item?.postThumbnail && item?.postThumbnail !== 'null' ? `${API_HOST}/${item?.postThumbnail}` : defaultImg}`}
+                    onLoad={(e) => { e.target.style.visibility = ''; }}
                     onError={handleImgError}
                   />
                 </div>
               </div>
               <Typography.Title>
-                <Link to={`/blog/post/${item.id}`}>{item.postName}</Link>
+                <Link to={`/blog/${item?.User?.nickName}/post/${item.id}`}>{item.postName}</Link>
               </Typography.Title>
               <List.Item.Meta />
               <Typography.Paragraph
+
+
                 style={{ minHeight: 66 }}
                 ellipsis={{
                   rows: 3,

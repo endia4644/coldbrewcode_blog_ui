@@ -73,8 +73,8 @@
 
   &-list {
     .ant-card-cover {
+      background: $grayColor url('../../../common/images/beans.svg') center / 40% no-repeat;
       img {
-        background: $grayColor url('../../../common/images/beans.svg') center / 40% no-repeat;
         min-height: 160px;
         object-fit: cover;
       }

@@ -4,6 +4,7 @@
  */
 export const createImgErrorHandler = ({ defaultImg }) => {
   return (e) => {
+    if (e.target.src === defaultImg) return;
     e.target.src = defaultImg;
-  }
+  };
 };

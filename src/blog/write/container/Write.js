@@ -34,11 +34,12 @@ export default function Write() {
 
   const tagRef = useRef(new Set());
   const imageMap = useRef(new Map());
+  const editorRef = useRef(null);
   const [currentTag, setCurrentTag] = useState("");
   const [hashtag, setHashtag] = useState([]);
-  const [htmlContent, setHtmlContent] = useState(null);
+  const [htmlContent, setHtmlContent] = useState("");
   const [tempHtmlContent, setTempHtmlContent] = useState(null);
-  const [postName, setPostName] = useState(null);
+  const [postName, setPostName] = useState("");
   const post = useSelector(state => state.write.post);
   const thumbnail = useSelector(state => state.write.postThumbnail);
   const thumbnailId = useSelector(state => state.write.thumbnailId);
@@ -111,11 +112,18 @@ export default function Write() {
    * 게시글 수정 초기화 로직
    */
   useEffect(() => {
-    // 게시글 ID가 스토어에 없는경우 신규등록|임시저장 불러오기 이므로 종료
     if (!postId) {
+      // 수정 → 신규 작성으로 전환 시 이전 수정 상태 초기화
+      for (const [key, value] of Object.entries(INITINAL_STATE)) {
+        dispatch(actions.setValue({key, value}));
+      }
+      setPostName("");
+      setCurrentTag("");
+      setHashtag([]);
+      setHtmlContent("");
+      tagRef.current = new Set();
       return;
     }
-    // id 값으로 게시글 상세조회 액션 호출
     dispatch(actions.fetchPost({ id: postId }));
   }, [postId, dispatch]);
 
@@ -199,7 +207,8 @@ export default function Write() {
     /* 현재 입력중이면서 저장하지 않은 정보로 태그로 변환 */
     insertHashTag();
 
-    let content = contentAddIndex(htmlContent);
+    const latestContent = editorRef.current?.getData() ?? htmlContent;
+    let content = contentAddIndex(latestContent);
 
     setLevel(1);
     // 메인 정보를 스토어에 저장 : 제목, 본문, 해시태그
@@ -343,7 +352,7 @@ export default function Write() {
       });
     }
     // 본문 내용중 해드 태그를 목차 등록 가능한 구조로 치환하여 리턴
-    let content = contentAddIndex(htmlContent);
+    let content = contentAddIndex(editorRef.current?.getData() ?? htmlContent);
     // 임시등록 액션 호출
     if(!continueYsno) {
       dispatch(
@@ -397,7 +406,7 @@ export default function Write() {
     return () => {
       // 게시글 작성의 INITINAL_STATE 초기화
       for (const [key, value] of Object.entries(INITINAL_STATE)) {
-        dispatch(actions.setValue(key, value));
+        dispatch(actions.setValue({key, value}));
       }
       // 언마운트 시 작성/수정/임시저장 액션 상태를 초기화
       deleteStatusFunction(Types.FetchCreateTempPost);
@@ -510,6 +519,7 @@ export default function Write() {
           getHtmlContent={getHtmlContent}
           getTempHtmlContent={getTempHtmlContent}
           imageMap={imageMap}
+          editorRef={editorRef}
         />
       </Content>
       <Footer className="main-footer">

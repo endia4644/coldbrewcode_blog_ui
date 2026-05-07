@@ -23,7 +23,14 @@ export function createReducer(initialState, handlerMap) {
 }
 
 export function createSetValueAction(type) {
-  return ({key, value, fetchKey}) => {
+  return (keyOrObj, val) => {
+    let key, value, fetchKey;
+    if (keyOrObj !== null && typeof keyOrObj === 'object') {
+      ({ key, value, fetchKey } = keyOrObj);
+    } else {
+      key = keyOrObj;
+      value = val;
+    }
     const action = { type, key, value };
     if (fetchKey) {
       action[FETCH_KEY] = fetchKey;
