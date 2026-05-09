@@ -100,6 +100,9 @@ export default function Post() {
   useEffect(() => {
     /* 게시글 정보 조회 */
     dispatch(actions.fetchGetPost({ id, postType }));
+    return () => {
+      dispatch(actions.setValue('post', null));
+    };
   }, [dispatch, id, postType]);
 
   useEffect(() => {
@@ -185,7 +188,7 @@ export default function Post() {
             >
               {post?.postName}
             </Typography.Title>
-            {status === AuthStatus.Login && user?.id === post.User.id && (
+            {status === AuthStatus.Login && user?.id === post?.User?.id && (
                 <ButtonGroup>
                   <Button
                       className="button-type-round button-color-white"
@@ -298,7 +301,7 @@ export default function Post() {
                     />
                 ))}
           </Row>
-          {user?.id === post.User.id && (
+          {user?.id === post?.User?.id && (
             <>
               <Modal
                 className="modal-size-middle"
